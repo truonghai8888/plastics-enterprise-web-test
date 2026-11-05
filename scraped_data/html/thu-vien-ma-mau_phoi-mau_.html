@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<meta name="theme-color" content="#131714">
+<title>Phối màu tấm ốp lên phòng mẫu | Eco Bamboo</title>
+<meta name="description" content="Chọn mã tấm ốp than tre và xem ngay trên tường, tủ của 13 phòng mẫu dựng thật — phòng ngủ, phòng khách, bếp, phòng ăn, nhà tắm.">
+
+<link rel="icon" href="https://ecobamboo.vn/favicon.ico?v=6c8f63d8" sizes="16x16 32x32 48x48 64x64">
+<link rel="icon" type="image/png" href="https://ecobamboo.vn/assets/img/favicon.png?v=6c8f63d8" sizes="512x512">
+<link rel="apple-touch-icon" href="https://ecobamboo.vn/assets/img/icon-180.png?v=6c8f63d8">
+<link rel="canonical" href="https://ecobamboo.vn/thu-vien-ma-mau/phoi-mau/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ecobamboo.vn/thu-vien-ma-mau/phoi-mau/">
+<meta property="og:title" content="Phối màu tấm ốp lên phòng mẫu | Eco Bamboo">
+<meta property="og:description" content="Chọn mã tấm ốp than tre và xem ngay trên tường, tủ của 13 phòng mẫu dựng thật.">
+<meta property="og:image" content="https://ecobamboo.vn/thu-vien-ma-mau/phoi-mau/assets/og-phoi-mau.jpg?v=2ec2e9ab">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ecobamboo.vn/thu-vien-ma-mau/phoi-mau/assets/og-phoi-mau.jpg?v=2ec2e9ab">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+ {"@type":"ListItem","position":1,"name":"Trang chủ","item":"https://ecobamboo.vn/"},
+ {"@type":"ListItem","position":2,"name":"Thư viện mã màu","item":"https://ecobamboo.vn/thu-vien-ma-mau"},
+ {"@type":"ListItem","position":3,"name":"Phối màu","item":"https://ecobamboo.vn/thu-vien-ma-mau/phoi-mau/"}]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="phoi-mau.css?v=c10aebb8">
+</head>
+<body>
+
+<header class="dau">
+  <a class="logo" href="https://ecobamboo.vn/" aria-label="Eco Bamboo — về trang chủ">
+    <img src="assets/logo.png?v=064ffb74" alt="Eco Bamboo" width="120" height="61">
+  </a>
+  
+  <a class="ve-bang-mau" href="https://ecobamboo.vn/thu-vien-ma-mau" title="Về thư viện mã màu">
+    <span aria-hidden="true">←</span><span class="ve-chu">Bảng màu</span>
+  </a>
+  <div class="tieu">
+    <h1>Phối màu tấm ốp lên phòng mẫu</h1>
+  </div>
+
+  <button id="chon-canh" class="canh-hien" type="button" aria-haspopup="dialog" aria-expanded="false"
+          aria-controls="bang-canh" title="Đổi cảnh">
+    <img id="canh-hien-anh" alt="" width="44" height="33">
+    <span class="canh-hien-chu"><small id="canh-hien-nhom">Cảnh</small><b id="canh-hien-ten">đang nạp…</b></span>
+    <svg class="mui" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <a class="lien-he" href="https://ecobamboo.vn/nhan-mau">Xem mẫu thật<span class="lien-he-phu"> · gửi mẫu về tận nhà</span></a>
+</header>
+
+<main class="san">
+
+  <section class="san-anh" aria-label="Ảnh phòng">
+    <div class="sanh" id="sanh">
+      <div class="sanh-trong" id="sanh-trong">
+        <canvas id="khung" width="1600" height="1200"
+                aria-label="Cảnh phòng, chạm vào mảng tường hoặc tủ để chọn mặt cần ốp"></canvas>
+        <canvas id="mach" hidden></canvas>
+        <img id="anh-goc" alt="Ảnh gốc của cảnh, chưa ốp">
+        
+        <svg id="lop-mat" class="lop-mat" aria-hidden="true" preserveAspectRatio="none"></svg>
+        <div id="ghim" class="ghim"></div>
+        <div class="cho" id="cho"><span class="xoay" aria-hidden="true"></span>đang nạp cảnh…</div>
+      </div>
+    </div>
+
+    <div class="cong-cu" role="toolbar" aria-label="Công cụ xem">
+      <div class="nhom-nut">
+        <button id="nut-goc" type="button" class="nut" title="Giữ chuột / giữ ngón tay để xem ảnh gốc chưa ốp">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 10s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="10" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+          <span>Ảnh gốc</span><small>giữ</small>
+        </button>
+        
+        <button id="nut-mach" type="button" class="nut" aria-pressed="false" hidden>Mạch tấm</button>
+        <button id="nut-lup" type="button" class="nut" aria-pressed="false" title="Soi vân: kéo trên ảnh khi đang bật">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.8 12.8L17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>Kính lúp</span>
+        </button>
+        <span id="muc-lup" class="muc-lup" aria-label="Mức phóng">
+          <button type="button" data-muc="2" aria-pressed="false">2×</button>
+          <button type="button" data-muc="4" aria-pressed="true">4×</button>
+          <button type="button" data-muc="8" aria-pressed="false">8×</button>
+        </span>
+        <span class="vach" aria-hidden="true"></span>
+
+        <button type="button" id="nut-tai" class="nut"
+                title="Lưu ảnh phòng mẫu đang xem về máy, có đóng dấu Eco Bamboo.">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v9m0 0 3.4-3.4M10 12 6.6 8.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 14v1.5A1.5 1.5 0 0 0 5 17h10a1.5 1.5 0 0 0 1.5-1.5V14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span>Lưu ảnh</span></button>
+      </div>
+      <div class="trang-thai">
+        <span id="goi" class="goi"></span>
+        <p id="bao" role="status" aria-live="polite"></p>
+        
+        <p id="loi-nap" role="alert" hidden>
+          <span id="loi-nap-chu"></span>
+          <button type="button" id="loi-nap-lai">Thử lại</button>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <aside class="bang" aria-label="Chọn mặt và mã tấm">
+    <div class="bang-cuon" id="bang-cuon">
+      <section class="khoi">
+        <h2>Mặt đang ốp <span class="huong" id="huong-mat">chạm vào ảnh hoặc chọn ở đây</span></h2>
+        <div class="mat-ds" id="mat-ds"></div>
+      </section>
+
+      <section class="khoi khoi-ma">
+        <div class="khoi-dau">
+          <h2>Mã tấm ốp <span id="dem" class="dem"></span></h2>
+          <label class="tim-o">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12.8 12.8L17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <input id="tim" class="tim" type="search" placeholder="Tìm mã hoặc tên màu" aria-label="Tìm mã hoặc tên màu" autocomplete="off">
+          </label>
+        </div>
+        <div class="nhom-ma" id="nhom-ma" role="tablist" aria-label="Nhóm vân"></div>
+        <div class="luoi" id="luoi"></div>
+      </section>
+
+      <details class="ghi">
+        <summary>Về công cụ này</summary>
+        <p><b>Ảnh này là gì.</b> Cảnh dựng bằng Blender/Cycles. Sáu lớp số liệu xuất ra từ chính cảnh ấy cho phép tính lại ánh sáng khi đổi màu mặt ốp, thay vì dán một tấm ảnh phẳng lên tường.</p>
+        <p><b>Màu trên màn hình chỉ để tham khảo.</b> Ô mẫu là ảnh chụp tấm đã hiệu chuẩn theo một giả định về mức sáng, và mỗi màn hình hiển thị một khác. Xem mẫu thật trước khi chốt màu.</p>
+        <p><b>Mã mặt gương không xem trước được.</b> Vẻ ngoài của tấm gương là ảnh phản chiếu chính căn phòng — mà phòng thì mỗi nhà một khác. Công cụ tính lại ánh sáng khuếch tán nên không dựng được mặt gương; các mã ấy hiện mờ trong lưới.</p>
+        <p><b>Trang không tính vật tư.</b> Số tấm, diện tích và giá phụ thuộc cách chia mảng ngoài công trường, không phụ thuộc bức ảnh.</p>
+      </details>
+    </div>
+
+    <footer class="dang" id="dang">
+      <div id="dang-chon" class="dang-chon"></div>
+    </footer>
+  </aside>
+</main>
+
+<div id="bang-canh" class="bang-canh" role="dialog" aria-modal="true" aria-labelledby="bang-canh-tieu" hidden>
+  <div class="bang-canh-nen" data-dong></div>
+  <div class="bang-canh-tam">
+    <div class="bang-canh-dau">
+      <h2 id="bang-canh-tieu">Chọn cảnh</h2>
+      <button type="button" class="dong" data-dong aria-label="Đóng">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="bang-canh-tab" id="bang-canh-tab" role="tablist" aria-label="Loại phòng"></div>
+    <div class="bang-canh-luoi" id="bang-canh-luoi"></div>
+  </div>
+</div>
+
+<script src="phoi-mau.js?v=ed4f81d3"></script>
+<script src="giao-dien.js?v=ba4f35c1"></script>
+
+<script src="dien-thoai.js?v=92cb5596"></script>
+</body>
+</html>
