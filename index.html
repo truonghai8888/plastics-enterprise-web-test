@@ -26,22 +26,31 @@
       }(window.location));
     </script>
 
-    <!-- Tự động tương thích đường dẫn hình ảnh/assets khi chạy trên GitHub Pages subpath -->
+    <!-- Tự động tương thích đường dẫn hình ảnh, video, scripts, styles khi chạy trên GitHub Pages subpath -->
     <script type="text/javascript">
       (function() {
         if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
+          var knownRoutes = [
+            'tu-thiet-ke-vach', 'san-pham-chinh', 'thu-vien-ma-mau', 'bang-gia',
+            'tinh-chi-phi', 'cong-trinh', 'tai-catalogue', 'huong-dan-thi-cong',
+            'tin-tuc', 'hoi-dap', 'gioi-thieu', 'chung-chi-chung-nhan',
+            'chinh-sach-bao-hanh', 'lien-he', 'nhan-mau', 'san-pham',
+            'chinh-sach-bao-mat', 'dieu-khoan', 'nha-phan-phoi', 'tam-than-tre-17mm'
+          ];
           var parts = window.location.pathname.split('/').filter(Boolean);
-          if (parts.length > 0) {
+          // Chỉ áp dụng repoBase nếu phần đầu tiên của path KHÔNG phải là một route (tức là Project Site: /repo-name/...)
+          if (parts.length > 0 && knownRoutes.indexOf(parts[0]) === -1) {
             var repoBase = '/' + parts[0];
             var fixUrl = function(u) {
               if (typeof u === 'string') {
-                if ((u.startsWith('/images/') || u.startsWith('/assets/')) && !u.startsWith(repoBase + '/')) {
+                if ((u.startsWith('/images/') || u.startsWith('/assets/') || u.startsWith('/videos/')) && !u.startsWith(repoBase + '/')) {
                   return repoBase + u;
                 }
               }
               return u;
             };
 
+            // 1. Intercept Image src
             var origSrcDesc = Object.getOwnPropertyDescriptor(Image.prototype, 'src');
             if (origSrcDesc && origSrcDesc.set) {
               Object.defineProperty(Image.prototype, 'src', {
@@ -50,6 +59,36 @@
               });
             }
 
+            // 2. Intercept HTMLSourceElement src (Dành riêng cho <source> trong video/audio)
+            if (window.HTMLSourceElement) {
+              var origSourceSrcDesc = Object.getOwnPropertyDescriptor(HTMLSourceElement.prototype, 'src');
+              if (origSourceSrcDesc && origSourceSrcDesc.set) {
+                Object.defineProperty(HTMLSourceElement.prototype, 'src', {
+                  set: function(val) { origSourceSrcDesc.set.call(this, fixUrl(val)); },
+                  get: origSourceSrcDesc.get
+                });
+              }
+            }
+
+            // 3. Intercept HTMLVideoElement src & poster
+            if (window.HTMLVideoElement) {
+              var origVideoSrcDesc = Object.getOwnPropertyDescriptor(HTMLVideoElement.prototype, 'src');
+              if (origVideoSrcDesc && origVideoSrcDesc.set) {
+                Object.defineProperty(HTMLVideoElement.prototype, 'src', {
+                  set: function(val) { origVideoSrcDesc.set.call(this, fixUrl(val)); },
+                  get: origVideoSrcDesc.get
+                });
+              }
+              var origVideoPosterDesc = Object.getOwnPropertyDescriptor(HTMLVideoElement.prototype, 'poster');
+              if (origVideoPosterDesc && origVideoPosterDesc.set) {
+                Object.defineProperty(HTMLVideoElement.prototype, 'poster', {
+                  set: function(val) { origVideoPosterDesc.set.call(this, fixUrl(val)); },
+                  get: origVideoPosterDesc.get
+                });
+              }
+            }
+
+            // 4. Intercept fetch
             var origFetch = window.fetch;
             if (origFetch) {
               window.fetch = function(input, init) {
@@ -58,12 +97,13 @@
               };
             }
 
+            // 5. Global error listener phục hồi media
             window.addEventListener('error', function(e) {
               var el = e.target;
-              if (el && el.tagName === 'IMG' && el.src) {
+              if (el && (el.tagName === 'IMG' || el.tagName === 'VIDEO' || el.tagName === 'SOURCE') && el.src) {
                 try {
                   var urlObj = new URL(el.src);
-                  if ((urlObj.pathname.startsWith('/images/') || urlObj.pathname.startsWith('/assets/')) && !urlObj.pathname.startsWith(repoBase + '/')) {
+                  if ((urlObj.pathname.startsWith('/images/') || urlObj.pathname.startsWith('/assets/') || urlObj.pathname.startsWith('/videos/')) && !urlObj.pathname.startsWith(repoBase + '/')) {
                     el.src = repoBase + urlObj.pathname + urlObj.search;
                   }
                 } catch(err) {}

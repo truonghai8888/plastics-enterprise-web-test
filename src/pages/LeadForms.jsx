@@ -187,7 +187,7 @@ export function LeadCaptureForm({
             <input
               type="tel"
               required
-              placeholder="0915..."
+              placeholder="09xx xxx xxx"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               className="w-full px-3.5 py-2.5 rounded-xl border border-eco-gray-300 focus:outline-none focus:border-bamboo-600 focus:ring-1 focus:ring-bamboo-600 bg-white"

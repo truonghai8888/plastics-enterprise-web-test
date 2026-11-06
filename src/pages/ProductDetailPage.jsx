@@ -529,7 +529,7 @@ export default function ProductDetailPage({ product = PRODUCTS[0], onSelectProdu
                 <input
                   type="tel"
                   required
-                  placeholder="0915..."
+                  placeholder="09xx xxx xxx"
                   value={sampleForm.phone}
                   onChange={(e) => setSampleForm({ ...sampleForm, phone: e.target.value })}
                   className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-eco-gray-300 focus:outline-none focus:border-bamboo-600 focus:ring-1 focus:ring-bamboo-600"

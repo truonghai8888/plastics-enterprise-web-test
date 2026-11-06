@@ -112,10 +112,10 @@ export default function Footer() {
 
             <div className="flex items-center space-x-3.5">
               <div className="w-12 h-12 rounded-xl bg-bamboo-800/50 border border-bamboo-700 flex items-center justify-center text-wood-400 shrink-0">
-                <span className="font-extrabold text-base">10N</span>
+                <span className="font-extrabold text-base">{BRAND.warrantyYears}N</span>
               </div>
               <div>
-                <div className="font-bold text-white text-sm">Bảo Hành 10 Năm</div>
+                <div className="font-bold text-white text-sm">Bảo Hành {BRAND.warrantyYears} Năm</div>
                 <div className="text-xs text-eco-gray-400">Cam kết độ bền cốt tấm, chống ẩm mốc, cong vênh</div>
               </div>
             </div>

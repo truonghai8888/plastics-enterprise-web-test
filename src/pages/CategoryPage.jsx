@@ -266,7 +266,7 @@ export default function CategoryPage({ onSelectProduct, initialCategory = 'all' 
               <div className="p-4 rounded-xl bg-bamboo-50/70 border border-bamboo-200/80 text-xs space-y-1.5 text-eco-gray-700">
                 <div className="font-bold text-bamboo-900 flex items-center">
                   <span className="w-2 h-2 rounded-full bg-amber-500 mr-2 animate-pulse"></span>
-                  Bảo Hành Chính Hãng 10 Năm
+                  Bảo Hành Chính Hãng {BRAND.warrantyYears} Năm
                 </div>
                 <p className="text-[11px] text-eco-gray-600 leading-relaxed">
                   Bảng giá niêm yết công khai theo sản lượng. Không qua trung gian.
@@ -460,7 +460,7 @@ export default function CategoryPage({ onSelectProduct, initialCategory = 'all' 
                 <input
                   type="tel"
                   required
-                  placeholder="0915..."
+                  placeholder="09xx xxx xxx"
                   value={sampleForm.phone}
                   onChange={(e) => setSampleForm({ ...sampleForm, phone: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-eco-gray-300"

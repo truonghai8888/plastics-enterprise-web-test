@@ -22,11 +22,21 @@ import TermsPage from './pages/TermsPage';
 import { PRODUCTS } from './data/products';
 import BRAND, { getCurrentYear } from './config/brandConfig';
 
-// Hỗ trợ tự động phát hiện basePath khi deploy trên GitHub Pages (dạng https://user.github.io/repo-name/)
+// Danh sách các top-level route của website để phân biệt giữa project repo subpath và user-site/custom domain
+export const KNOWN_TOP_ROUTES = [
+  'tu-thiet-ke-vach', 'san-pham-chinh', 'thu-vien-ma-mau', 'bang-gia',
+  'tinh-chi-phi', 'cong-trinh', 'tai-catalogue', 'huong-dan-thi-cong',
+  'tin-tuc', 'hoi-dap', 'gioi-thieu', 'chung-chi-chung-nhan',
+  'chinh-sach-bao-hanh', 'lien-he', 'nhan-mau', 'san-pham',
+  'chinh-sach-bao-mat', 'dieu-khoan', 'nha-phan-phoi', 'tam-than-tre-17mm'
+];
+
+// Hỗ trợ tự động phát hiện basePath khi deploy trên GitHub Pages (cả User site lẫn Project site)
 export const getBasePath = () => {
   if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
     const parts = window.location.pathname.split('/').filter(Boolean);
-    if (parts.length > 0) {
+    // Nếu segment đầu tiên KHÔNG nằm trong danh sách routes, đó chính là tên repository subpath (vd: /plastics-enterprise-web-test/)
+    if (parts.length > 0 && !KNOWN_TOP_ROUTES.includes(parts[0])) {
       return '/' + parts[0] + '/';
     }
   }
@@ -45,7 +55,7 @@ export const normalizePath = (p) => {
   return path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
 };
 
-export const ECOBAMBOO_URLS = [
+export const PLASTICS_ENTERPRISE_URLS = [
   { url: '/', label: '1. Trang chủ (#main)', page: 'home' },
   { url: '/nha-phan-phoi', label: '2. Nhà phân phối', page: 'distributor' },
   { url: '/san-pham-chinh', label: '4. Sản phẩm chính (Tất cả)', page: 'category', categoryId: 'all' },
@@ -85,19 +95,21 @@ export const ECOBAMBOO_URLS = [
   { url: '/dieu-khoan', label: '38. Điều khoản sử dụng', page: 'terms' },
 ];
 
+export const ECOBAMBOO_URLS = PLASTICS_ENTERPRISE_URLS;
+
 export default function App() {
   const [currentRoute, setCurrentRoute] = useState(() => {
     // Check initial pathname & strip trailing slash if any
     const rawPath = window.location.pathname;
     const cleanPath = normalizePath(rawPath);
-    const matched = ECOBAMBOO_URLS.find(u => normalizePath(u.url) === cleanPath);
+    const matched = PLASTICS_ENTERPRISE_URLS.find(u => normalizePath(u.url) === cleanPath);
     if (matched) return matched;
     // URL không tồn tại / không hoạt động -> Tự động chuyển hướng về trang chủ
     if (cleanPath !== '/' && typeof window !== 'undefined' && window.history) {
       const base = getBasePath();
       window.history.replaceState({}, '', base);
     }
-    return ECOBAMBOO_URLS[0];
+    return PLASTICS_ENTERPRISE_URLS[0];
   });
 
   const [selectedProduct, setSelectedProduct] = useState(() => {
@@ -112,13 +124,13 @@ export default function App() {
     const handlePopState = () => {
       const rawPath = window.location.pathname;
       const cleanPath = normalizePath(rawPath);
-      const matched = ECOBAMBOO_URLS.find(u => normalizePath(u.url) === cleanPath);
+      const matched = PLASTICS_ENTERPRISE_URLS.find(u => normalizePath(u.url) === cleanPath);
       // Nếu URL popstate không hoạt động -> chuyển về trang chủ
       if (!matched && cleanPath !== '/' && window.history) {
         const base = getBasePath();
         window.history.replaceState({}, '', base);
       }
-      navigateTo(matched || ECOBAMBOO_URLS[0], false);
+      navigateTo(matched || PLASTICS_ENTERPRISE_URLS[0], false);
     };
 
     const handleGlobalClick = (e) => {
@@ -135,7 +147,7 @@ export default function App() {
       // Handle #main or root
       if (href === '/#main' || href === '#main' || href === '/') {
         e.preventDefault();
-        navigateTo(ECOBAMBOO_URLS[0]);
+        navigateTo(PLASTICS_ENTERPRISE_URLS[0]);
         return;
       }
 
@@ -152,14 +164,14 @@ export default function App() {
         return;
       }
 
-      const matched = ECOBAMBOO_URLS.find(u => normalizePath(u.url) === cleanPath);
+      const matched = PLASTICS_ENTERPRISE_URLS.find(u => normalizePath(u.url) === cleanPath);
       if (matched) {
         e.preventDefault();
         navigateTo(matched);
       } else {
         // YÊU CẦU 3: Bất kỳ URL nào không hoạt động -> Tự động trả về trang chủ!
         e.preventDefault();
-        navigateTo(ECOBAMBOO_URLS[0]);
+        navigateTo(PLASTICS_ENTERPRISE_URLS[0]);
       }
     };
 
@@ -203,7 +215,7 @@ export default function App() {
 
   const handleSelectProduct = (prod) => {
     setSelectedProduct(prod);
-    const matched = ECOBAMBOO_URLS.find(u => u.productCode === prod.code) || {
+    const matched = PLASTICS_ENTERPRISE_URLS.find(u => u.productCode === prod.code) || {
       url: `/san-pham/${prod.id}`,
       label: prod.name,
       page: 'detail',
@@ -214,13 +226,13 @@ export default function App() {
 
   const handleOpenVisualizer = (code = 'EB66006') => {
     setVisualizerCode(code);
-    const visualizerRoute = ECOBAMBOO_URLS.find(u => u.page === 'visualizer');
+    const visualizerRoute = PLASTICS_ENTERPRISE_URLS.find(u => u.page === 'visualizer');
     navigateTo(visualizerRoute);
   };
 
   return (
     <div className="relative">
-      {/* RENDER KHỚP VỚI CÁC TRANG CỦA ECOBAMBOO */}
+      {/* RENDER KHỚP VỚI CÁC TRANG CỦA WEBSITE */}
       {currentRoute.page === 'home' && <HomePage />}
       {currentRoute.page === 'distributor' && <DistributorPage />}
       {currentRoute.page === 'category' && (
@@ -249,7 +261,7 @@ export default function App() {
       )}
       {currentRoute.page === 'pricing' && (
         <PricingTable onOpenCalculator={() => {
-          const calcRoute = ECOBAMBOO_URLS.find(u => u.page === 'calculator');
+          const calcRoute = PLASTICS_ENTERPRISE_URLS.find(u => u.page === 'calculator');
           navigateTo(calcRoute);
         }} />
       )}

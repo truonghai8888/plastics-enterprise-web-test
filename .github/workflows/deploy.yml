@@ -36,10 +36,20 @@ jobs:
       - name: Build production
         run: npm run build
 
-      - name: Ensure 404.html exists in dist
+      - name: Ensure 404.html and route entrypoints exist in dist
         run: |
-          if [ -f "dist/index.html" ] && [ ! -f "dist/404.html" ]; then
+          if [ -f "dist/index.html" ]; then
             cp dist/index.html dist/404.html
+            mkdir -p dist/tu-thiet-ke-vach
+            cp dist/index.html dist/tu-thiet-ke-vach/index.html
+            mkdir -p dist/san-pham-chinh
+            cp dist/index.html dist/san-pham-chinh/index.html
+            mkdir -p dist/thu-vien-ma-mau
+            cp dist/index.html dist/thu-vien-ma-mau/index.html
+            mkdir -p dist/bang-gia
+            cp dist/index.html dist/bang-gia/index.html
+            mkdir -p dist/gioi-thieu
+            cp dist/index.html dist/gioi-thieu/index.html
           fi
 
       - name: Upload artifact

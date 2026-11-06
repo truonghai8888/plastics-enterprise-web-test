@@ -322,12 +322,22 @@ export const BRANDS = {
   }
 };
 
+// ==========================================
+// 3. XUẤT CÁC BIẾN DÙNG CHUNG DOANH NGHIỆP NHỰA (PLASTICS ENTERPRISE SHARED CONFIG)
+// ==========================================
 // ĐỔI DUY NHẤT BIẾN NÀY ĐỂ CHUYỂN TOÀN BỘ WEBSITE SANG THƯƠNG HIỆU KHÁC:
 export const ACTIVE_BRAND = 'amc'; // 'amc' hoặc 'ecobamboo'
+export const PLASTICS_ENTERPRISE_ACTIVE_BRAND = ACTIVE_BRAND;
 
+export const PLASTICS_ENTERPRISE_BRANDS = BRANDS;
 export const BRAND = BRANDS[ACTIVE_BRAND] || BRANDS.amc;
+export const PLASTICS_ENTERPRISE_BRAND = BRAND;
+
 export const DISTRIBUTOR_REGIONS = BRAND.distributorRegions || [];
+export const PLASTICS_ENTERPRISE_DISTRIBUTOR_REGIONS = DISTRIBUTOR_REGIONS;
+
 export const PRODUCT_NAMING = BRAND.productNaming || {};
+export const PLASTICS_ENTERPRISE_PRODUCT_NAMING = PRODUCT_NAMING;
 
 // Helper lấy mô tả sản phẩm động theo thương hiệu hiện tại
 export const getProductShortDesc = (productName = '') => {
@@ -353,8 +363,6 @@ export const formatProductName = (baseName, code) => {
   return `${baseName} ${code}`;
 };
 
-export default BRAND;
-
 // Central theme classes dynamic helper
 export const THEME = BRAND.themeClasses || {
   accentText: 'text-amber-500',
@@ -368,3 +376,16 @@ export const THEME = BRAND.themeClasses || {
   checkBg: 'bg-amber-50 text-amber-800 border-amber-200',
   buttonPrimary: 'bg-amber-500 hover:bg-amber-600 text-stone-900',
 };
+export const PLASTICS_ENTERPRISE_THEME = THEME;
+
+// Cấu hình doanh nghiệp dùng chung toàn hệ thống
+export const PLASTICS_ENTERPRISE_CONFIG = {
+  activeBrand: ACTIVE_BRAND,
+  brands: BRANDS,
+  current: BRAND,
+  regions: DISTRIBUTOR_REGIONS,
+  productNaming: PRODUCT_NAMING,
+  theme: THEME
+};
+
+export default BRAND;

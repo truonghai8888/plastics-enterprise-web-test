@@ -714,7 +714,7 @@ export default function RoomVisualizerPage({ initialCode = 'EB66006', onNavigate
                   <input
                     type="tel"
                     required
-                    placeholder="0915..."
+                    placeholder="09xx xxx xxx"
                     value={quoteForm.phone}
                     onChange={(e) => setQuoteForm({ ...quoteForm, phone: e.target.value })}
                     className="w-full px-3.5 py-2 text-xs rounded-xl border border-eco-gray-300 focus:outline-none focus:border-bamboo-600 focus:ring-1 focus:ring-bamboo-600"

@@ -1,8 +1,12 @@
 import React from 'react';
 import MainLayout from '../components/layout/MainLayout';
 import BRAND, { getYearSpan } from '../config/brandConfig';
+import { getBasePath } from '../App';
 
 export default function AboutPage() {
+  const base = getBasePath();
+  const videoSrc = base === '/' ? '/videos/amc-factory-intro.mp4' : (base + 'videos/amc-factory-intro.mp4');
+  const posterSrc = base === '/' ? '/images/nhuaamc/473728285_122162385302280460_5265071145712265862_n-1.jpg' : (base + 'images/nhuaamc/473728285_122162385302280460_5265071145712265862_n-1.jpg');
   return (
     <MainLayout>
       {/* 1. HEADER BANNER */}
@@ -64,9 +68,9 @@ export default function AboutPage() {
               <video
                 controls
                 className="w-full aspect-video object-cover"
-                poster="/images/nhuaamc/473728285_122162385302280460_5265071145712265862_n-1.jpg"
+                poster={posterSrc}
               >
-                <source src="/videos/amc-factory-intro.mp4" type="video/mp4" />
+                <source src={videoSrc} type="video/mp4" />
                 Trình duyệt của bạn không hỗ trợ phát video HTML5.
               </video>
             </div>
@@ -75,7 +79,7 @@ export default function AboutPage() {
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
                 <span className="font-bold text-eco-gray-900">Video giới thiệu nhà máy và dây chuyền sản xuất {BRAND.shortName}</span>
               </div>
-              <span className="text-[11px] text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded">CCN Kim Bình</span>
+              <span className="text-[11px] text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded">{BRAND.factory?.shortAddress || 'CCN Kim Bình'}</span>
             </div>
           </div>
         </div>
@@ -158,7 +162,7 @@ export default function AboutPage() {
               Ưu Thế Vượt Trội
             </span>
             <h3 className="text-2xl sm:text-4xl font-black text-eco-gray-900">
-              TẠI SAO CHỌN NHỰA {BRAND.shortName} ?
+              TẠI SAO CHỌN {BRAND.shortName.toUpperCase()} ?
             </h3>
             <p className="text-xs sm:text-sm text-eco-gray-600">
               Nhà máy sản xuất gỗ nhựa chất lượng hàng đầu Việt Nam
@@ -210,7 +214,7 @@ export default function AboutPage() {
                 Bền Vững Theo Năm Tháng
               </h4>
               <p className="text-xs text-eco-gray-600 leading-relaxed">
-                Dù là nắng mưa thất thường hay khí hậu nồm ẩm nhiệt đới, nhựa {BRAND.shortName} vẫn giữ nguyên được vẻ đẹp và độ bền, bảo vệ ngôi nhà của bạn bền đẹp dài lâu.
+                Dù là nắng mưa thất thường hay khí hậu nồm ẩm nhiệt đới, {BRAND.shortName} vẫn giữ nguyên được vẻ đẹp và độ bền, bảo vệ ngôi nhà của bạn bền đẹp dài lâu.
               </p>
             </div>
           </div>
@@ -223,7 +227,7 @@ export default function AboutPage() {
               Đánh Giá Thực Tế
             </span>
             <h3 className="text-2xl sm:text-3xl font-black text-eco-gray-900">
-              KHÁCH HÀNG NÓI GÌ VỀ NHỰA {BRAND.shortName}
+              KHÁCH HÀNG NÓI GÌ VỀ {BRAND.shortName.toUpperCase()}
             </h3>
             <p className="text-xs text-eco-gray-500">
               Sự hài lòng của khách hàng và nhà phân phối là minh chứng rõ nhất cho chất lượng sản phẩm
@@ -242,7 +246,7 @@ export default function AboutPage() {
                   {'★★★★★'}
                 </div>
                 <p className="text-xs sm:text-sm text-eco-gray-700 leading-relaxed italic">
-                  &ldquo;Anh biết đến nhựa {BRAND.shortName} thông qua 1 người bạn ở Hà Nam. Sau khi tìm hiểu về dòng sản phẩm này, anh quyết định mua về ốp thử xem chất lượng thế nào. Nhận thấy chất lượng của nhựa {BRAND.shortName} rất tốt, hơn nữa thị trường gỗ nhựa cũng đang tiềm năng và có cơ hội phát triển trong tương lai, anh quyết định nhập hàng về phân phối cho các đại lý. Trộm vía cũng được mọi người tin tưởng và ủng hộ nhiều.&rdquo;
+                  &ldquo;Anh biết đến {BRAND.shortName} thông qua 1 người bạn ở Hà Nam. Sau khi tìm hiểu về dòng sản phẩm này, anh quyết định mua về ốp thử xem chất lượng thế nào. Nhận thấy chất lượng của {BRAND.shortName} rất tốt, hơn nữa thị trường gỗ nhựa cũng đang tiềm năng và có cơ hội phát triển trong tương lai, anh quyết định nhập hàng về phân phối cho các đại lý. Trộm vía cũng được mọi người tin tưởng và ủng hộ nhiều.&rdquo;
                 </p>
                 <div className="text-xs font-bold text-eco-gray-900">
                   Anh Tuấn — <span className="font-normal text-eco-gray-500">Đại lý phân phối vật tư, Hà Nam</span>
@@ -354,7 +358,7 @@ export default function AboutPage() {
             <div className="pt-4 border-t border-eco-gray-200/80">
               <div className="text-xs font-bold text-eco-gray-800 uppercase tracking-wider mb-3 flex items-center">
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-500 mr-2"></span>
-                Bản Đồ Chỉ Đường Đến Nhà Máy {BRAND.shortName} (CCN Kim Bình, Hà Nam)
+                Bản Đồ Chỉ Đường Đến Nhà Máy {BRAND.shortName} ({BRAND.factory?.shortAddress || 'CCN Kim Bình'})
               </div>
               <div className="rounded-2xl overflow-hidden border border-eco-gray-300 shadow-inner h-72 sm:h-80 w-full bg-eco-gray-100">
                 <iframe

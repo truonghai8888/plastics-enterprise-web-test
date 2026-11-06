@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import MainLayout from '../components/layout/MainLayout';
 import BRAND, { getCurrentYear } from '../config/brandConfig';
 import { VACH_STUDIO_INNER_HTML } from '../data/vachStudioInnerHtml';
+import { getBasePath } from '../App';
 
 export default function WallDesignerPage() {
   const isInitializedRef = useRef(false);
@@ -12,7 +13,8 @@ export default function WallDesignerPage() {
       const linkVach = document.createElement('link');
       linkVach.id = 'vach-css-link';
       linkVach.rel = 'stylesheet';
-      linkVach.href = '/assets/css/vach.css';
+      const base = getBasePath();
+      linkVach.href = base === '/' ? '/assets/css/vach.css' : (base + 'assets/css/vach.css');
       document.head.appendChild(linkVach);
     }
 
@@ -182,8 +184,12 @@ export default function WallDesignerPage() {
       setTimeout(initStudio, 300);
     }
 
-    loadScript('/assets/js/vach-data.js', 'script-vach-data')
-      .then(() => loadScript('/assets/js/vach.js', 'script-vach-engine'))
+    const base = getBasePath();
+    const vachDataSrc = base === '/' ? '/assets/js/vach-data.js' : (base + 'assets/js/vach-data.js');
+    const vachEngineSrc = base === '/' ? '/assets/js/vach.js' : (base + 'assets/js/vach.js');
+
+    loadScript(vachDataSrc, 'script-vach-data')
+      .then(() => loadScript(vachEngineSrc, 'script-vach-engine'))
       .then(() => {
         setTimeout(initStudio, 50);
         setTimeout(initStudio, 350);
