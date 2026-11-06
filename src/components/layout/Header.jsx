@@ -409,15 +409,7 @@ export default function Header() {
 
                 {activeDropdown === 'pricing' && (
                   <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-xl shadow-dropdown border border-eco-gray-200 py-2 animate-fade-in z-50">
-                    <a href="/tu-thiet-ke-vach" className="block px-4 py-2.5 text-sm text-eco-gray-700 hover:bg-amber-50 hover:text-amber-900">
-                      <div className="font-semibold text-eco-gray-900 flex items-center">
-                        <SparklesIcon className="w-4 h-4 mr-1.5 text-amber-500" />
-                        Tự thiết kế vách 3D
-                        <span className="ml-1.5 px-1.5 py-0.5 text-[10px] bg-red-100 text-red-700 rounded font-bold">Mới</span>
-                      </div>
-                      <div className="text-xs text-eco-gray-500 mt-0.5">Canvas mô phỏng chia tỉ lệ vách và nẹp hoàn thiện</div>
-                    </a>
-                    <a href="/tinh-chi-phi" className="block px-4 py-2.5 text-sm text-eco-gray-700 hover:bg-bamboo-50 hover:text-bamboo-800 border-t border-eco-gray-100">
+                    <a href="/tinh-chi-phi" className="block px-4 py-2.5 text-sm text-eco-gray-700 hover:bg-bamboo-50 hover:text-bamboo-800">
                       <div className="font-semibold text-eco-gray-900 flex items-center">
                         <CalculatorIcon className="w-4 h-4 mr-1.5 text-bamboo-600" />
                         Dự toán & Tính chi phí vật tư
@@ -531,7 +523,7 @@ export default function Header() {
             {/* Header của drawer */}
             <div className="p-4 border-b border-eco-gray-200 flex items-center justify-between bg-bamboo-900 text-white">
               <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-lg tracking-wider">ECOBAMBOO</span>
+                <span className="font-extrabold text-lg tracking-wider">{BRAND.shortName.toUpperCase()}</span>
               </div>
               <button
                 onClick={() => setMobileMenuOpen(false)}

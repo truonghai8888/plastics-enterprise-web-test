@@ -1,0 +1,2446 @@
+/* ══ PHÔNG CỦA BẢN VẼ — `EB Ve`, ĐÚNG HAI TỆP MÀ PDF NHÚNG ═══════════════════════════
+   `banve.js` đo bề rộng chữ trên canvas để xếp nhãn, còn `pdf.js` xếp nhãn theo bề
+   rộng đọc từ `bvp-400.ttf` / `bvp-700.ttf` nhúng vào tệp. Hai thước đo phải là MỘT.
+
+ ⚠⚠ VÌ SAO KHÔNG DÙNG `Be Vietnam Pro` CỦA `eb.css`: tệp đó chỉ khai `@font-face` cho
+   nét **400 và 600** — không có 700. Nên `700px 'Be Vietnam Pro'` trên canvas rơi về
+   nét **600** trong im lặng, trong khi PDF in ra nét **700**. Đo 22/10/2026 ở co 100:
+   `W` 103,9 px trên canvas so với 105,7 px trong PDF; tiêu đề `BẢNG KHỐI LƯỢNG…` lệch
+   **2,86 pt**. Và `document.fonts.check('700 13px "Be Vietnam Pro"')` vẫn trả **true** —
+   nó trả lời *"có khớp được không"*, KHÔNG trả lời *"có đúng nét đó không"*.
+
+ ⚠ VÌ SAO LÀ `.ttf` CHỨ KHÔNG PHẢI `.woff2` ĐÃ CÓ: bản `woff2` là bản **cắt bớt** theo
+   `unicode-range` (latin + vietnamese), còn PDF nhúng tệp TTF **đầy đủ**. Một chữ nằm
+   ngoài hai dải cắt (ví dụ `→` U+2192) sẽ rơi về phông hệ thống trên canvas mà vẫn in
+   đúng trong PDF — lệch im lặng, và chỉ lộ ra khi có người thêm nhãn mới. Dùng chính
+   tệp PDF nhúng thì hai thước là **cùng một tệp**, không còn khoảng hở nào.
+   Giá phải trả: +273 KB trên trang công cụ này. Đổi lại là thước đo không thể lệch.
+
+ ⚠ KHÔNG đặt tên họ là `Be Vietnam Pro` — làm thế là đổi nét đậm của CẢ trang công cụ
+   (và của 296 trang nếu ai đó chép sang `eb.css`). Họ riêng giữ phạm vi đúng bằng
+   bản vẽ.
+   Khai nét: `banve.js` chỉ dùng 400 và 700, không dùng nét nào khác. */
+@font-face{font-family:'EB Ve';font-style:normal;font-weight:400;font-display:block;
+  src:url(/assets/fonts/bvp-400.ttf) format('truetype')}
+@font-face{font-family:'EB Ve';font-style:normal;font-weight:700;font-display:block;
+  src:url(/assets/fonts/bvp-700.ttf) format('truetype')}
+:root{--nen:#eef1ee;--the:#fff;--muc:#15201b;--muc2:#41514a;--muc3:#767c78;--nhan:#1c6b4a;--nhan-nh:#e3efe8;--sai:#ac3a2b;--sai-nh:#fbeceb;--vang:#8a6a1e;--vang-nh:#f7efd9;--vien:#d4dad5;--vien2:#e8ebe8;--chon:#1c6b4a;--bong:0 1px 2px rgba(21,32,27,.06),0 10px 28px -14px rgba(21,32,27,.18)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--nen:#101514;--the:#181e1b;--muc:#e8eeea;--muc2:#a9b5af;--muc3:#7d8b85;--nhan:#5cc294;--nhan-nh:#163024;--sai:#f08b7c;--sai-nh:#331c19;--vang:#d9b45e;--vang-nh:#3a3016;--vien:#2b3430;--vien2:#222a26;--chon:#5cc294;--bong:0 1px 2px rgba(0,0,0,.45),0 12px 32px -16px rgba(0,0,0,.8)}}
+:root[data-theme="dark"]{--nen:#101514;--the:#181e1b;--muc:#e8eeea;--muc2:#a9b5af;--muc3:#7d8b85;--nhan:#5cc294;--nhan-nh:#163024;--sai:#f08b7c;--sai-nh:#331c19;--vang:#d9b45e;--vang-nh:#3a3016;--vien:#2b3430;--vien2:#222a26;--chon:#5cc294;--bong:0 1px 2px rgba(0,0,0,.45),0 12px 32px -16px rgba(0,0,0,.8)}
+*{box-sizing:border-box}
+body{background:var(--nen);color:var(--muc);font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:14px;line-height:1.55;padding-block:0 40px;padding-left:16px;padding-right:16px}
+.bao{max-width:1300px;margin:0 auto}
+h1{font-size:clamp(22px,3.4vw,30px);line-height:1.15;letter-spacing:-.02em;margin:0 0 4px;font-weight:700}
+.eb{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--nhan);font-weight:600;margin:26px 0 12px}
+.eb::before{content:"";width:20px;height:2px;background:var(--nhan)}
+.dat{color:var(--muc2);margin:0 0 16px;max-width:76ch}
+code,.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.app{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start}
+@media(max-width:960px){.app{grid-template-columns:1fr}.san{order:-1}.bang-dk{position:static;max-height:none}}
+.bang-dk{background:var(--the);border:1px solid var(--vien);border-radius:14px;padding:14px;box-shadow:var(--bong);position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto}
+.san{background:var(--the);border:1px solid var(--vien);border-radius:14px;box-shadow:var(--bong);overflow:hidden;position:relative}
+canvas{display:block;width:100%;height:auto;touch-action:none}
+.hud{position:absolute;left:12px;bottom:10px;right:12px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:#fff;background:rgba(0,0,0,.58);padding:4px 9px;border-radius:5px;pointer-events:none}
+.kyhieu{position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#fff;background:rgba(16,22,20,.82);padding:6px 11px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .12s}
+.kyhieu.hien{opacity:1}.kyhieu .bt{font-family:"IBM Plex Mono",monospace;font-size:15px;line-height:1}.kyhieu.ve{background:rgba(28,107,74,.92)}.kyhieu.sau{background:rgba(120,80,20,.9)}
+.nh{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--muc3);font-weight:600;margin:14px 0 7px}.nh:first-child{margin-top:0}
+.hang{display:flex;gap:6px;flex-wrap:wrap}
+button{font-family:inherit;font-size:12.5px;font-weight:500;color:var(--muc);background:var(--nen);border:1px solid var(--vien);border-radius:8px;padding:7px 10px;cursor:pointer;transition:.12s}
+button:hover:not(:disabled){border-color:var(--nhan);color:var(--nhan)}button.ch{background:var(--nhan);border-color:var(--nhan);color:#fff}button:disabled{opacity:.38;cursor:not-allowed}
+button.ph{color:var(--sai)}button.ph:hover:not(:disabled){border-color:var(--sai)}button.to{width:100%;text-align:left}
+input[type=number]{font-family:"IBM Plex Mono",monospace;font-size:12.5px;width:100%;padding:6px 8px;border:1px solid var(--vien);border-radius:7px;background:var(--nen);color:var(--muc)}
+/* ══⚠⚠ HÀNG `.kt2` PHẢI XUỐNG DÒNG ĐƯỢC — KHÔNG CÒN LÀ LƯỚI 3 CỘT CỨNG ═══════════════
+   Từ BS22 §1.2 mỗi cụm có thêm hai nút bước lớn (`−100` · `+100`), tức 4 nút × 40 px =
+   160 px MỘT CỤM. Hai cụm + dấu `×` = 327 px, trong khi khung chứa chỉ ~367 px ở vỏ
+   điện thoại và **360 px ở bảng phải của vỏ máy tính** — tức KHÔNG VỎ NÀO đủ chỗ.
+   Lưới `1fr auto 1fr` không xuống dòng nên nó bóp ô nhập thay vì tràn: đo ở 390 px ra
+   **ô nhập 18 px** (không đọc nổi "4010"), hàng tràn 34 px, và `+100` cuối bị cắt khỏi
+   màn. Ở 360 px tràn 49 px.
+ ⇒ Cụm nào CÓ bước lớn thì chiếm trọn một hàng (`flex:1 1 100%`), cụm thường vẫn hai
+   cụm một hàng như cũ. Phân biệt bằng `data-buoc-lon` mà chính `themBuocLon()` đặt —
+   không phải bằng một ngưỡng bề rộng gõ tay, vì nguyên nhân là SỐ NÚT chứ không phải
+   khổ màn.
+ ⚠ Tách hàng thì dấu `×` mất nghĩa (nó nói "rộng × cao") nên ẩn đi, và mỗi cụm tự xưng
+   tên bằng `data-nhan`. Bỏ nhãn mà vẫn ẩn `×` là lấy mất thứ duy nhất phân biệt hai ô. */
+.kt2{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.kt2>.so-cum{flex:1 1 120px;min-width:0}
+.kt2>span:not(.so-cum){flex:0 0 auto}
+.kt2 span{color:var(--muc3);font-size:12px}
+/* ⚠ `flex-basis:100%` là đủ để cụm chiếm trọn hàng; THÊM `min-width:100%` thì cụm
+   không co được nữa và hàng tràn thêm 6 px (đo ở cả ba khổ 360/390/430) — 6 px ấy là
+   viền của các nút, thứ `100%` không kể tới. Một ràng buộc thừa sinh đúng cái nó định
+   chống. */
+/* ══⚠⚠ NHÃN LÀ MỘT DÒNG TRONG CỤM, KHÔNG PHẢI MỘT HỘP `position:absolute` ═══════════
+   Bản đầu đặt `position:relative` lên cụm để neo nhãn. Hậu quả không nằm ở chỗ nhìn:
+   `offsetTop` của một phần tử đo từ **tổ tiên ĐƯỢC ĐỊNH VỊ gần nhất**, nên mọi nút
+   trong cụm bỗng có `offsetTop ≈ 0` so với chính cụm thay vì so với thân tờ. Cổng
+   `114a` (*"mọi nút sáng chạm tới được sau khi tờ cuộn tới nó"*) cuộn bằng
+   `n.offsetTop − T.offsetTop`, nên nó cuộn về 0 và bốn nút báo "bị che" — bốn ca đỏ ở
+   một cổng không liên quan gì tới nhãn.
+ ⇒ Đừng biến một CỤM ĐIỀU KHIỂN thành ngữ cảnh định vị. Cho nhãn làm một mục flex
+   chiếm trọn dòng đầu (`flex:0 0 100%`) rồi để cụm `flex-wrap:wrap`: cùng chiều cao,
+   cùng chỗ đặt, mà không đổi gốc `offsetTop` của thứ gì.
+ ⚠ `.so-nut:first-child` vẫn bo đúng góc: CSS `:first-child` khớp PHẦN TỬ, không khớp
+   `::before`, nên nút đầu vẫn là con đầu tiên theo phép chọn. */
+.kt2>.so-cum[data-buoc-lon]{flex:1 1 100%;flex-wrap:wrap}
+.kt2>.so-cum[data-buoc-lon]::before{content:attr(data-nhan);flex:0 0 100%;
+  font-size:11px;line-height:15px;color:var(--muc3);letter-spacing:.02em;
+  white-space:nowrap;padding-left:2px}
+.kt2>.so-cum[data-buoc-lon]~span:not(.so-cum){display:none}
+.o-mau{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}.o-mau i{display:block;aspect-ratio:1;border-radius:5px;cursor:pointer;border:2px solid transparent;background-size:cover}.o-mau i:hover{border-color:var(--muc3)}.o-mau i.ch{border-color:var(--chon);box-shadow:0 0 0 2px var(--the) inset}
+.tt{font-size:12px;color:var(--muc2);margin:6px 0 0}
+input[type=range]{width:100%;accent-color:var(--nhan);margin:4px 0 0}.so{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muc2);display:flex;justify-content:space-between}
+.cd{background:var(--nen);border-radius:9px;padding:9px 10px;font-size:12px;color:var(--muc2)}.cd b{color:var(--muc)}.cd.bac{background:var(--vang-nh);color:var(--vang)}.cd.bac b{color:var(--vang)}
+.the-nc{display:none;border:1px solid var(--vien);border-radius:11px;padding:11px 12px;margin-top:12px;background:var(--the)}.the-nc.mo{display:block}
+.the-nc .nh:first-child{margin-top:0}
+.chon-nep{display:flex;flex-direction:column;gap:6px}.chon-nep .vai{font-size:11px;color:var(--muc3);text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
+.chon-nep .hang button{display:inline-flex;align-items:center;gap:5px;padding:4px 7px}.chon-nep .hang button svg{width:30px;height:20px;flex:none}.chon-nep .hang button.ch svg *{stroke:#fff}
+.chon-nep .hang button.ch svg .to{fill:#fff}
+.mau-nep{display:flex;gap:6px}.mau-nep button{width:30px;height:24px;padding:0;border-radius:6px;border:2px solid var(--vien)}.mau-nep button.ch{outline:2px solid var(--nhan);outline-offset:1px;border-color:#fff}
+.mau-nep button:disabled{opacity:.25}
+/* §49 — quy tắc của `#popMach` đã gỡ cùng chính bảng đó. */
+.chua{background:var(--nhan-nh);border-left:3px solid var(--nhan);border-radius:0 9px 9px 0;padding:9px 11px;font-size:12.5px;margin-top:12px}
+.bo-mau{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mau-khoi{text-align:left;padding:0 0 6px;border-radius:9px;line-height:1.25;overflow:hidden}.mau-khoi .hinh{display:block;aspect-ratio:12/7;background-size:cover;background-position:center;border-bottom:1px solid var(--vien);margin-bottom:5px}.mau-khoi b{display:block;font-size:11.5px;padding:0 7px}i.stt{display:inline-block;font-style:normal;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:var(--nhan);color:#fff;border-radius:4px;padding:0 5px;margin-right:5px;vertical-align:1px}summary i.stt{margin-right:7px}.mau-khoi small{display:block;font-size:10.5px;color:var(--muc3);margin-top:2px}.mau-khoi em{display:inline-block;font-style:normal;font-size:9.5px;color:var(--muc3);border:1px solid var(--vien);border-radius:4px;padding:0 4px;margin:4px 7px 0}.nh .dem,summary .dem{font-weight:400;color:var(--muc3);font-size:11px}
+.tw{overflow-x:auto;border:1px solid var(--vien);border-radius:10px;margin-top:14px;background:var(--the)}
+table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:5px 8px;text-align:left;border-bottom:1px solid var(--vien2)}th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muc3);font-weight:600;white-space:nowrap}tbody tr:last-child td{border-bottom:none}
+td.n,th.n{text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+.do{background:var(--the);border:1px solid var(--vien);border-radius:14px;padding:18px 20px;margin-top:14px;box-shadow:var(--bong)}.do h2{font-size:16px;margin:0 0 12px}
+.do-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));gap:10px}.do-grid>div{background:var(--nen);border-radius:10px;padding:11px 12px}
+.do-grid b{display:block;font-family:"IBM Plex Mono",monospace;font-size:21px;font-weight:600;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.02em}.do-grid small{display:block;font-size:11.5px;color:var(--muc3);margin-top:3px;line-height:1.3}
+/* ══⚠⚠ §42 · P6 — DÒNG GHI CHÚ KHỐI LƯỢNG THÔI MONOSPACE ═════════════════════════
+   TGĐ: *"một dòng monospace dài … thợ đọc như mã lỗi"*. Đo trên điện thoại ở bước
+   Báo giá: `#d-ct` là **IBM Plex Mono 12,5 px, cao 97 px**, ngay trên một bảng SKU
+   `#blKL` **đã đầy đủ, 17 dòng, Be Vietnam Pro 14 px**. Tức thứ khó đọc là bản THỨ
+   HAI của cùng một nội dung, in bằng phông mã nguồn.
+   ⚠ Phông đẳng khoảng đúng chỗ của nó: cột số, mã hàng trong BẢNG. Một đoạn văn xuôi
+     bằng phông mã nguồn thì đọc ra như thông báo lỗi — đúng chữ TGĐ dùng. */
+.do .ct{font-size:12.8px;line-height:1.55;color:var(--muc2);margin:11px 0 0}
+.canh{background:var(--sai-nh);border-left:3px solid var(--sai);border-radius:0 9px 9px 0;padding:12px 14px;margin:14px 0;font-size:13px}.canh b{color:var(--sai)}
+/* ⚠ `#khungAnh` ẩn cho tới khi CÓ ảnh (`gui.js` bật `display:block` sau khi xuất).
+   Nay nó sống trong hộp nhỏ "Xuất ảnh & bản vẽ" — hộp mở ra mà chưa xuất lần nào thì
+   chỉ có ba nút, đúng ý: một khung ảnh rỗng không nói được gì. */
+#khungAnh{display:none;margin-top:14px;background:var(--the);border:1px solid var(--vien);border-radius:14px;padding:16px;box-shadow:var(--bong)}#khungAnh img{width:100%;border-radius:9px;border:1px solid var(--vien);display:block}
+.dt-an{display:none}@media(max-width:960px){.dt-an{display:block;background:var(--sai-nh);border-left:3px solid var(--sai);border-radius:0 9px 9px 0;padding:10px 12px;font-size:12.5px;margin-bottom:12px}.chi-pc{display:none}}
+:focus-visible{outline:2px solid var(--nhan);outline-offset:2px}
+
+details.nhom{border:1px solid var(--vien);border-radius:11px;background:var(--the);margin-top:10px;overflow:hidden}
+details.nhom>summary{list-style:none;cursor:pointer;padding:10px 12px;font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px}
+details.nhom>summary::-webkit-details-marker{display:none}
+details.nhom>summary .buoc{font-family:"IBM Plex Mono",monospace;font-size:11px;color:#fff;background:var(--nhan);border-radius:5px;padding:1px 6px}
+details.nhom>summary .tomtat{margin-left:auto;font-weight:400;font-size:11.5px;color:var(--muc3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46%}
+details.nhom>summary::after{content:"▸";color:var(--muc3);margin-left:6px;transition:.15s}
+details.nhom[open]>summary::after{transform:rotate(90deg)}
+details.nhom>.than{padding:2px 12px 12px}
+details.con{margin-top:10px;border-top:1px dashed var(--vien);padding-top:6px}
+details.con>summary{list-style:none;cursor:pointer;font-size:12px;color:var(--nhan);font-weight:600;padding:4px 0}
+details.con>summary::-webkit-details-marker{display:none}
+details.con>summary::before{content:"▸ ";color:var(--muc3)}
+details.con[open]>summary::before{content:"▾ "}
+.thanh-nhanh{position:absolute;right:12px;top:12px;display:flex;gap:6px;z-index:3}
+.thanh-nhanh button{padding:6px 9px;font-size:12px;background:rgba(255,255,255,.92);border-color:rgba(0,0,0,.12);color:#15201b;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.thanh-nhanh button.ch{background:var(--nhan);color:#fff}
+.thanh-nhanh button:disabled{opacity:.45}
+.pop{position:absolute;z-index:4;background:var(--the);border:1px solid var(--vien);border-radius:12px;box-shadow:0 12px 32px -10px rgba(0,0,0,.35);padding:8px;display:none;min-width:200px;max-width:280px}
+.pop.mo{display:block}
+.pop .ten{font-size:11px;color:var(--muc3);padding:2px 4px 6px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.pop .hang{gap:4px}.pop button{padding:6px 8px;font-size:12px}
+.pop .o-mau{grid-template-columns:repeat(6,1fr);gap:4px;margin-top:6px}.pop .o-mau i{border-radius:4px}
+.pop input[type=range]{margin:6px 0 0}
+.pop .dong{display:none;padding-top:6px}.pop .dong.mo{display:block}
+.goiy{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:2;background:rgba(16,22,20,.86);color:#fff;border-radius:12px;padding:14px 18px;font-size:13.5px;line-height:1.7;pointer-events:none;text-align:left;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.goiy b{color:#8fe3bd}
+.goiy.an{display:none}
+.bo-lam{display:flex;flex-direction:column;gap:6px}
+.nhom-lam{border:1px solid var(--vien);border-radius:9px;padding:6px 7px 7px;background:var(--nen)}
+.nhom-lam .dau{display:grid;grid-template-columns:64px 1fr;gap:8px;align-items:center}
+.nhom-lam svg{width:64px;height:18px;display:block;color:var(--muc2)}.nhom-lam svg path{fill:currentColor}
+.nhom-lam b{font-size:11.5px;font-weight:600;display:block;line-height:1.2}.nhom-lam small{font-size:10.5px;color:var(--muc3)}
+.chip-lam{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.chip-lam button{display:flex;align-items:center;gap:5px;padding:3px 7px 3px 3px;font-size:10.5px;font-family:"IBM Plex Mono",monospace;border-radius:6px;background:var(--the)}
+.chip-lam button i{width:18px;height:18px;border-radius:4px;background-size:cover;background-position:center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15);flex:none}
+.chip-lam button.ch{background:var(--nhan);border-color:var(--nhan);color:#fff}.chip-lam button.ch:hover{color:#fff}
+
+/* ── KHUNG TRANG TRÊN WEBSITE ─────────────────────────────────────────────────
+   Bản chạy thử là một tệp đứng riêng, không có thanh đầu trang và chân trang của
+   site. Bốn lớp dưới là phần nối công cụ vào khung trang chung.
+   ⚠ Để ở `vach.css` chứ không ở `eb.css`: chỉ trang này nạp nó. Nhét 11 KB kiểu
+     dáng của một công cụ vào bảng kiểu chung là bắt 297 trang còn lại tải thứ
+     chúng không bao giờ dùng. `kiem_lop_css()` đọc cả hai tệp nên vẫn được canh. */
+.vach-trang{padding-top:18px}
+.vach-h1{font-size:clamp(1.5rem,1.1rem + 1.4vw,2rem);line-height:1.2;margin:0 0 6px}
+.vach-phu{margin:0 0 16px;color:var(--ink-600);max-width:62ch}
+/* Dòng nói rõ ảnh là dựng 3D — thay khối cảnh báo đỏ của bản chạy thử. Luật lệnh
+   23/09: mọi ảnh xuất ra phải ghi rõ, không để khách hiểu là ảnh chụp công trình. */
+.vach-ghichu{margin:10px 0 0;font-size:.86rem;color:var(--ink-600)}
+.vach-ghichu a{color:var(--green-700);font-weight:600}
+@media (max-width:899px){
+  .vach-trang{padding-top:10px}
+  .vach-phu{margin-bottom:10px;font-size:.92rem}
+}
+
+/* ── TẦNG ĐIỆN THOẠI ────────────────────────────────────────────────────────
+   Lệnh 23/09 mục 2.2. Bật bằng lớp `dt-on` trên <html> do `dt.js` đặt theo bề
+   rộng thật, KHÔNG bằng `@media` một mình: `dt.js` còn phải đặt trần
+   devicePixelRatio và chiều cao khung 3D, nên hai bên phải bật cùng một lúc theo
+   cùng một điều kiện. Hai điều kiện song song là hai chỗ để lệch nhau.
+   ⚠ ĐẶT Ở CUỐI TỆP: `@media` không cộng độ đặc hiệu, mà nhiều quy tắc dưới đây
+   ghi đè các quy tắc cùng độ đặc hiệu ở trên (bài học đã ghi trong CLAUDE.md —
+   khối mobile đặt giữa tệp thì hỏng đúng một nửa). */
+/* ⚠⚠ `.do` và `.tw` KHÔNG ĐƯỢC ẨN KHI ĐÃ DỜI VÀO TẤM (LỆNH bản 4 · M6).
+   Quy tắc cũ ẩn chúng ở MỌI chỗ trên tầng điện thoại — kể cả sau khi `dt.js` đã dời
+   chúng vào tấm "Khối lượng & báo giá". Hậu quả đo được 28/09: tấm đó chỉ có hai nút
+   xuất và một lời "làm trên máy tính" — **không khối lượng, không tấm, không tạm
+   tính**, đúng như Cowork báo. Mà `VIEC.bg` thì vẫn khai `node:["doKL","bangKL",…]`
+   nên đọc mã lại thấy đủ: node CÓ trong tấm, chỉ là CSS ẩn nó.
+   Nay chỉ ẩn khi chúng còn nằm trong kho cũ / thân trang, không ẩn trong `#dtThan`. */
+html.dt-on .bang-dk, html.dt-on #khungAnh,
+html.dt-on .dt-an, html.dt-on #hud{ display:none }
+html.dt-on .do, html.dt-on .tw{ display:none }
+html.dt-on #dtThan .do{ display:block; margin-top:0; border:0; box-shadow:none;
+  padding:0; background:none }
+html.dt-on #dtThan .tw{ display:block }
+html.dt-on #dtThan .do h2{ font-size:14px; margin:0 0 9px }
+html.dt-on #dtThan .do-grid{ grid-template-columns:repeat(2,1fr); gap:7px }
+html.dt-on #dtThan .do-grid b{ font-size:17px }
+html.dt-on .app{ display:block }
+html.dt-on .san{ position:sticky; top:0; z-index:3; height:56svh; min-height:240px;
+  background:var(--nen); padding:0; border-radius:0 }
+html.dt-on .san canvas{ display:block; width:100%; border-radius:0 }
+html.dt-on .bao{ padding-bottom:calc(112px + env(safe-area-inset-bottom,0px)) }
+html.dt-on #kyhieu{ display:none !important }
+
+/* nút nổi trên khung 3D — chỉ ba nút, không thêm (mục 2.2) */
+/* 0.3 — nhắc nổi giữa khung 3D khi chưa chọn gì (Bổ sung 7 §0.3) */
+.dt-nhac{ display:none }
+html.dt-on .dt-nhac{ display:block; position:absolute; left:50%; top:46%;
+  transform:translate(-50%,-50%); z-index:4; pointer-events:none;
+  padding:9px 14px; border-radius:999px; font-size:13.5px; font-weight:600;
+  color:#fff; background:rgba(20,26,23,.78); backdrop-filter:blur(3px);
+  opacity:0; transition:opacity .25s }
+html.dt-on .dt-nhac.hien{ opacity:1 }
+@media (prefers-reduced-motion:reduce){ html.dt-on .dt-nhac{ transition:none } }
+.dt-noi{ display:none }
+html.dt-on .dt-noi{ display:flex; gap:8px; position:absolute; top:10px; z-index:4 }
+html.dt-on .dt-noi-t{ left:10px } html.dt-on .dt-noi-p{ right:10px }
+.dt-tron{ width:40px; height:40px; border-radius:50%; border:1px solid var(--vien);
+  background:rgba(255,255,255,.86); color:var(--muc); font-size:17px; line-height:1;
+  display:grid; place-items:center; backdrop-filter:blur(6px) }
+.dt-tron:disabled{ opacity:.38 }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .dt-tron{ background:rgba(24,30,27,.86) } }
+
+/* thanh việc theo ngữ cảnh, cao 56px */
+.dt-viec{ display:none }
+html.dt-on .dt-viec{ display:flex; gap:8px; align-items:center; height:56px;
+  padding:0 10px; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch;
+  position:sticky; top:56svh; z-index:3; background:var(--the);
+  border-bottom:1px solid var(--vien); scrollbar-width:none }
+html.dt-on .dt-viec::-webkit-scrollbar{ display:none }
+/* ══⚠⚠ Z8 — HÀNG CHIP TRÀN NGANG PHẢI CÓ MỜ MÉP ═══════════════════════════════════
+   BS4 §1.2 #1: chip "Tủ", "Đợt" nằm ngoài 390 px, `elementFromPoint` trả ngoài màn.
+   Hàng này VỐN ĐÃ `overflow-x:auto` nên vuốt được — thứ thiếu là **dấu hiệu** còn chip
+   bên phải. Đo trên mẫu `tu` ở 390 px: chip con của hộc dựng ra tới `x = 527`, tức
+   137 px ngoài mép, và không có gì trên màn nói là còn nữa.
+ ⚠ `dt-tran-p` / `dt-tran-t` do `veViec()` đặt theo `scrollWidth`/`scrollLeft` THẬT —
+   CSS không tự biết một khối có tràn hay không, nên không có cách làm bằng CSS thuần.
+ ⚠ Dùng `mask-image` chứ không phủ một `::after` màu: hàng chip dính (`position:sticky`)
+   trên nền `var(--the)`, mà một dải gradient màu đặc sẽ sai màu khi đổi chủ đề sáng/tối. */
+html.dt-on .dt-viec.dt-tran-p{ mask-image:linear-gradient(to right,#000 0,#000 calc(100% - 28px),transparent 100%);
+  -webkit-mask-image:linear-gradient(to right,#000 0,#000 calc(100% - 28px),transparent 100%) }
+html.dt-on .dt-viec.dt-tran-t{ mask-image:linear-gradient(to right,transparent 0,#000 28px,#000 100%);
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 28px,#000 100%) }
+html.dt-on .dt-viec.dt-tran-t.dt-tran-p{ mask-image:linear-gradient(to right,transparent 0,#000 28px,#000 calc(100% - 28px),transparent 100%);
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 28px,#000 calc(100% - 28px),transparent 100%) }
+.dt-viec button{ flex:0 0 auto; min-height:44px; padding:0 14px; border-radius:22px;
+  border:1px solid var(--vien); background:var(--nen); color:var(--muc); font-size:14px }
+.dt-viec button[aria-pressed="true"]{ background:var(--nhan-nh); border-color:var(--nhan);
+  color:var(--nhan); font-weight:600 }
+
+/* tấm đáy: cao tối đa 40% màn hình để vách vẫn thấy ở trên */
+.dt-tam{ display:none }
+/* ⚠⚠ ĐÁY TẤM BÁM BIẾN `--dt-day`, KHÔNG GÕ 56px. Kho này đã học đúng bài ấy một lần
+   (xem ghi chú ở `html.dt-app{--dt-day:64px}`) nhưng chỉ khai biến cho vỏ `dt-app`;
+   vỏ `dt-on` vẫn gõ cứng 56 ở HAI chỗ. BS22 §1.3 cho thanh đáy **hai dòng** nên chiều
+   cao thật thành ~79 px và tấm nội dung che mất thanh — bốn cổng cũ (4c · 21i · 26e ×2)
+   bắt đúng.
+ ⚠⚠ Và thanh đáy nay CAO THAY ĐỔI (gói dòng), nên một con số cố định không bám nổi:
+   `dt.js` ĐO chiều cao thật bằng `ResizeObserver` rồi công bố vào `--dt-day`. Đây là
+   chỗ duy nhất đúng: một giá trị gõ tay cho một chiều cao biến thiên thì sai ngay lần
+   gói dòng đầu tiên. Giá trị trong CSS chỉ là mốc trước khi phép đo đầu chạy. */
+html.dt-on{ --dt-day:56px }
+html.dt-on .dt-tam{ display:flex; flex-direction:column; position:fixed; left:0; right:0;
+  bottom:calc(var(--dt-day) + env(safe-area-inset-bottom,0px)); z-index:40; max-height:40svh;
+  background:var(--the); border-top:1px solid var(--vien);
+  border-radius:14px 14px 0 0; box-shadow:var(--bong);
+  transform:translateY(102%); transition:transform .18s ease-out }
+html.dt-on .dt-tam.mo{ transform:none }
+.dt-tam-dau{ display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:10px 12px; border-bottom:1px solid var(--vien2); font-size:14px }
+.dt-tam-dau button{ width:36px; height:36px; border-radius:10px; border:1px solid var(--vien);
+  background:var(--nen); color:var(--muc) }
+.dt-tam-than{ overflow-y:auto; -webkit-overflow-scrolling:touch; padding:10px 12px 14px }
+/* Khối dời vào tấm đáy: bỏ khung ngoài của nó, tấm đáy đã là khung.
+   Và mở lại các khối vốn chỉ dành cho desktop — chúng nay CÓ đường dùng trên
+   điện thoại (nút ±, chia, bo), nên `.chi-pc` không còn đúng khi đã ở trong tấm. */
+.dt-tam-than>.the-nc, .dt-tam-than>details, .dt-tam-than>div{ border:0; padding:0; margin:0 0 6px;
+  background:none; box-shadow:none; max-height:none }
+.dt-tam-than>.the-nc{ display:block }
+.dt-tam-than .chi-pc{ display:block }
+.dt-tam-than .hang.chi-pc, .dt-tam-than .kt2.chi-pc{ display:flex }
+.dt-tam-than summary{ cursor:default }
+.dt-hang{ display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 }
+.dt-hang button{ flex:1 1 auto; min-height:44px; min-width:64px; border-radius:10px;
+  border:1px solid var(--vien); background:var(--nen); color:var(--muc); font-size:14px }
+.dt-hang input[type=number]{ flex:1 1 84px; min-height:44px; text-align:center;
+  border-radius:10px; border:1px solid var(--vien); background:var(--the); color:var(--muc);
+  font-size:15px; font-variant-numeric:tabular-nums }
+.dt-tam-than input[type=range]{ width:100%; margin:4px 0 2px }
+.dt-nh{ font-size:12px; color:var(--muc3); margin-top:10px }
+.dt-tt{ font-size:12.5px; color:var(--muc2); margin:8px 0 0; line-height:1.5 }
+
+/* Ô SỐ KHÔNG CÓ HIỆU LỰC với loại tủ đang chọn — làm mờ cả nhãn lẫn ô.
+   Lý do nằm ở dòng chữ dưới thẻ, không nằm ở `title`: điện thoại không có hover,
+   nên một `title` ở đây là một lời giải thích không ai đọc được.
+   Ô đã `disabled` trong HTML; quy tắc này chỉ làm cho mắt thấy nó đang mờ. */
+.tt-mo{ opacity:.45 }
+
+/* Dòng CẢNH BÁO trong khối chữ — dùng cho câu "bản thử, đừng cắt theo" của tệp CNC.
+   Phải khác hẳn một dòng chú thích thường: chú thích thì người ta bỏ qua, còn câu này
+   là thứ đứng giữa một tệp sai và một tấm bị phay hỏng. */
+.tt-canh{ border-left:3px solid var(--vang,#CC8D00); padding:8px 10px; border-radius:6px;
+  background:color-mix(in srgb, var(--vang,#CC8D00) 10%, transparent); color:var(--muc) }
+/* ⚠ BS52 §B — dòng sự thật của một thao tác bị từ chối. `width:100%` + `flex-basis`
+   là lần chắn thứ hai: `khongLamDuoc()` đã leo ra khỏi `.hang` trước khi chèn, nhưng
+   một neo nằm trong hàng flex kiểu khác thì vẫn co về 0 × 0 px — chữ đúng, đủ, không
+   bị cắt, mà khách không thấy gì. Và `white-space:normal` khai tường minh: cả mục đích
+   của §B là câu dài được XUỐNG HÀNG, nên đừng để nó phụ thuộc giá trị kế thừa. */
+#klTuChoi{ width:100%; flex-basis:100%; white-space:normal; overflow-wrap:break-word }
+/* BS46 §3.3 — mỗi chỗ chưa thi công được là MỘT DÒNG riêng, có nút gỡ. Dòng phải xuống
+   hàng tự do: câu lý do dài hơn một dòng là chuyện thường, và cắt nó đi là đúng lỗi
+   BS52 §B vừa chữa. */
+/* ⚠ Thẻ §3.3 nay ĐƯỢC DỜI ra cạnh `#c` (xem `apKhoaThiCong`), nên nó có thể rơi vào
+   một hàng flex — `width/flex-basis:100%` là lần hai, đúng khuôn `#klTuChoi`. Và nó
+   phải TỰ CÓ CHỖ: trước đây nó sống trong kho đỗ nên chưa bao giờ cần. */
+#klThiCong{ width:100%; flex-basis:100%; white-space:normal; overflow-wrap:break-word;
+  margin:8px 0 0; padding:8px 10px; border-left:3px solid var(--vang,#CC8D00);
+  background:var(--sand,#FBF7EE); border-radius:4px }
+#klBang{ margin-top:8px }
+#klThiCong .kl-dong{ display:block; margin-top:6px; white-space:normal;
+  overflow-wrap:break-word; line-height:1.5 }
+#klThiCong .kl-go{ margin-left:6px; padding:3px 8px; font-size:11.5px }
+/* BS46 §3.1 — dòng sự thật trong Sơ đồ: ngắn, một dòng, không ăn chỗ của hình. */
+.sd-vp{ margin:4px 0 0; padding:5px 8px; border-radius:6px; font-size:11.5px;
+  border-left:3px solid var(--vang,#CC8D00); color:var(--muc);
+  background:color-mix(in srgb, var(--vang,#CC8D00) 12%, transparent) }
+/* ══⚠⚠ BS60 §2c — THANH ĐỢT trên Sơ đồ ═══════════════════════════════════════════════
+   Con trỏ `pointer` để trên máy tính nó đọc ra là bấm được; `touch-action:manipulation`
+   để trên điện thoại cú chạm không bị trễ 300 ms của phép dò chạm-đôi.
+ ⚠ KHÔNG đặt `stroke` hay `stroke-width` ở đây: hai thứ ấy do `veSoDoMD` tính theo MÃ
+   MÀU và theo tỉ lệ (sàn 3 px), nên khai trong CSS là một bản thứ hai sẽ đè mất. */
+.sd-dot{cursor:pointer;touch-action:manipulation}
+.sd-dot:focus-visible{outline:2px solid var(--xanh,#1ac75c);outline-offset:2px}
+/* Dấu trên hàng chip. `attr()` đọc thuộc tính nên KHÔNG phải vẽ lại hàng chip khi số
+   đổi — xem chú thích ở `dt.js::veViec`. */
+#dtViec[data-vp]{ position:relative }
+#dtViec[data-vp]::after{ content:"⚠ " attr(data-vp); position:sticky; right:0;
+  align-self:center; flex:none; margin-left:4px; padding:2px 6px; border-radius:6px;
+  font-size:11px; font-weight:700; color:#7a4a00;
+  background:color-mix(in srgb, var(--vang,#CC8D00) 26%, #fff) }
+/* ══⚠⚠ BS53 §B — HÀNG NÚT KIỂU TỦ ĐỔI MÀU **NGAY**, KHÔNG CHUYỂN DẦN ════════════════
+   TGĐ: nút vừa bấm thành "một ô xanh đặc, không thấy biểu tượng lẫn chữ"; ảnh chụp
+   1,1 s sau khi chạm. Đo 13/10 trên vỏ điện thoại 390px, bốn mốc thời gian, ba lần bấm:
+
+       @  60 ms  tương phản 1,5:1   chữ rgb(131,136,134) trên nền rgb(140,178,161)
+       @ 200 ms  tương phản 6,5:1   chữ #fff trên nền #1c6b4a
+       @1100 ms  6,5:1      @2500 ms  6,5:1
+
+   Tức chữ **chìm hẳn vào nền** trong lúc `button{transition:.12s}` (quy tắc nền, không
+   nêu thuộc tính nên nó chạy cho CẢ `color` và `background`) đang nội suy. Giữa hai màu
+   ấy có một quãng mà chữ và nền gần bằng nhau — và trên máy thật, một lượt vẽ lại trùng
+   đúng quãng đó là ra tấm ảnh TGĐ chụp.
+
+ ⚠ Chỉ tắt cho **hàng nút kiểu tủ**, không tắt `button{transition}` toàn công cụ: hiệu
+   ứng ấy là affordance của mọi nút khác, và đổi nó là đổi thứ `qa-desktop.js` đang canh
+   trên 12 trang. Một luật hẹp cho đúng chỗ lệnh nói tới.
+ ⚠ KHÔNG "sửa" bằng cách đổi màu chữ hay màu nền: hai màu đều đúng ở trạng thái đứng
+   yên (6,5:1 ≥ 4,5). Thứ sai là **đường đi giữa hai trạng thái**. */
+#tuLoai button{ transition:none }
+.tt-mo input, .kt2 input:disabled{ cursor:not-allowed }
+
+/* thanh tổng cố định sát đáy — thay chỗ .mbar trên trang này */
+.dt-tong{ display:none }
+html.dt-on .dt-tong{ display:flex; align-items:center; justify-content:space-between; gap:10px;
+  position:fixed; left:0; right:0; bottom:0; z-index:45; height:56px;
+  padding:0 12px calc(0px + env(safe-area-inset-bottom,0px));
+  box-sizing:content-box; background:var(--the); border-top:1px solid var(--vien) }
+.dt-tong #dtSo{ font-size:13.5px; color:var(--muc); font-variant-numeric:tabular-nums }
+.dt-tong #dtSo i{ color:var(--muc3); margin:0 6px; font-style:normal }
+.dt-cta{ flex:0 0 auto; min-height:44px; padding:0 16px; border-radius:10px; border:0;
+  background:var(--nhan); color:#fff; font-size:14px; font-weight:600 }
+/* Nút phụ trên thanh đáy — lối vào "Xuất ảnh & bản vẽ" (Bổ sung 5 điểm ⑨).
+   ⚠ Viền chứ không nền đặc: nền đặc thì nó tranh mắt với "Nhận báo giá", mà đó
+     mới là đường ra lead chính. Vẫn giữ 44px chiều cao chạm.
+   ⚠⚠ CÂU "#dtSo nhường chỗ khi hẹp" ĐÃ HẾT HIỆU LỰC (BS22 §1.3): TGĐ đòi dòng quy
+     cách **đủ chữ** và **xuống hai dòng khi thiếu chỗ**. Nay nó có một DÒNG RIÊNG phía
+     trên hai nút (xem quy tắc ở khối thanh đáy dưới), nên không còn tranh chỗ với nút
+     nữa — lý lẽ cũ đúng cho một thanh MỘT dòng, không đúng cho thanh hai dòng. */
+.dt-phu{ flex:0 0 auto; min-height:44px; padding:0 12px; border-radius:10px;
+  border:1px solid var(--vien); background:var(--the); color:var(--muc);
+  font-size:13.5px; font-weight:600; white-space:nowrap }
+/* ⚠⚠ QUY TẮC `@media (max-width:400px){ #dtSo{display:none} }` ĐÃ GỠ — BS22 §1.3.
+   Nó là chỗ ẩn THỨ HAI: tôi gỡ một chỗ ở khối thanh đáy rồi đo thì **cả 32 mẫu vẫn
+   "bị ẩn"**, vì chỗ này còn. Hai quy tắc cùng ẩn một thứ ở hai khối cách nhau 450
+   dòng — đo đầu ra mới thấy, đọc một khối thì không. */
+
+/* ngang màn hình: khung 3D bên trái, tấm đáy thành cột phải (mục 2.2) */
+@media (orientation:landscape) and (max-height:560px){
+  html.dt-on .san{ position:fixed; left:0; top:0; width:60vw; height:100svh }
+  html.dt-on .bao{ padding-left:60vw; padding-bottom:0 }
+  html.dt-on .dt-viec{ position:fixed; top:0; left:60vw; right:0; width:auto }
+  html.dt-on .dt-tam{ left:60vw; bottom:var(--dt-day);
+    max-height:calc(100svh - var(--dt-day) - 56px) }
+  html.dt-on .dt-tong{ left:60vw }
+}
+
+/* ── LƯỚI CHỌN MÃ THẬT (mục 3) ──────────────────────────────────────────────
+   101 ô thay 13 vật liệu tạm. Ô nền là MÀU ĐẠI DIỆN đo từ tấm ô mẫu lúc dựng, ảnh
+   nhỏ nằm trên nó và tải lười — nên lưới hiện ra đủ màu ngay, ảnh về sau. */
+.o-mau i{ position:relative; overflow:hidden }
+.o-mau i>img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  display:block; border:0 }
+/* ⚠⚠ §22 · X3 — DẢI NỀN 42% → 62%, và lý do là SỐ ĐO chứ không phải gu thẩm mỹ.
+   Lệnh đặt cổng *"tương phản chữ mã ≥ 4,5 : 1"* và nêu hai mã TỐI làm ví dụ
+   (EB89001 đen, EB88001G cam tối). Đo cả 101 mã (lấy màu trung bình dải đáy của
+   chính ảnh vân, trộn với màn đen theo đúng độ mờ, rồi tính tương phản với #fff):
+
+       hỏng ở đầu SÁNG, không phải đầu tối.  12/101 mã dưới 4,5 : 1
+       thấp nhất EB68031G 3,41 · EB89029G 3,71 · EB89028 3,73 · EB89038 3,85
+       cao nhất  EB68041G 19,94 (vân đen — dư sức)
+
+   Vân trắng dưới màn 42% ra nền ≈ 148, chữ trắng trên đó chỉ còn ≈ 2,9 : 1. Tính
+   ngược: cần nền ≤ 122 ⇒ độ mờ ≥ 0,52; lấy **0,62** để có biên, vì con số trên là
+   TRUNG BÌNH — một vệt sáng cục bộ trong dải vẫn sáng hơn mức trung bình.
+   ⚠ Sửa ở luật GỐC nên dải trên MÁY TÍNH cũng tối hơn. Đây là một thay đổi nhìn
+     thấy được trên bản máy tính, và nó là CỐ Ý: 12 mã đó không đọc được ở cả hai
+     vỏ, không riêng điện thoại. Hình học lưới 6 cột không đổi. */
+.o-mau i>b{ position:absolute; left:0; right:0; bottom:0; z-index:2;
+  font:600 8.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; text-align:center;
+  color:#fff; background:rgba(0,0,0,.62); letter-spacing:.2px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.o-mau i[hidden]{ display:none !important }
+.loc-van{ display:flex; gap:6px; flex-wrap:wrap; margin:2px 0 8px }
+.loc-van button{ min-height:30px; padding:0 9px; border-radius:15px; font-size:11.5px;
+  border:1px solid var(--vien); background:var(--nen); color:var(--muc2) }
+.loc-van button b{ color:var(--muc3); font-weight:600 }
+.loc-van button[aria-pressed="true"]{ background:var(--nhan-nh); border-color:var(--nhan);
+  color:var(--nhan) } .loc-van button[aria-pressed="true"] b{ color:var(--nhan) }
+html.dt-on .loc-van button{ min-height:36px; padding:0 12px; font-size:12.5px }
+
+/* ── BẢNG KHỐI LƯỢNG (mục 4) ────────────────────────────────────────────────
+   Hai phần: vật liệu Eco Bamboo bán, và thứ thợ chuẩn bị. Sale chỉ báo giá phần
+   trên (Bổ sung 3, 23/09). */
+.bl-nh{ margin:14px 0 6px; font-size:12px; font-weight:700; letter-spacing:.3px;
+  text-transform:uppercase; color:var(--muc3) }
+.bl-nh:first-child{ margin-top:4px }
+table.bl{ width:100%; border-collapse:collapse; font-size:13px }
+table.bl th{ text-align:left; font-weight:600; font-size:11.5px; color:var(--muc3);
+  padding:4px 8px 4px 0; border-bottom:1px solid var(--vien) }
+table.bl td{ padding:5px 8px 5px 0; border-bottom:1px solid var(--vien2);
+  vertical-align:top }
+table.bl td.sl, table.bl th.sl{ text-align:right; white-space:nowrap;
+  font-variant-numeric:tabular-nums; font-weight:600 }
+table.bl td.dv{ color:var(--muc2); white-space:nowrap }
+table.bl td.gc{ color:var(--muc3); font-size:12px }
+.bl-nut{ margin-top:12px }
+.nut-phu{ display:inline-block; min-height:44px; line-height:42px; padding:0 16px;
+  border-radius:10px; border:1px solid var(--nhan); color:var(--nhan);
+  background:var(--nhan-nh); font-size:14px; font-weight:600; text-decoration:none }
+/* Trên điện thoại bảng nằm trong tấm đáy: cột ghi chú xuống dòng chứ không cuộn. */
+html.dt-on table.bl td.gc{ font-size:11.5px }
+html.dt-on table.bl{ font-size:12.5px }
+
+/* ── VÁCH CỦA TÔI (mục 5.1) ─────────────────────────────────────────────────
+   Xác nhận xoá làm NGAY TRÊN NÚT (bấm lần nữa), không dùng confirm(): hộp của
+   trình duyệt chặn mọi sự kiện, kể cả vòng vẽ WebGL của khung 3D. */
+.lv{ margin-top:18px; padding-top:14px; border-top:1px solid var(--vien) }
+.lv-dau{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px }
+.lv-dau b{ font-size:14px }
+.lv-dem{ font-size:12px; color:var(--muc3); font-variant-numeric:tabular-nums }
+.lv-nho{ min-height:36px; padding:0 12px; border-radius:9px; font-size:13px;
+  border:1px solid var(--vien); background:var(--nen); color:var(--muc2) }
+.lv-hoi{ border-color:var(--sai) !important; background:var(--sai-nh) !important;
+  color:var(--sai) !important; font-weight:600 }
+.lv-ds{ display:grid; gap:12px; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)) }
+.lv-o{ border:1px solid var(--vien); border-radius:10px; padding:8px; background:var(--the) }
+.lv-o img{ display:block; width:100%; height:auto; border-radius:6px; background:var(--nen) }
+.lv-trong{ aspect-ratio:5/3; display:grid; place-items:center; border-radius:6px;
+  background:var(--nen); color:var(--muc3); font-size:12px }
+.lv-o input{ width:100%; margin:8px 0 6px; min-height:36px; padding:0 8px; font-size:13px;
+  border:1px solid var(--vien); border-radius:8px; background:var(--nen); color:var(--muc) }
+.lv-nut{ display:flex; gap:5px; flex-wrap:wrap }
+.lv-nut button{ flex:1 1 auto; min-height:36px; padding:0 8px; font-size:12px;
+  border:1px solid var(--vien); border-radius:8px; background:var(--nen); color:var(--muc2) }
+.lv-o small{ display:block; margin-top:6px; font-size:11.5px; color:var(--muc3) }
+html.dt-on .lv-ds{ grid-template-columns:repeat(auto-fill,minmax(150px,1fr)) }
+html.dt-on .lv-nut button{ min-height:44px }
+
+/* ── LƯU ẢNH · BẢN VẼ · GỬI LINK (mục 5.2) ─────────────────────────────────── */
+.gu{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:14px }
+.gu .tt{ flex:1 1 100%; margin:2px 0 0 }
+#guLink{ flex:1 1 100%; min-height:40px; padding:0 10px; font-size:12.5px;
+  border:1px solid var(--vien); border-radius:9px; background:var(--nen); color:var(--muc) }
+html.dt-on .gu button{ flex:1 1 40% }
+
+/* ── NHẬN BÁO GIÁ CHO VÁCH (mục 5.3) ────────────────────────────────────────── */
+.bg-lead{ max-width:760px; margin:26px auto 0; padding:18px 16px 20px;
+  border:1px solid var(--vien); border-radius:12px; background:var(--the) }
+.bg-lead h2{ margin:0 0 4px; font-size:17px }
+.bg-hang{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  margin:10px 0 }
+.bg-form label{ display:block; font-size:12.5px; color:var(--muc2) }
+.bg-form input[type=text], .bg-form input:not([type]), .bg-form textarea{
+  width:100%; margin-top:4px; min-height:44px; padding:8px 10px; font-size:15px;
+  border:1px solid var(--vien); border-radius:9px; background:var(--nen); color:var(--muc) }
+.bg-form textarea{ min-height:64px; resize:vertical }
+.bg-ghi{ display:block; margin-top:10px }
+.bg-form button[type=submit]{ margin-top:12px; min-height:48px; padding:0 22px;
+  border:0; border-radius:10px; background:var(--nhan); color:#fff;
+  font-size:15px; font-weight:600 }
+.bg-form .hp{ position:absolute; left:-9999px; width:1px; height:1px }
+.bg-xong{ margin-top:14px; padding:14px; border-radius:10px;
+  border:1px solid var(--nhan); background:var(--nhan-nh); font-size:14px }
+.bg-ma{ margin:10px 0 }
+.bg-ma span{ display:block; font-size:12px; color:var(--muc3); margin-bottom:4px }
+.bg-ma input{ width:100%; min-height:40px; padding:0 10px; font-size:12.5px;
+  border:1px solid var(--vien); border-radius:9px; background:var(--nen); color:var(--muc) }
+.bg-nut{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px }
+
+/* Loé nhẹ khối xuất ảnh khi tới từ nút trên khung 3D — cuộn tới mà không có
+   dấu gì thì khách không biết mình vừa được đưa tới đâu. */
+.gu-loe{ animation:guLoe 1.4s ease-out }
+@keyframes guLoe{ 0%,60%{ box-shadow:0 0 0 3px var(--nhan) } 100%{ box-shadow:none } }
+@media (prefers-reduced-motion:reduce){ .gu-loe{ animation:none; box-shadow:0 0 0 3px var(--nhan) } }
+
+/* ── ⑧ CỬA SỔ NỔI "NHẬN BÁO GIÁ" + BẢNG TẠM TÍNH ─────────────────────────────
+   ⚠ Bảng cuộn ngang trong khối riêng: bốn cột tiền trên khung 390px là đúng chỗ
+     số tiền bị bẻ đôi, mà số tiền ngắt giữa chừng thì đọc sai còn dễ hơn đọc đúng
+     (bài học đã ghi cho bảng giá trang mã màu). Cột số giữ `nowrap`. */
+/* ⚠⚠ `[hidden]` THUA MỘT BỘ CHỌN LỚP. `.bg-hop{display:flex}` có độ đặc hiệu
+   (0,1,0) còn `[hidden]{display:none}` mặc định của trình duyệt là (0,0,1) — nên
+   hộp vẫn hiện dù đã đặt `hidden`, và biểu mẫu nằm chình ình trên trang đúng thứ
+   lệnh ⑧ bảo phải giấu. Đo được: `bgKhoiHien: true` trước khi bấm.
+   Khai lại tường minh cho HAI lớp này thay vì đặt `[hidden]{…!important}` toàn
+   tệp — `!important` toàn cục là thứ lần sau có người phải đi gỡ. */
+.bg-nen[hidden],.bg-hop[hidden]{ display:none }
+.bg-nen{ position:fixed; inset:0; z-index:70; background:#0007 }
+.bg-hop{ position:fixed; z-index:71; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:min(680px,calc(100vw - 24px)); max-height:min(86svh,900px);
+  display:flex; flex-direction:column; background:var(--the);
+  border:1px solid var(--vien); border-radius:14px; overflow:hidden }
+.bg-hop-dau{ display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:12px 14px; border-bottom:1px solid var(--vien); font-size:15px }
+.bg-x{ min-width:44px; min-height:44px; border:0; background:none; color:var(--muc);
+  font-size:18px; line-height:1 }
+.bg-hop-than{ overflow:auto; padding:12px 14px 16px }
+.bg-bang{ width:100%; border-collapse:collapse; font-size:13.5px; margin-bottom:10px }
+.bg-bang th,.bg-bang td{ padding:7px 8px; border-bottom:1px solid var(--vien); text-align:left }
+.bg-bang th:nth-child(2),.bg-bang td:nth-child(2),
+.bg-bang th:nth-child(3),.bg-bang td:nth-child(3),
+.bg-bang th:nth-child(4),.bg-bang td:nth-child(4){ text-align:right; white-space:nowrap;
+  font-variant-numeric:tabular-nums }
+.bg-bang tfoot th{ border-bottom:0; font-size:15px }
+.bg-rieng,.bg-tho,.bg-nhan{ font-size:13px; color:var(--muc2); margin:6px 0 }
+.bg-nhan{ padding:8px 10px; background:var(--nen2); border-radius:8px; color:var(--muc) }
+/* Khối "cần lưu ý khi thi công" (bước 4): chỗ nối tấm và mảng vân không liền.
+   Viền cảnh báo bên trái thay vì chữ đỏ: nó là điều phải biết, không phải lỗi. */
+.bg-noi{ font-size:13px; color:var(--muc); margin:8px 0 0; padding:8px 10px;
+  background:var(--nen2); border-left:3px solid var(--nhan); border-radius:0 8px 8px 0;
+  line-height:1.5 }
+.q-cta{ background:var(--nhan); color:#fff; border:0; font-weight:600 }
+@media (max-width:520px){
+  .bg-hop{ left:0; right:0; top:auto; bottom:0; transform:none; width:100%;
+    max-height:92svh; border-radius:14px 14px 0 0 }
+  .bg-bang{ font-size:12.5px }
+  .bg-bang th,.bg-bang td{ padding:6px 5px }
+}
+
+/* ⚠⚠ HAI NÚT CHỮ CHỈ DÀNH CHO DESKTOP. Lệnh Bổ sung 5 đặt lối vào ở HAI chỗ khác
+   nhau: thanh công cụ khung 3D (desktop) và thanh đáy (điện thoại). Đặt cả hai vào
+   cả hai chỗ là thừa, và ở đây nó còn HỎNG THẬT:
+   `.thanh-nhanh` là `position:absolute` NẰM ĐÈ lên khung 3D và nó KHÔNG được ẩn ở
+   khổ hẹp (lớp `chi-pc` không có quy tắc nào). Thêm hai nút chữ làm thanh đó xuống
+   ba dòng — đo ở 390×844: 366×126 px, che 27% khung 3D — và nó NUỐT CÚ CHẠM.
+   Đo được: chạm chọn mạch tụt từ 22/22 xuống 2/22.
+   ⚠ Chỉ ẩn HAI nút mới, không ẩn cả thanh: các nút còn lại (vẽ mạch · quét LED ·
+     số đo · xem ảnh) vốn đã ở đó từ trước và điện thoại đang dùng chúng. */
+/* ⚠⚠ 0.1/§1 (Bổ sung 7): TRÊN ĐIỆN THOẠI ẨN CẢ THANH CÔNG CỤ DESKTOP, không chỉ
+   hai nút chữ. Đo 25/09 ở 390×664: `.thanh-nhanh` (absolute, right/top 12) và bộ
+   nút tròn RIÊNG của tầng điện thoại (`#dtUndo` ↶ · `#dtRedo` ↷ · `#dtVua` ⤢, dựng
+   trong `dt.js`) cùng nằm góc trên khung 3D và ĐÈ LÊN NHAU — đúng ảnh `soat-dt-1`
+   mà lệnh nêu. Tức không phải thanh desktop co lại cho xấu, mà là HAI BỘ NÚT CHO
+   CÙNG MỘT VIỆC cùng hiện.
+   ⚠ Ghi chú cũ ngay dưới nói "các nút còn lại điện thoại đang dùng chúng" — SAI:
+     tầng điện thoại có bộ tròn của riêng nó, và Bổ sung 9 bỏ hẳn việc sửa bố cục
+     trên điện thoại nên ✏ Vẽ mạch · 💡 Quét LED không còn chỗ dùng ở khổ hẹp.
+   Giữ lại ghi chú cũ bên dưới vì số đo trong đó (27% khung 3D, 22/22 → 2/22) vẫn
+   là bằng chứng của lần trước. */
+@media (max-width:899px){ .thanh-nhanh{ display:none } }
+
+/* ── KHUNG MỘT MÀN HÌNH (Bổ sung 8) ─────────────────────────────────────────
+   Header 56 · Thanh bước 44 · Khung 3D · Thanh việc 52 · Tầng nội dung · Đáy 64.
+
+   ⚠⚠ ẨN CHROME CỦA SITE trên trang này ở khổ điện thoại. Đo 25/09 ở 390px:
+     topbar 49 + header 83 = 132px, tức MỘT MÌNH nó đã vượt trần "đỉnh khung 3D
+     ≤ 130px" của Bổ sung 7 §1. Không có cách nào đạt mà vẫn giữ cả hai, và
+     Bổ sung 8 khai "Header 56" nghĩa là công cụ có thanh đầu RIÊNG.
+     Đảo lại: bỏ lớp `dt-app` trong dt.js — một chỗ, không phải đi tìm từng dòng.
+   ⚠ Chỉ ẩn dưới `html.dt-app`, KHÔNG ẩn bằng `@media` một mình: `dt.js` bật lớp
+     đó theo bề rộng thật cùng lúc với `dt-on`, nên không có hai điều kiện song
+     song để lệch nhau. Máy tính và máy in không đụng tới.
+   ⚠ ĐẶT CUỐI TỆP — `@media` không cộng độ đặc hiệu. */
+/* ⚠⚠ CHÂN TRANG CŨNG PHẢI ẨN, và bỏ sót nó là một lỗi NHÌN THẤY ĐƯỢC. Đo trên tên
+   miền ở 390×844: `footer.ft` (nền #131714) bắt đầu ở y=756, tức hiện ra thành một
+   dải ĐEN cao ~88px nằm giữa tầng nội dung và thanh đáy cố định — người dùng đọc ra
+   là trang vỡ. Bản trước ẩn thanh trên và header rồi dừng, vì lý do lúc ấy là "đỉnh
+   khung 3D ≤ 130px" nên chỉ nhìn phần TRÊN.
+   ⚠ Ẩn được vì hotline KHÔNG chỉ nằm ở chân trang: đo cùng lượt, nút "Gọi
+     0915.189.389" của chính công cụ hiện ở y=657, ngoài `footer`. Nếu ngày nào nút
+     đó biến mất thì luật này phải xét lại — ẩn chân trang trên một trang thu khách
+     mà không còn đường gọi nào là đổi một chỗ xấu lấy một chỗ hỏng. */
+html.dt-app .topbar, html.dt-app .hdr, html.dt-app .ft,
+html.dt-app .vach-h1, html.dt-app .vach-phu{ display:none }
+html.dt-app .vach-trang{ padding-top:0 }
+html.dt-app .vach-trang>.wrap-wide{ padding:0 }
+html.dt-app, html.dt-app body{ overscroll-behavior-y:none }
+
+.dt-head{ display:none }
+html.dt-app .dt-head{ display:flex; align-items:center; gap:8px;
+  position:sticky; top:0; z-index:6; height:56px; padding:0 8px;
+  padding-top:env(safe-area-inset-top,0px);
+  background:var(--nen); border-bottom:1px solid var(--vien) }
+html.dt-app .dt-head>b{ font-size:15px; font-weight:650 }
+html.dt-app .dt-head-p{ margin-left:auto; font-size:12px; color:var(--muc3) }
+.dt-ve{ display:flex; align-items:center; justify-content:center;
+  width:40px; height:40px; border-radius:50%; text-decoration:none;
+  font-size:24px; line-height:1; color:var(--muc2) }
+
+.dt-buoc{ display:none }
+html.dt-app .dt-buoc{ display:flex; gap:6px; align-items:stretch;
+  position:sticky; top:calc(56px + env(safe-area-inset-top,0px)); z-index:6;
+  height:44px; padding:0 8px 6px; background:var(--nen) }
+.dt-buoc button{ flex:1 1 0; display:flex; align-items:center; justify-content:center;
+  gap:6px; min-width:0; min-height:38px; padding:0 6px; border-radius:10px;
+  border:1px solid var(--vien); background:var(--the); font-size:13px;
+  color:var(--muc2); white-space:nowrap; overflow:hidden }
+.dt-buoc button>i{ flex:0 0 auto; width:18px; height:18px; border-radius:50%;
+  display:grid; place-items:center; font-style:normal; font-size:11px;
+  background:var(--vien); color:var(--muc2) }
+.dt-buoc button[aria-selected="true"]{ background:var(--nhan-nh);
+  border-color:var(--nhan); color:var(--nhan); font-weight:650 }
+.dt-buoc button[aria-selected="true"]>i{ background:var(--nhan); color:#fff }
+/* Khung 3D bám dưới hai thanh trên, không bám mép màn hình. */
+html.dt-app .san{ top:calc(100px + env(safe-area-inset-top,0px)); z-index:3 }
+
+/* Thẻ "mở trên máy tính" — lối ra cho việc cần chuột (Bổ sung 9 §1) */
+.dt-may{ border:1px solid var(--vien); border-left:3px solid var(--nhan);
+  border-radius:0 10px 10px 0; padding:12px; margin-top:12px; background:var(--the) }
+.dt-may>b{ display:block; font-size:14px; margin-bottom:4px }
+.dt-may>p{ margin:0 0 10px; font-size:12.5px; color:var(--muc3); line-height:1.5 }
+.dt-may .dt-cta{ width:100% }
+
+/* Chiều cao hai thanh theo ĐÚNG số của Bổ sung 8: thanh việc 52 · thanh đáy 64.
+   Trước đó là 56 và 56 — đo ở 390px ra 56/57. Không phải sửa cho đẹp mắt: hai con
+   số này quyết định chiều cao còn lại của khung 3D, và trần "đỉnh 3D ≤ 130px" của
+   Bổ sung 7 §1 đo được hay không phụ thuộc vào chúng. */
+html.dt-app .dt-viec{ height:52px }
+html.dt-app .dt-tong{ height:64px }
+
+/* ⚠ Đáy tấm nội dung phải bám ĐÚNG chiều cao thanh đáy. Nâng thanh đáy 56 → 64 mà
+   để `bottom:56px` là tấm che mất 8px trên cùng của thanh CTA — ca 4c bắt được
+   ngay. Hai con số ở hai chỗ thì lần sau đổi một chỗ lại lệch, nên khai một biến. */
+html.dt-app{ --dt-day:64px }
+html.dt-app .dt-tam{ bottom:calc(var(--dt-day) + env(safe-area-inset-bottom,0px)) }
+
+/* ── "Không tải được công cụ" (Bổ sung 7 §5) ────────────────────────────────
+   Ẩn sẵn; chỉ hiện khi bó JS không tải được hoặc `window.VACH` không có thật.
+   ⚠ Dùng `[hidden]` của HTML chứ không dùng một lớp `.an`: thuộc tính đó là thứ
+     `soi()` bật/tắt, và `[hidden]{display:none}` trong reset chỉ (0,0,1) nên bất
+     kỳ lớp nào cũng thắng nó — nên khối này KHÔNG được mang thêm lớp đặt display. */
+.vach-hong{ max-width:520px; margin:28px auto; padding:18px;
+  border:1px solid var(--vien); border-left:3px solid var(--sai);
+  border-radius:0 12px 12px 0; background:var(--the); text-align:left }
+.vach-hong>b{ display:block; font-size:16px; margin-bottom:6px }
+.vach-hong>p{ margin:0 0 12px; font-size:13.5px; color:var(--muc3); line-height:1.55 }
+.vach-hong>button{ min-height:44px; padding:0 20px; border-radius:10px;
+  border:0; background:var(--nhan); color:#fff; font-size:15px; font-weight:600 }
+
+/* ── HỘP BÁO GIÁ TRÊN ĐIỆN THOẠI (Bổ sung 7 §4) ─────────────────────────────
+   Đo 25/09 ở 390×844 và 360×640: hộp là modal `position:fixed` đúng, thân cuộn
+   được đúng — nhưng thứ tự nội dung là *bảng tạm tính rồi mới tới biểu mẫu*, và
+   bảng đó cao 1.104px trong khung thấy được 705px. Hệ quả đo được:
+     ô Họ tên  y = 799  (đáy khung là 844 — tức nằm sát mép, bàn phím lên là mất)
+     nút Gửi   y = 1113 (390px) · 672 (360px) — NGOÀI khung, phải cuộn mới thấy
+   Khách mở "Nhận báo giá" mà không thấy chỗ điền lẫn nút gửi thì đó là một cái
+   phễu bị bịt ngay ở miệng, và nó không báo gì cả.
+
+   ⚠ Đổi thứ tự bằng `order` của flex, KHÔNG đổi DOM: `gui.js` chuyển node
+     `#bgKhoi` thật vào hộp (không dựng biểu mẫu thứ hai), nên đụng vào DOM ở đây
+     là đụng vào chính cái node đang mang mọi trình nghe của `eb.js`.
+   ⚠ Chỉ đổi ở khổ điện thoại. Trên máy tính hộp cao 776px chứa đủ cả hai, và đọc
+     bảng số trước rồi mới điền là thứ tự đúng ở đó. */
+.bg-hop .bg-lead>h2{ display:none }   /* thanh đầu của hộp đã in đúng câu này */
+@media (max-width:899px){
+  .bg-hop .bg-hop-than{ display:flex; flex-direction:column }
+  .bg-hop .bg-hop-than>#bgKhoi{ order:1 }
+  .bg-hop .bg-hop-than>#bgTamTinh{ order:2 }
+}
+
+/* Thanh đầu và thanh bước phải TRÀN HẾT BỀ NGANG. Đo 25/09: `#dtHead` ra x=16 w=358
+   trên khổ 390 — vì nó nằm trong `.app`, mà khối đó có lề hai bên. Một thanh chrome
+   thụt vào hai bên trông như một cái thẻ, không như thanh đầu của ứng dụng. */
+html.dt-app .dt-head, html.dt-app .dt-buoc{ margin-inline:calc(-1 * var(--gut, 16px)) }
+html.dt-app .dt-head{ padding-inline:14px }
+html.dt-app .dt-buoc{ padding-inline:14px }
+/* Nút mở menu — gọi đúng `#burger` thật, xem chú thích trong dt.js */
+.dt-menu{ margin-left:auto; width:40px; height:40px; border-radius:50%;
+  border:1px solid var(--vien); background:var(--the); font-size:17px; line-height:1;
+  color:var(--muc2) }
+/* Khung 3D cũng tràn hết bề ngang: đo được x=17 w=356 trên khổ 390 — mất 34px cho
+   lề của `.app`, tức gần 9% bề ngang vách, chỉ để giữ một lề mà tầng này không dùng. */
+html.dt-app .san{ margin-inline:calc(-1 * var(--gut, 16px)) }
+/* Thanh việc cũng tràn hết: đo trên bản đang chạy ra 16..374 trong khi bốn tầng kia
+   đã −1..391 — một tầng thụt vào giữa bốn tầng tràn đọc ra như lỗi dựng. */
+html.dt-app .dt-viec{ margin-inline:calc(-1 * var(--gut, 16px)); padding-inline:14px }
+
+/* ── NHẮC + NHÃN M1…Mn KHI CHƯA CHỌN GÌ (Bổ sung 13 §2b) ────────────────────
+   ⚠ Nhắc nay GIỮ NGUYÊN chừng nào chưa chọn gì (bỏ đồng hồ 3 giây trong dt.js),
+     nên nó phải rời khỏi giữa vách: ở giữa mà đứng mãi thì nó che đúng cái nó đang
+     mời khách chạm vào. Đưa lên sát mép trên khung 3D, thu nhỏ một bậc. */
+/* ⚠ NÂNG LÊN TRÊN HAI CHIP. Đo trên tên miền 28/09 ở khổ 390: hộp nhắc [95,493]
+   chồng lên chip "▦ Mốc tấm · ✦ Ánh sáng" [8,498] đúng **87×28 px** — chữ nhắc và
+   nút đè lên nhau ở góc dưới trái. Chip cao 34 px đặt ở bottom:10px, nên hộp nhắc
+   phải bắt đầu từ 52 px trở lên mới hết chồng. */
+html.dt-on .dt-nhac{ top:auto; bottom:52px; left:50%; transform:translateX(-50%);
+  padding:7px 12px; font-size:12.5px }
+.dt-nhan{ display:none }
+html.dt-on .dt-nhan{ display:block; position:absolute; inset:0; z-index:4;
+  pointer-events:none; opacity:0; transition:opacity .22s }
+html.dt-on .dt-nhan.hien{ opacity:1 }
+/* §22 · X2 ③ — nhãn bị luật va chạm loại ra thì ẨN HẲN. `[hidden]` mặc định là
+   `display:none`, nhưng `.dt-nhan i` khai `position:absolute` nên phải nói rõ. */
+.dt-nhan i[hidden]{ display:none !important }
+/* §22 · X2 ④ — dòng nhắc đáy 3D ẩn khi có nhãn số đang hiện. */
+html.dt-on .dt-nhac.an-nhan{ opacity:0; pointer-events:none }
+/* §22 · X2 — nhãn M cỡ 11 px (lệnh nêu số này). */
+.dt-nhan i{ position:absolute; transform:translate(-50%,-50%); font-size:11px;
+  padding:2px 7px; border-radius:999px; font-style:normal;
+  font-size:11px; font-weight:700; letter-spacing:.02em;
+  color:#1b2b14; background:rgba(255,255,255,.82);
+  box-shadow:0 1px 3px rgba(0,0,0,.28) }
+@media (prefers-reduced-motion:reduce){ html.dt-on .dt-nhan{ transition:none } }
+/* ⚠ Một dòng, không xuống hàng: đo ở 390px bản đầu ra HAI dòng và đè lên nhãn M5.
+   Nhắc mà che mất chính cái nhãn nó đang chỉ tới thì tự phủ định. */
+html.dt-on .dt-nhac{ white-space:nowrap; max-width:calc(100% - 24px);
+  overflow:hidden; text-overflow:ellipsis }
+
+/* ══⚠⚠ §42 · P3 — DÒNG NHẮC XUỐNG ĐÁY 3D, MỘT DÒNG, MỜ 70 % ═══════════════════════
+   TGĐ: *"dòng nhắc nằm GIỮA 3D, đè lên vách"*. Ba việc, và cả ba đều đo được.
+   ① **Xuống đáy.** Quy tắc `bottom:52px` ở trên là ĐÚNG VÀO LÚC NÓ ĐƯỢC VIẾT: hai
+     chip *▦ Mốc tấm · ✦ Ánh sáng* khi ấy nằm ở đáy 3D và hộp nhắc chồng lên chúng
+     đúng 87×28 px. Đo lại 01/10 sau khi hai chip đã dời: *Mốc tấm* ở **thanh trên
+     (top 0)**, *Ánh sáng* ở **đỉnh 3D (top 111)** — đáy trống. Giữ 52 px nữa là chừa
+     chỗ cho hai thứ không còn ở đó, và chừa đúng vào giữa mặt vách.
+     ⚠ Đo trước khi hạ: ở khổ 390 chỉ còn hai thẻ `<a>` của menu nằm SAU khung, không
+       phải nút nổi. Đừng hạ mà không đo lại — quy tắc cũ sinh ra từ một lần chồng nút
+       có thật.
+   ② **Một dòng.** `white-space:nowrap` đã có, nhưng câu tạm dài vẫn ra **2 dòng cao
+     33 px** vì `max-width` cho phép xuống hàng ở chỗ khác; thêm `text-overflow` để nó
+     cắt bằng dấu ba chấm thay vì cao gấp đôi.
+   ③ **Mờ 70 %.** Nhưng câu TẠM giữ 100 %: nó là phản hồi cho thao tác vừa rồi (lời từ
+     chối, lời xác nhận) — làm mờ một câu từ chối là giấu đi đúng thứ khách cần đọc. */
+html.dt-on .dt-nhac{ bottom:12px }
+html.dt-on .dt-nhac.hien{ opacity:.7 }
+html.dt-on .dt-nhac.dt-nhac-tam.hien{ opacity:1 }
+
+/* ── TẤM MÀU TRÊN ĐIỆN THOẠI (Bổ sung 13 §2e) ───────────────────────────────
+   Đo ở 390×844 trước khi sửa: 7 chip nhóm vân xếp **3 hàng cao 120 px** trong một
+   tấm chỉ cao 280 px — tức gần nửa tấm dành cho bộ lọc, còn lưới 101 mã chỉ lộ 12 ô.
+   Một hàng cuộn ngang 36 px trả lại ~84 px cho chính thứ khách vào đây để chọn.
+   ⚠ `flex-shrink:0` trên chip: thiếu nó thì flex bóp bảy chip cho vừa một hàng và
+     chữ bị cắt — vừa mắt mà không đọc được. */
+html.dt-on .dt-tam-than .loc-van{ display:flex; flex-wrap:nowrap; gap:6px;
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
+  scrollbar-width:none; height:36px; margin:2px 0 8px }
+html.dt-on .dt-tam-than .loc-van::-webkit-scrollbar{ display:none }
+html.dt-on .dt-tam-than .loc-van button{ flex:0 0 auto; min-height:34px;
+  padding:0 11px; font-size:12.5px; white-space:nowrap }
+/* §49 — ba quy tắc `.dt-tam-than #boSang` đã gỡ: từ §17·U1 hàng bộ phối không còn
+   nằm trong tờ Vật liệu, nên chúng không thể khớp gì nữa. Lý do cũ ("bốn nút có emoji
+   + chữ, xếp hai hàng thì ăn mất lưới mã") VẪN ĐÚNG và đã dọn sang `#hopSang` dưới
+   đây — giữ lý do, dời chỗ áp. */
+
+/* ── BA TRẠNG THÁI KHUNG 3D (Bổ sung 8 §1 · Bổ sung 13 §2d) ─────────────────
+   Xem 52svh · Chọn 30svh · Báo giá 22svh. Trước bản này `.san` cố định 56svh, mà
+   tấm nội dung cao tới 40svh — 56 + 40 = 96svh cộng header 56 + bước 44 + việc 52
+   + đáy 64 thì không còn chỗ, nên tấm ĐÈ LÊN 3D và che nửa dưới vách. Đo ở
+   390×844: mở tấm Màu thì mép trên tấm nằm ở y=445 trong khi 3D kết thúc ở y=572.
+   ⚠ `min-height` phải hạ theo, nếu không 240px thắng mọi tỉ lệ nhỏ hơn và ba
+     trạng thái thành một. */
+/* ⚠⚠ §42 · P2 ĐẢO BA CON SỐ NÀY: sàn 40svh ở MỌI trạng thái (TGĐ/Cowork 30/09 đêm).
+   Đo iPhone 13 (390 × 664): Xem 343 px (52 %) · Chọn **197 px (30 %)** · Báo giá
+   **144 px (22 %)**. Ở 144 px cái vách chỉ còn là một dải ảnh — thợ không soát được
+   hình mình vừa dựng, mà bước Báo giá chính là lúc phải soát.
+   ⚠ Ba con số cũ (52/30/22) KHÔNG phải tuỳ tiện: chúng sinh ra để tấm nội dung thôi
+     ĐÈ lên 3D (Bổ sung 13 §2e). Nay nâng sàn thì tấm hẹp lại chứ không đè, vì `.dt-tam`
+     neo bằng `top` + `bottom` theo chính chiều cao khung — nên chỉ cần sửa MỘT nơi và
+     hai công thức `top` dưới đây tự theo. Đừng gán chiều cao tấm bằng JS.
+   ⚠ `min-height` nâng theo, nếu không ở màn ngắn (iPhone SE 568) 40svh = 227 px lại
+     rơi xuống dưới sàn cũ và ba trạng thái thành một. */
+html.dt-app .san{ height:52svh }
+html.dt-app.dt-chon .san{ height:40svh; min-height:240px }
+html.dt-app.dt-bao  .san{ height:40svh; min-height:240px }
+/* Tầng nội dung LẤP HẾT phần còn lại, không lơ lửng. Đo trước khi sửa ở trạng thái
+   Chọn: 3D kết thúc y=353, thanh việc tới ~405, mà tấm mới bắt đầu ở y=445 — 40px
+   trống ở giữa, và tấm thì "lửng" đúng như Bổ sung 13 §2e mô tả.
+   ⚠ Neo bằng `top` + `bottom` cùng lúc rồi bỏ `max-height`: đó là cách duy nhất để
+     nó lấp đúng phần còn lại mà không phải đo bằng JS rồi gán chiều cao — hai nơi
+     giữ một con số thì sớm muộn lệch. Các số cộng vào đều là số đã khai ở trên:
+     thanh đầu 56 + thanh bước 44 + khung 3D + thanh việc 52. */
+html.dt-app.dt-chon .dt-tam, html.dt-app.dt-bao .dt-tam{
+  max-height:none; border-radius:0 }
+html.dt-app.dt-chon .dt-tam{
+  top:calc(100px + env(safe-area-inset-top,0px) + 40svh + 52px) }
+html.dt-app.dt-bao .dt-tam{
+  top:calc(100px + env(safe-area-inset-top,0px) + 40svh + 52px) }
+
+/* ── THANH ĐÁY TIẾN/LÙI + BA NÚT XUẤT TRÊN 3D (Bổ sung 8 §1–2 · Bổ sung 13 §2c) ─ */
+.dt-tong #dtLui{ flex:0 0 auto; min-height:44px; padding:0 12px; border-radius:10px;
+  border:1px solid var(--vien); background:var(--the); font-size:13px;
+  max-width:42%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.dt-tong #dtLui:disabled{ opacity:.35 }
+.dt-tong #dtToi{ flex:0 1 auto; min-height:44px; white-space:nowrap }
+/* ⚠ Tóm tắt nhường chỗ trước, hai nút giữ nguyên: ở 360px cả ba không vừa, mà thứ
+   bỏ được là dòng số — nút thì bấm vào mới đi tiếp được. */
+/* ══⚠⚠ BS22 §1.3 — DÒNG QUY CÁCH KHÔNG BỊ CẮT ════════════════════════════════════
+   TGĐ: thay `"14,84 m² · 6 tấm · 6 mạch g…"` bằng **dòng đủ**, số in đậm, **xuống hai
+   dòng khi thiếu chỗ**, bấm vào mở tờ tóm tắt.
+
+ ⚠⚠ VÀ Ở ≤ 400 px DÒNG NÀY TRƯỚC ĐÂY BỊ **ẨN HẲN** (`display:none`). Nên cổng §1.3
+   ("390 px: dòng không chứa …") sẽ xanh **vì rỗng** nếu cứ để thế — đúng loại "xanh
+   vì không có gì để đo" mà kho này cấm. Phải cho nó hiện.
+ ⚠ Cách cho hiện mà KHÔNG bóp hai nút: cho nó một **dòng riêng** phía trên (`order:-1`
+   + `flex-basis:100%`), thanh đáy cao lên theo. Lý lẽ cũ ("thứ bỏ được là dòng số, nút
+   thì bấm vào mới đi tiếp được") vẫn đúng — nên tôi không lấy chỗ của nút, tôi thêm
+   một dòng. `height` phải thành `min-height`, nếu không dòng mới bị cắt bởi chiều cao
+   cố định 56 px và ta quay lại đúng chỗ cũ bằng một đường khác.
+ ⚠ `-webkit-line-clamp` KHÔNG dùng: nó vẫn CẮT, chỉ cắt ở dòng thứ hai thay vì dòng
+   thứ nhất — mà lệnh đòi "dòng đủ", không đòi "cắt muộn hơn". */
+.dt-tong #dtSo{ flex:1 1 auto; min-width:0; white-space:normal; overflow:visible;
+  text-overflow:clip; line-height:1.35; font-size:12px; text-align:left;
+  cursor:pointer; background:none; border:0; padding:2px 0; color:inherit }
+.dt-tong #dtSo b{ font-weight:700; color:var(--muc) }
+.dt-tong #dtSo i{ font-style:normal; opacity:.45; margin:0 5px }
+.dt-tong #dtSo:focus-visible{ outline:2px solid var(--xanh,#24700b); outline-offset:2px }
+@media (max-width:520px){
+  html.dt-on .dt-tong{ flex-wrap:wrap; height:auto; min-height:56px; padding-top:4px }
+  .dt-tong #dtSo{ order:-1; flex:1 0 100%; min-height:0 }
+}
+
+/* Ba nút xuất nổi trên 3D — CHỈ ở bước ③ Báo giá. */
+/* ⚠⚠ Ba nút nổi trên khung 3D (ảnh · PDF · link) ĐÃ GỠ cùng lớp CSS của chúng —
+   TGĐ 27/09: "mấy ký tự để xuất ảnh, file ngay trên ảnh… bỏ đi cho đỡ rối".
+   ⚠ KHÔNG viết tên lớp đó ra đây dưới dạng có dấu chấm: `kiem_lop_css()` quét chuỗi
+     và sẽ đếm chính dòng chú thích này thành "một quy tắc không ai dùng" — đã dính
+     đúng một lần khi viết bản đầu, và cùng họ với lần chú thích HTML làm phép đếm
+     ảnh đọc ra 1 thay vì 0. */
+/* ⚠⚠ MỘT DÒNG RÁC ĐÃ GỠ Ở ĐÂY (11/10/2026). Đợt gỡ ba nút nổi (27/09) xoá các bộ chọn
+   nhưng BỎ SÓT dòng khai cuối cùng cộng hai dấu ngoặc đóng:
+       background:rgba(24,30,27,.9)  + hai dấu đóng
+   Một dòng khai đứng ở cấp cao nhất là lỗi cú pháp; trình duyệt khôi phục bằng cách
+   NUỐT TỚI DẤU ĐÓNG KẾ TIẾP — đúng cơ chế đã làm chết `.fig-nm` ngày 31/08. Lần này
+   dấu đóng nằm ngay trên cùng dòng nên thiệt hại chưa lan, nhưng hễ có ai chèn một
+   quy tắc vào giữa thì quy tắc ấy biến mất trong im lặng.
+ ⚠ Bắt được bằng phép ĐẾM, không bằng đọc: bỏ hết chú thích rồi đếm dấu mở và dấu
+   đóng ra 775/777 — lệch 2. Phép ấy CLAUDE.md đã ghi là "phép rẻ mà bắt được", nhưng
+   chưa ai nối vào bản dựng; nay `kiem_lop_css()` chạy nó mỗi lần dựng. */
+/* Bước đã qua: chấm xanh nhạt (Bổ sung 8 §1). */
+.dt-buoc button.qua>i{ background:var(--nhan-nh); color:var(--nhan) }
+
+/* ── BẢNG ĐỀ XUẤT KHỔ TẤM (lệnh quy trình bản 2, mục 1.2) ───────────────────── */
+.de-xuat{ display:flex; flex-direction:column; gap:6px; margin:4px 0 10px }
+.dx-dong{ display:block; width:100%; text-align:left; padding:8px 10px;
+  border:1px solid var(--vien); border-radius:10px; background:var(--the);
+  line-height:1.35 }
+.dx-dong>b{ display:inline; font-size:13px }
+.dx-dong>span{ display:block; font-size:12px; color:var(--muc3); margin-top:2px }
+.dx-dong.ch{ border-color:var(--nhan); background:var(--nhan-nh) }
+.dx-nhan{ display:inline-block; margin-left:6px; padding:1px 7px; border-radius:999px;
+  font-style:normal; font-size:10.5px; font-weight:700;
+  background:var(--nhan); color:#fff; vertical-align:2px }
+.dx-xau{ color:var(--sai) }
+/* Câu giải thích vì sao dòng ĐỀ XUẤT thắng dù trông như thừa nhiều (LỆNH bản 4 · D5) */
+.dx-vi{ display:block; margin-top:3px; font-size:11.5px; color:var(--xanh,#24700B) }
+
+/* ── BẢNG THEO DÕI VẬT TƯ trong khung 3D (lệnh quy trình bản 2, mục 2.7) ────── */
+.bang-vt{ position:absolute; left:10px; bottom:10px; z-index:4; pointer-events:none;
+  padding:6px 11px; border-radius:999px; font-size:12.5px; line-height:1.3;
+  color:#fff; background:rgba(20,26,23,.78); backdrop-filter:blur(3px);
+  /* ⚠⚠ BS22 §1.3 — KHÔNG CẮT, XUỐNG DÒNG. Dòng này cũng mang `nowrap` + `ellipsis`
+     như dòng ở vỏ điện thoại, nên nó cắt được ở cùng điều kiện: vách nhiều tủ thì
+     chuỗi dài ra ("… · 3 mảng phải nối"). Nó là một viên nổi ở góc dưới khung 3D nên
+     xuống hai dòng không đẩy gì cả.
+   ⚠ Số đậm đã có sẵn ở đây (`<b>`), khác dòng điện thoại — nên §1.3 chỉ phải thêm
+     phần xuống dòng. Đừng "thống nhất" bằng cách bọc lại lần nữa: hai lớp `<b>` lồng
+     nhau không đậm hơn, chỉ làm chuỗi khó đọc khi gỡ lỗi. */
+  max-width:calc(100% - 20px); white-space:normal; overflow:visible;
+  text-overflow:clip }
+.bang-vt .vt-xau{ color:#ffb3a7 }
+
+/* ══⚠⚠ BS22 §1.5 — TẦNG NHÃN KÍCH THƯỚC + Ô SỐ NỔI ═══════════════════════════════
+   Nhãn là NÚT BẤM (≥ 44 px trên điện thoại, theo lệnh), mốc là `<span>` không bấm.
+ ⚠ Tầng `pointer-events:none`, từng nhãn bật lại `auto`: để cử chỉ xoay/phóng trên
+   khung 3D không bị cả một tấm trong suốt chặn mất — đúng cái bẫy mà `.bang-vt` ngay
+   trên đã khai `pointer-events:none` để tránh.
+ ⚠ `:not([hidden])` trên mọi quy tắc đặt `display` — §52.2, cổng `112a` canh.
+ ⚠ `translate(-50%,-50%)` để nhãn ngồi ĐÚNG điểm chiếu; neo bằng `left/top` thuần thì
+   nhãn lệch sang phải-dưới đúng nửa bề rộng của chính nó, và lệch ấy đổi theo độ dài
+   con số — tức nhãn "4.200" lệch nhiều hơn nhãn "300". */
+/* ⚠⚠ TẦNG NHÃN LÀ MỘT HỘP 0×0, KHÔNG PHẢI MỘT TẤM `inset:0`. Cổng `1f` (Bổ sung 15 §2
+   — "khung 3D không bị lớp nào che") đỏ với `ktNhan 389x336`: một tấm phủ kín khung,
+   dù `pointer-events:none`, vẫn là một lớp che theo hình học — và cổng đo hình học.
+ ⚠ Con 0×0 vẫn định vị đúng: nhãn `position:absolute` neo vào tổ tiên ĐƯỢC ĐỊNH VỊ gần
+   nhất, tức chính hộp này, và nó nằm ở góc (0,0) của khung. Toạ độ `left/top` vì thế
+   không đổi một pixel. */
+.kt-nhan{ position:absolute; left:0; top:0; width:0; height:0; z-index:5;
+  pointer-events:none }
+/* ══⚠⚠ `transition:none` LÀ BẮT BUỘC, KHÔNG PHẢI DỌN DẸP ════════════════════════════
+   Quy tắc nền `button{transition:.12s}` không nêu THUỘC TÍNH nào, nên nó chạy cho **mọi**
+   thuộc tính — kể cả `top`/`left`. Tầng nhãn thì được dựng lại ~120 ms một lần để đi theo
+   camera, tức **đúng bằng thời lượng transition**: mỗi lần dựng lại là một lần transition
+   khởi động lại từ vị trí ban đầu, và vị trí tính ra **không bao giờ tới đích**.
+ ⚠⚠ Đây là nguyên nhân thật của ca `Z5b` đã bám dai qua BỐN bản sửa phép đặt nhãn. Phép
+   đặt đã đúng từ bản thứ hai — nó ghi `top: 219px` vào inline style — nhưng
+   `getComputedStyle` đọc ra **456px**, tức giá trị CŨ, vì transition đang dở. Nhãn `<span>`
+   (mốc) thì đúng chỗ, nhãn `<button>` (sửa được) thì sai: khác nhau duy nhất là quy tắc
+   `button{transition}`. Nhìn vào vị trí nhãn thì thấy "phép đặt sai"; đọc inline style mới
+   thấy phép đặt đúng và thứ sai nằm ở tầng khác hẳn.
+ ⇒ Nhãn được đặt chỗ bằng mã, không bằng cử chỉ của người dùng, nên nó KHÔNG được có
+   transition vị trí. Đừng gỡ dòng này. */
+.kt-n{ transition:none!important;
+  position:absolute; transform:translate(-50%,-50%); white-space:nowrap;
+  font-size:11.5px; line-height:1; padding:5px 8px; border-radius:999px;
+  background:rgba(20,26,23,.82); color:#fff; backdrop-filter:blur(2px) }
+.kt-n:not([hidden]){ display:inline-block }
+.kt-n b{ font-weight:700; font-variant-numeric:tabular-nums }
+/* ══⚠⚠ NHÃN TRONG SUỐT VỚI CÚ CHẠM — `pointer-events:none`, CỐ Ý ═══════════════════
+   Ba lần sửa theo hình học (ra tâm → ra mép → ra ngoài hộp bao + tránh mạch) và mỗi
+   lần lại lộ một chỗ khác. Số đo nói rõ vì sao: trên điện thoại một mảng chiếu ra
+   **85 × 28 px**, mà năm nhãn mỗi cái **28 px cao, 66–116 px rộng**. Năm hộp ấy không
+   thể vừa nằm ngoài một hộp 85 × 28 vừa còn trỏ vào nó. Đây là bất khả về chỗ, không
+   phải một phép đặt chưa đủ khéo — nên mọi bản sửa hình học đều chỉ dời chỗ hỏng.
+ ⇒ Bỏ hẳn lớp lỗi: nhãn KHÔNG nhận cú chạm, nên trình duyệt luôn đưa cú chạm xuống
+   canvas và mọi cử chỉ 3D (chạm chọn · giữ 400/700 ms · kéo · xoay) chạy y như khi
+   chưa có nhãn. Việc "bấm nhãn để sửa" do `ui.js` TỰ DÒ theo toạ độ trong trình nghe
+   `click` của canvas — ta biết hộp nhãn ở đâu, nên không cần trình duyệt dò hộ.
+ ⚠ Phép đẩy nhãn ra ngoài hộp bao vẫn GIỮ: nó không còn để chống mất cú chạm, mà để
+   nhãn đừng che mất chính cái vật nó đang nói về. Hai mục đích, một phép. */
+.kt-n-sua{ pointer-events:none; cursor:pointer;
+  border:1px solid rgba(255,255,255,.35) }
+.kt-n-sua:hover{ background:rgba(20,26,23,.95) }
+.kt-n-sua:focus-visible{ outline:2px solid var(--vang,#cc8d00); outline-offset:2px }
+.kt-n-moc{ border:1px dashed rgba(255,255,255,.3); opacity:.9 }
+
+.kt-sua{ position:absolute; z-index:7; pointer-events:auto;
+  background:var(--the); border:1px solid var(--vien); border-radius:12px;
+  box-shadow:var(--bong); padding:8px; gap:6px; flex-wrap:wrap;
+  max-width:calc(100% - 12px) }
+.kt-sua:not([hidden]){ display:flex }
+.kt-sua input{ width:88px; min-height:36px; font-size:14px;
+  font-variant-numeric:tabular-nums }
+.kt-sua .kt-b, .kt-sua .kt-c{ display:inline-flex; flex-wrap:wrap; gap:4px }
+.kt-sua button{ min-height:36px; padding:0 9px; border-radius:8px; font-size:12px;
+  border:1px solid var(--vien); background:#fff; color:var(--muc) }
+.kt-sua .kt-xong{ background:var(--xanh,#24700b); color:#fff; border-color:transparent;
+  font-weight:700 }
+@media (pointer:coarse){
+  .kt-n{ font-size:12px; padding:7px 11px }
+  .kt-sua input, .kt-sua button{ min-height:44px }
+}
+html.dt-on .kt-n{ font-size:12px; padding:7px 11px }
+html.dt-on .kt-sua input, html.dt-on .kt-sua button{ min-height:44px }
+.bang-vt.nhap{ animation:vtNhap .55s ease-out 1 }
+@keyframes vtNhap{ 0%{ background:rgba(150,30,20,.92) } 100%{ background:rgba(20,26,23,.78) } }
+@media (prefers-reduced-motion:reduce){ .bang-vt.nhap{ animation:none } }
+/* Điện thoại: nhường chỗ cho nhắc "Chạm vào một mảng" đang ở đáy giữa. */
+html.dt-on .bang-vt{ bottom:auto; top:58px; left:10px; font-size:11.5px; padding:4px 9px }
+.vt-goi{ color:var(--nhan) }
+
+/* ── §20 · W9 — DÒNG CHÊNH LỆCH, tự tắt sau 1,6 s ───────────────────────────────
+   Đặt NGAY TRÊN bảng theo dõi vật tư, cùng mép trái: hai con số nói về cùng một
+   thứ thì đứng cạnh nhau, người đọc không phải quét cả khung 3D.
+   ⚠ `pointer-events:none` — nó nằm trên mặt 3D, mà 3D thì phải kéo xoay được. Một
+     dòng chữ nổi ăn mất cú kéo là lỗi nặng hơn hẳn việc không có dòng chữ. */
+.vt-chenh{ position:absolute; left:10px; bottom:42px; z-index:5; pointer-events:none;
+  padding:5px 11px; border-radius:999px; font-size:12.5px; font-weight:600;
+  line-height:1.3; color:#fff; white-space:nowrap; opacity:0;
+  transform:translateY(4px); transition:opacity .18s ease-out, transform .18s ease-out }
+.vt-chenh.hien{ opacity:1; transform:none }
+.vt-chenh.vt-tang{ background:rgba(150,30,20,.92) }
+.vt-chenh.vt-giam{ background:rgba(20,100,45,.92) }
+/* §20 · W10 — dòng trung tính, dùng cho "Đã hoàn tác" / "Đã làm lại". */
+.vt-chenh.vt-tin{ background:rgba(20,26,23,.9) }
+@media (prefers-reduced-motion:reduce){ .vt-chenh{ transition:none } }
+/* Điện thoại: bảng vật tư đã dời lên `top:58px`, nên dòng chênh nằm ngay dưới nó. */
+html.dt-on .vt-chenh{ bottom:auto; top:84px; font-size:11.5px; padding:4px 9px }
+
+/* ════ VỎ BẢN 3 (LỆNH giao diện bản 3, 25/09/2026) ══════════════════════════════
+   Lưới 3 cột × 2 hàng theo lệnh §1: thanh đầu 52 · cột bước 230 · 3D · bảng bước
+   360 · thanh đáy 56.
+   ⚠ ĐẶT CUỐI TỆP, sau mọi khối `@media`: quy tắc ở đây ghi đè `.app`/`.bang-dk` của
+     vỏ cũ mà `@media` KHÔNG cộng độ đặc hiệu (bài học đã ghi cho đợt mobile 30/08).
+   ⚠ Chiều cao dùng `svh`, không `vh`: trên iOS `vh` tính theo khung KHÔNG có thanh
+     địa chỉ, nên thanh đáy bị đẩy khuất dưới mép màn hình. */
+/* ⚠ DÍNH THEO MÀN HÌNH (`sticky`), không chỉ đặt chiều cao. Trang còn có chrome
+   site + hero phía trên (đo: 217 px ở 1440×1000), nên một khung cao đúng
+   `100svh − 24` bắt đầu ở y=217 sẽ đẩy THANH ĐÁY xuống dưới mép màn hình — mà thanh
+   đáy là nơi luật ③ của lệnh sống (m² · tấm · chỗ nối · cảnh báo). Dính thì cuộn qua
+   hero một nhịp là cả khung vào trọn màn, và số ở đáy luôn thấy được.
+   ⚠ `top` phải bằng ĐÚNG phần trừ trong `height`, nếu không khung thò ra một đầu. */
+.v3{display:grid;grid-template-columns:230px minmax(0,1fr) 360px;
+  grid-template-rows:52px minmax(0,1fr) 56px;
+  grid-template-areas:"dau dau dau" "cot san bang" "day day day";
+  /* ⚠ `top` phải TRỪ CHIỀU CAO HEADER SITE đang dính (đo 25/09: `.hdr` sticky,
+     top:0, cao 83 px). Đặt `top:12` thì thanh đầu công cụ nằm DƯỚI header và bị che
+     hẳn — trên ảnh chụp thấy logo công cụ mất, chỉ còn menu site. */
+  position:sticky;top:95px;height:calc(100svh - 107px);min-height:520px;gap:0;
+  background:var(--the);border:1px solid var(--vien);border-radius:14px;
+  box-shadow:var(--bong);overflow:hidden}
+.v3-dau{grid-area:dau;display:flex;align-items:center;gap:14px;padding:0 14px;
+  border-bottom:1px solid var(--vien);background:var(--the)}
+.v3-logo{display:flex;flex-direction:column;line-height:1;text-decoration:none;font-weight:800;
+  font-size:11px;letter-spacing:.06em}
+.v3-logo b{color:var(--nhan)}.v3-logo i{color:var(--vang);font-style:normal}
+.v3-ten{font-weight:700;font-size:15px;color:var(--muc)}
+.v3-ma{margin-left:auto;font-size:12px;color:var(--muc3)}
+.v3-dau .q-cta{margin-left:10px}
+.v3-cot{grid-area:cot;border-right:1px solid var(--vien);padding:10px 8px;overflow-y:auto;
+  background:var(--nen)}
+.v3-b{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;
+  font-size:13.5px;font-weight:600;color:var(--muc)}
+.v3-b i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;
+  font-size:11px;font-style:normal;background:var(--nhan);color:#fff;flex:none}
+.v3-b-mo{background:var(--nhan-nh)}
+.v3-b-xam{color:var(--muc3);cursor:pointer}
+.v3-b-xam i{background:var(--vien)}
+.v3-muc{list-style:none;margin:2px 0 10px;padding:0 0 0 14px;border-left:2px solid var(--vien2)}
+.v3-muc button{display:block;width:100%;text-align:left;border:0;background:none;
+  padding:7px 9px;border-radius:8px;font:inherit;font-size:13px;color:var(--muc2);cursor:pointer}
+.v3-muc button:hover{background:var(--vien2)}
+.v3-muc button.ch{background:var(--the);color:var(--muc);font-weight:600;
+  box-shadow:inset 3px 0 0 var(--nhan)}
+.v3-muc button b{color:var(--nhan);font-weight:700}
+.v3-ghi{font-size:12px;color:var(--muc3);padding:0 10px;margin:10px 0 0;line-height:1.5}
+.v3-san{grid-area:san;border:0;border-radius:0;box-shadow:none}
+/* ⚠ CANVAS LẤP TRỌN KHUNG 3D. Quy tắc nền `canvas{width:100%;height:auto}` giữ tỉ lệ
+   của thuộc tính `width`/`height` trên thẻ (1600×960), nên trong một ô cao 866 px nó
+   chỉ cao 425 và để lại một mảng trắng bằng nửa khung — đo được, và nhìn ảnh chụp thì
+   đọc ra "3D bị cắt đôi". `ui.js` đọc `clientWidth/clientHeight` để đặt bộ đệm vẽ nên
+   nó theo được kích thước thật. */
+.v3-san canvas{height:100%;width:100%;object-fit:cover}
+.v3-cong{position:absolute;top:10px;right:10px;display:flex;gap:6px;z-index:3}
+.v3-cong button{background:rgba(255,255,255,.94);border:1px solid var(--vien);
+  border-radius:9px;min-width:36px;height:36px;padding:0 10px;font-size:14px;cursor:pointer;
+  color:var(--muc)}
+.v3-nhac{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;z-index:3;
+  background:rgba(21,32,27,.86);color:#fff;font-size:12.5px;padding:7px 14px;border-radius:999px;
+  max-width:min(92%,640px);text-align:center;line-height:1.45}
+.v3-bang{grid-area:bang;border-left:1px solid var(--vien);padding:12px 14px 18px;
+  overflow-y:auto;background:var(--the)}
+.v3-bang-dau{font-size:15px;color:var(--muc);margin:0 0 10px;padding-bottom:9px;
+  border-bottom:1px solid var(--vien2)}
+/* §20 · W5 — dòng dẫn của bước, đầu bảng. To hơn chữ hướng dẫn thường (13,5 px so
+   với 11,5 px của `.tt`) vì nó là câu ĐẦU TIÊN thợ đọc khi mở một bước. */
+.v3-dan{display:block;margin-top:5px;font-size:13.5px;font-weight:400;line-height:1.45;
+  color:var(--nhan)}
+/* BS44 §2.2 — lối quay về "‹ Cả vách" ở đầu bảng phải. Chỉ hiện khi đang chọn một vật
+   (JS lật `hidden`), nên nó không bao giờ là một nút trỏ về chính chỗ đang đứng. */
+/* ⚠⚠ KHÔNG khai `display` ở đây. `#v3VeVach` ẩn/hiện bằng thuộc tính `hidden`, mà một
+   quy tắc `display` trên lớp **đè mất `[hidden]`** — nút sẽ hiện cả khi không chọn gì.
+   Cổng `112a` (§52.2) bắt đúng điều này ngay lượt đầu: *"1 quy tắc MỚI đè mất `hidden`:
+   .v3-ve-vach → display"*. `<button>` vốn đã là `inline-block`, nên khai lại chỉ để cho
+   đẹp mắt mà đổi lấy một nút chết không tắt được. */
+.v3-ve-vach{margin-top:7px;padding:4px 10px;font-size:12.5px;
+  line-height:1.2;border:1px solid var(--vien2);border-radius:999px;background:#fff;
+  color:var(--muc);cursor:pointer}
+.v3-ve-vach:hover{border-color:var(--xanh,#24700b);color:var(--xanh,#24700b)}
+.v3-day{grid-area:day;display:flex;align-items:center;gap:12px;padding:0 14px;
+  border-top:1px solid var(--vien);background:var(--the)}
+.v3-so{display:flex;gap:18px;align-items:center;min-width:0;overflow:hidden}
+.v3-so span{display:flex;flex-direction:column;line-height:1.15;white-space:nowrap}
+.v3-so b{font-size:15px;color:var(--muc);font-variant-numeric:tabular-nums}
+.v3-so small{font-size:10.5px;color:var(--muc3)}
+.v3-so .v3-xau b{color:var(--sai)}
+/* Nhấp đỏ MỘT NHỊP khi số TĂNG — xem ghi chú ở `veDay()` trong vo.js. */
+.v3-tang b{color:var(--sai);animation:v3nhay .3s ease}
+@keyframes v3nhay{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
+.v3-di{margin-left:auto;display:flex;gap:8px;flex:none}
+/* Vỏ cũ tắt hẳn khi vỏ mới chạy — hai vỏ cùng hiện là hai bảng điều khiển cho
+   một việc, đúng thứ TGĐ bác. */
+.v3-on .app,.v3-on .bang-dk{display:none}
+/* ── KHỔ ĐIỆN THOẠI (< 1024) ────────────────────────────────────────────────
+   ⚠⚠ KHÔNG ẩn cả `.v3`: khung 3D (`.v3-san`) nằm TRONG nó, ẩn cả khung là mất luôn
+     canvas và tầng điện thoại dựng ra một trang không có vách. Đã dính đúng thế —
+     `qa-vach-dt.js` ra "khung 3D cao 0px" ở sáu ca liền.
+   Thay vào đó: lưới bung thành khối, ba phần của vỏ máy tính ẩn, và `.v3-san` giữ
+   nguyên để `html.dt-on .san{…}` (Bổ sung 8) tiếp tục cai quản nó. */
+@media (max-width:1023px){
+  .v3{display:block;position:static;height:auto;min-height:0;border:0;border-radius:0;
+    box-shadow:none;background:none;overflow:visible}
+  /* ⚠ `.v3-cong` PHẢI ẨN THEO. Nó nằm TRONG `.v3-san` nên không bị quy tắc trên chạm
+     tới, và `dt.js` có bộ nút tròn riêng ở cùng góc — ảnh chụp tên miền thật cho thấy
+     HAI bộ nút đè lên nhau. Ẩn ở đây chứ không gỡ khỏi HTML: khổ máy tính vẫn cần nó. */
+  /* ⚠⚠ `.v3-moc` VÀ `#v3Nhac` PHẢI ẨN THEO, và ẩn bằng CSS chứ không dựa vào
+     `veMoc()`. `veMoc()` có nhánh "đang ở tầng điện thoại thì xoá rỗng", nhưng
+     `vo.js` chạy TRƯỚC khi `dt.js` gắn lớp `dt-on`, nên lượt vẽ đầu tiên vẫn đổ
+     mốc khổ tấm + nhãn M vào DOM và không có gì vẽ lại. Đo trên tên miền thật ở
+     khổ 390: `v3Moc` 389×437 và 10 nhãn `<i>` nằm CHỒNG LÊN khung 3D — đúng điều
+     Bổ sung 15 §2 đòi không được có. Một nhánh phụ thuộc thứ tự nạp thì sớm muộn
+     cũng chạy sai thứ tự; luật hình thức thì không. */
+  .v3-dau,.v3-cot,.v3-bang,.v3-day,.v3-cong,.v3-moc,#v3Nhac{display:none}
+  .v3-san{border-radius:14px;border:1px solid var(--vien)}
+  .v3-nhac{bottom:8px;font-size:12px}
+}
+/* Lớp phủ MỐC KHỔ + NHÃN MẢNG trên 3D (lệnh bản 3 §1b, §1).
+   `pointer-events:none` trên cả lớp: nó nằm đè lên 3D, mà 3D là nơi khách chạm. */
+.v3-moc{position:absolute;inset:0;z-index:2;pointer-events:none}
+.v3-moc i{position:absolute;transform:translate(-50%,-50%);background:var(--nhan);
+  color:#fff;font-style:normal;font-size:11px;font-weight:600;padding:2px 7px;
+  border-radius:999px;white-space:nowrap}
+.v3-moc u{position:absolute;transform-origin:0 50%;height:0;
+  border-top:1.5px dashed rgba(255,255,255,.72);text-decoration:none}
+.v3-moc b{position:absolute;transform:translate(-50%,-100%);background:rgba(21,32,27,.86);
+  color:#fff;font-size:11px;font-weight:500;padding:3px 9px;border-radius:7px;white-space:nowrap}
+/* ⚠ BẢNG VẬT TƯ NỔI (mục 2.7) ẨN KHI VỎ BẢN 3 CHẠY. Nó in đúng ba con số mà thanh đáy
+   của vỏ mới đã in (m² · tấm · chỗ nối), và nó nằm đè lên dòng nhắc giữa khung 3D —
+   ảnh chụp mục 1b cho thấy hai khối chữ chồng lên nhau. Một thông tin hai chỗ thì sớm
+   muộn hai chỗ lệch nhau; luật ③ của lệnh giao cho THANH ĐÁY, nên thanh đáy giữ. */
+.v3-on .bang-vt{ display:none }
+
+/* ═══ HAI NÚT NHỎ THANH ĐẦU + HAI HỘP NHỎ (Bổ sung 16 ①) ════════════════════════
+   Ba nút phải sang trái: Nhận báo giá · Xuất ảnh & bản vẽ · Lưu / Gửi link.
+   ⚠ `margin-left:auto` đặt trên nút TRÁI NHẤT của nhóm, không trên từng nút: đặt
+     trên từng nút thì mỗi nút tự đẩy mình sang phải và ba nút dính vào nhau ở mép. */
+.v3-dau .q-nho{ background:var(--the); color:var(--chu); border:1px solid var(--vien);
+  border-radius:9px; padding:0 12px; height:34px; font-size:.86rem; font-weight:600;
+  cursor:pointer; margin-left:8px; white-space:nowrap }
+.v3-dau .q-nho:hover{ border-color:var(--nhan); color:var(--nhan) }
+.v3-dau #qLuu{ margin-left:auto }
+.v3-nen{ position:fixed; inset:0; background:rgba(15,20,16,.5); z-index:60 }
+.v3-hop{ position:fixed; z-index:61; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:min(680px,calc(100vw - 32px)); max-height:min(80vh,760px); display:flex;
+  flex-direction:column; background:var(--the); border:1px solid var(--vien);
+  border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,.22); overflow:hidden }
+.v3-hop-dau{ display:flex; align-items:center; gap:10px; padding:14px 16px;
+  border-bottom:1px solid var(--vien) }
+.v3-hop-dau b{ font-size:1.02rem }
+.v3-hop-x{ margin-left:auto; width:34px; height:34px; border-radius:9px;
+  border:1px solid var(--vien); background:var(--the); cursor:pointer; font-size:1rem }
+.v3-hop-than{ padding:16px; overflow:auto }
+/* Khối được dời vào hộp bỏ lề ngoài của chính nó — lề đó là lề của trang cũ. */
+.v3-hop-than>*{ margin-top:0 }
+.v3-hop-than>*+*{ margin-top:14px }
+@media (max-width:640px){
+  .v3-hop{ width:100vw; max-height:88vh; left:0; top:auto; bottom:0; transform:none;
+    border-radius:16px 16px 0 0 } }
+
+/* Nhãn mét trên đoạn LED (Bổ sung 16 ⑤) — nẹp đậm, ngoài nhạt, đúng như vạch trên 3D. */
+.v3-moc em{ position:absolute; transform:translate(-50%,-50%); font-style:normal;
+  font-size:.7rem; font-weight:700; line-height:1; padding:3px 6px; border-radius:6px;
+  white-space:nowrap; pointer-events:none }
+.v3-moc em.vo-led-nep{ background:#C8890B; color:#fff }
+.v3-moc em.vo-led-ng{ background:rgba(200,137,11,.42); color:#3b2a00;
+  border:1px dashed rgba(90,62,0,.55) }
+
+/* Hàng nút góc nhìn nhanh trên khung 3D (Bổ sung 16 ③) — cùng kiểu với ↶ ↷ để mắt
+   đọc ra chúng là một nhóm công cụ, tách khỏi nút ▦ Sơ đồ bằng một khe. */
+.v3-goc{ display:inline-flex; gap:4px; margin-left:8px;
+  padding-left:8px; border-left:1px solid rgba(0,0,0,.12) }
+.v3-goc button{ min-width:34px }
+
+/* ═══ CÔNG CỤ CHIẾM TRỌN MÀN HÌNH TRÊN MÁY TÍNH (TGĐ 26/09) ═══════════════════
+   TGĐ nhìn bản vừa phát: "Giao diện mới nằm trên giao diện cũ như pop up. Bỏ giao
+   diện cũ đi, làm mới hoàn toàn."
+   Đúng: khung bản 3 đang là một THẺ BO GÓC nổi giữa trang cũ — trên nó còn thanh
+   khuyến mãi, menu site, tiêu đề trang và dòng phụ; dưới nó còn chân trang. Bản 3
+   thay giao diện của CÔNG CỤ, nhưng trang vẫn là trang cũ bọc quanh.
+   Điện thoại đã làm việc này từ Bổ sung 8 (`html.dt-app`); đây là vế máy tính.
+
+   ⚠ Ẩn dưới `html.v3-on` — lớp do `vo.js` bật khi vỏ dựng xong. Ẩn bằng `@media`
+     một mình thì trang không có JS (hoặc JS hỏng) sẽ mất sạch chrome mà không có
+     công cụ nào thay vào: khách nhận một trang trắng. `#vachHong` lo ca đó.
+   ⚠ Từ 861px trở lên — dưới ngưỡng đó `dt-app` đã lo, và hai luật cùng ẩn một thứ
+     thì không sao, nhưng `.v3` full-viewport sẽ đá vào bố cục điện thoại.
+   ⚠ `.vach-h1` KHÔNG xoá khỏi trang, chỉ cho khuất mắt: trang phải còn đúng một
+     `<h1>` cho cấu trúc tài liệu và trình đọc màn hình. Thanh đầu công cụ là `<span>`,
+     không phải tiêu đề. */
+@media (min-width:861px){
+  html.v3-on .topbar, html.v3-on .hdr, html.v3-on .ft{ display:none }
+  html.v3-on .vach-phu{ display:none }
+  html.v3-on .vach-h1{ position:absolute; width:1px; height:1px; margin:-1px;
+    padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0 }
+  html.v3-on .vach-trang{ padding:0 }
+  html.v3-on .vach-trang>.wrap-wide{ padding:0; max-width:none }
+  html.v3-on .v3{ position:fixed; inset:0; height:100svh; min-height:0;
+    border:0; border-radius:0; box-shadow:none; z-index:20 }
+  /* Trang không còn gì để cuộn: mọi thứ nằm trong khung, và cuộn nền phía sau một
+     ứng dụng toàn màn hình chỉ làm khung trôi đi trong khi nội dung đứng yên. */
+  html.v3-on, html.v3-on body{ overflow:hidden; overscroll-behavior:none }
+}
+/* ⚠ §20 · W14 — câu này nay ở CUỐI BẢNG BƯỚC 3, không còn ở thanh đáy. Nên:
+   · bỏ lề trái 18px (lề đó để tách nó khỏi ba con số trong thanh đáy);
+   · bỏ `@media (max-width:1180px){display:none}` — ẩn theo bề rộng là đúng khi nó
+     tranh chỗ với ba con số trong một thanh ngang, nhưng trong bảng dọc thì màn hình
+     hẹp KHÔNG phải lý do để giấu câu nói về giới hạn màu;
+   · thêm vạch ngăn trên, vì nó đứng sau bảng khối lượng chứ không cạnh số liệu. */
+.v3-ghichu{ margin:14px 0 0; padding-top:10px; border-top:1px solid var(--vien2);
+  font-size:.8rem; line-height:1.4; color:var(--ink-600); max-width:52ch }
+.v3-ghichu a{ color:var(--green-700); font-weight:600 }
+
+/* ── §20 · W12 — DANH SÁCH KIỂM "Vách sẵn sàng báo giá?" ────────────────────────
+   Ba trạng thái ba màu, và ba màu là CỐ Ý: ✓ xanh (xong) · ! vàng (nên biết, không
+   phải lỗi) · ✕ đỏ (nên sửa). Gộp vàng vào đỏ là dạy thợ phớt lờ màu đỏ — "mảng dài
+   hơn khổ tấm phải nối vân" là sự thật vật lý, không phải lỗi của ai. */
+ul.soat{ list-style:none; margin:6px 0 0; padding:0; display:flex; flex-direction:column; gap:6px }
+ul.soat li{ display:flex; align-items:flex-start; gap:8px; font-size:12.5px; line-height:1.4 }
+ul.soat li>span{ flex:1; min-width:0 }
+ul.soat i{ flex:0 0 17px; width:17px; height:17px; border-radius:50%; font-style:normal;
+  font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;
+  color:#fff; margin-top:1px }
+ul.soat i.s-ok{ background:#1f7a3d } ul.soat i.s-nhac{ background:#b07a00 }
+ul.soat i.s-xau{ background:#b3261e }
+ul.soat button{ flex:0 0 auto; font-size:11.5px; padding:2px 8px }
+
+/* §20 · W5 — hình mặt cắt nhỏ trên ba nút uốn của thẻ mối nối. */
+#theNoi button{ display:inline-flex; align-items:center; gap:5px }
+.mn-hinh{ flex:0 0 17px; opacity:.72 }
+#theNoi button.ch .mn-hinh{ opacity:1 }
+#theNoi button:disabled .mn-hinh{ opacity:.4 }
+
+/* §19.1 — khung kéo chọn nhiều mảng. `pointer-events:none`: nó nằm trên canvas đang
+   nhận chính cú kéo vẽ ra nó. */
+.khung-chon{ position:absolute; z-index:6; pointer-events:none;
+  border:1.5px dashed #1aa04a; background:rgba(26,160,74,.12); border-radius:3px }
+
+/* ── §20 · W1 — THẺ DẪN BA BƯỚC (hiện một lần) ──────────────────────────────────
+   `position:fixed` vì nó neo theo khung nhìn: công cụ chiếm trọn màn hình và không
+   cuộn, nên `fixed` và `absolute` trùng nhau ở đây — `fixed` thì không phụ thuộc
+   phần tử cha nào có `position` hay không. */
+.v3-dan1{ position:fixed; width:260px; z-index:60; background:var(--the);
+  border:1px solid var(--vien); border-radius:12px; padding:11px 13px 9px;
+  box-shadow:0 10px 28px rgba(0,0,0,.18); font-size:12.5px; line-height:1.45 }
+.v3-dan1 p{ margin:0 0 9px }
+/* ⚠ `flex:0 0 auto` + `nowrap`: nút trong thẻ này thừa hưởng bề rộng co giãn của
+   nút chung, nên "Tiếp" giãn hết chỗ trống còn "Bỏ qua" bị ép bẻ hai dòng
+   ("Bỏ / qua"). Nhìn ảnh mới thấy — đọc CSS thì cả hai quy tắc đều đúng. */
+.v3-dan1-nut{ display:flex; align-items:center; gap:7px }
+.v3-dan1-nut button{ flex:0 0 auto; width:auto; min-width:0; white-space:nowrap;
+  font-size:12px; padding:4px 12px }
+.v3-dan1-so{ margin-left:auto; font-size:11px; color:var(--muc3);
+  font-family:ui-monospace,Menlo,monospace }
+
+/* ⚠ `#hud` (dòng trạng thái đen, trải hết bề ngang đáy 3D) và `.v3-nhac` (bóng chữ
+   nhắc, căn giữa đáy) CÙNG NẰM Ở ĐÁY và chồng lên nhau — ảnh chụp toàn màn hình thấy
+   "32 đoạn mạc…" bị bóng nhắc che mất đuôi. Hai khối đều đúng chỗ khi đứng một mình;
+   chỉ khi công cụ chiếm trọn màn hình thì đáy mới hết chỗ.
+   Đẩy dòng nhắc lên trên dải hud thay vì thu hud lại: hud là dòng SỐ ĐO, cắt nó đi là
+   mất thông tin, còn dòng nhắc thì chỉ cần nằm trong tầm mắt. */
+.v3-on .v3-nhac{ bottom:40px }
+
+/* Nhãn của mảng ĐANG CHỌN nổi hơn — nó là nhãn duy nhất ở phần lớn các mục, nên nó
+   phải đọc ra là "mảng anh đang sửa", không phải một nhãn lạc. */
+.v3-moc i.vo-nhan-chon{ background:var(--nhan); color:#fff; border-color:var(--nhan) }
+
+/* ═══ THANH BƯỚC VỚI BỐN BƯỚC — CHỮ PHẢI ĐỌC ĐƯỢC HẾT (TGĐ 27/09) ═══════════════
+   Thêm bước "Kích thước" làm thanh bước từ ba lên bốn nút. Đo ở 390px: thanh KHÔNG
+   tràn (4 × 86px vừa khít) nhưng CHỮ TRONG NÚT bị cắt — "Kích thướ", "Màu & nẹ".
+   ⚠ Phép đo đầu của tôi so `scrollWidth` của thanh và ra "tràn 0px" ở cả ba khổ,
+     tức BÁO SẠCH trong khi ảnh chụp thấy rõ chữ cụt. Nút có `overflow:hidden` nên
+     phần cắt không làm thanh rộng thêm — đo thanh thì không bao giờ thấy.
+   Cách xử: ở khổ hẹp bỏ vòng số thứ tự (nó đã có màu nền cho bước đang mở, và bốn
+   bước thì thứ tự đọc được từ trái sang), thu cỡ chữ và lề. Không thu tên bước:
+   "Kích thước" và "Màu & nẹp" là hai thứ khách phải phân biệt được. */
+@media (max-width:430px){
+  html.dt-app .dt-buoc button{ font-size:12px; padding:0 3px; gap:0 }
+  html.dt-app .dt-buoc button>i{ display:none }
+  html.dt-app .dt-buoc button[aria-selected="true"]{ font-weight:700 }
+}
+
+/* Nút ± hai bên ô số (TGĐ 27/09). Cao 44px trên điện thoại — dưới ngưỡng đó thì
+   ngón tay trượt sang ô nhập và bàn phím bật lên, đúng thứ hai nút này tránh. */
+.so-cum{ display:flex; align-items:stretch; gap:0; flex:1 1 0; min-width:0 }
+.so-cum input{ flex:1 1 0; min-width:0; border-radius:0; text-align:center }
+.so-nut{ flex:0 0 auto; width:40px; min-height:40px; border:1px solid var(--vien);
+  background:var(--the); color:var(--chu); font-size:18px; line-height:1;
+  cursor:pointer; -webkit-user-select:none; user-select:none; touch-action:manipulation }
+.so-nut:first-child{ border-radius:10px 0 0 10px; border-right:0 }
+.so-nut:last-child{ border-radius:0 10px 10px 0; border-left:0 }
+.so-nut:active{ background:var(--nhan-nh); color:var(--nhan) }
+html.dt-app .so-nut{ width:46px; min-height:46px; font-size:20px }
+
+/* Báo ngữ cảnh WebGL bị thu hồi (xem chú thích ở `ui.js`). Nằm trên mọi thứ, chừa
+   mép an toàn của máy có tai thỏ, và đủ tương phản để đọc được trên nền ảnh bất kỳ. */
+.v3-gl-mat{ position:fixed; left:12px; right:12px; z-index:9000;
+  bottom:calc(12px + env(safe-area-inset-bottom,0px));
+  display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px;
+  background:#1d2320; color:#fff; border-radius:12px; padding:12px 14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35); font-size:13px; line-height:1.45 }
+.v3-gl-mat b{ font-size:14px; width:100% }
+.v3-gl-mat span{ flex:1 1 180px; color:#d6dcd7 }
+.v3-gl-mat button{ flex:0 0 auto; min-height:40px; padding:0 16px; border-radius:9px;
+  border:0; background:#fff; color:#1d2320; font-weight:600; font-size:13px }
+
+/* Bộ soi `?soi=1` (xem chú thích ở `ui.js`). `pointer-events:none` là BẮT BUỘC —
+   một bộ soi chắn mất cú chạm thì nó tạo ra đúng triệu chứng đang đi tìm. */
+.v3-soi{ position:fixed; left:0; right:0; z-index:9500; pointer-events:none;
+  top:env(safe-area-inset-top,0px); background:#111a14; color:#9ef7c4;
+  font:11px/1.5 "IBM Plex Mono",ui-monospace,monospace; padding:5px 8px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+
+/* Nhãn "mạch" — phân biệt với nhãn mảng M1…Mn bằng MÀU và hình dáng, không chỉ bằng
+   chữ: hai nhãn chỉ khác chữ thì ở cỡ đó người ta đọc ra cùng một thứ. */
+/* ⚠⚠ §26 · X4 — THẺ CHỮ NỔI TRÊN 3D ĐÃ BỎ khỏi mã (lớp `dt-nhan` + `mach`, viết
+   rời ra ở đây là CỐ Ý: `kiem_lop_dt()` quét chuỗi `.dt-…` không phân biệt chú
+   thích với quy tắc, nên viết đủ tên lớp trong một ghi chú là tự đẻ ra một cảnh
+   báo 'quy tắc không nơi nào dùng' cho một quy tắc không còn tồn tại). Quy tắc giữ
+   lại thì `kiem_lop_dt()` báo "không nơi nào dùng"; xoá đi thì không ai biết từng có
+   một thẻ như thế và vì sao bỏ. Nên xoá quy tắc, ghi lý do ở đây:
+   thẻ nằm giữa 3D che nửa vách, và với nẹp NGANG nó đè lên đúng thanh nẹp vừa chạm.
+   Thông số nay ở đầu tờ (điện thoại) / đầu bảng (máy tính) — `.dt-ten-phu`, `.v3-chon`. */
+
+/* ══ §26 · X4 — TIÊU ĐỀ TỜ HAI DÒNG, VÀ NÓ ĂN MẤT MỘT HÀNG Ô MÃ ═══════════════
+   Dòng phụ làm `.dt-tam-dau` cao **40 → 62 px**, thân tờ 320 → 315, và lưới mã ở
+   việc `g-mau` tụt từ **12 ô lộ xuống 8** — cổng 25c bắt ngay. Thiếu đúng **4 px**
+   cho hàng thứ ba (3 × 72 + 2 × 6 = 228, chỗ còn 224).
+   ⇒ Thu đệm dọc của tiêu đề 10 → 6 px và siết dòng phụ. KHÔNG bỏ dòng phụ: X4 nói rõ
+     *"dòng phụ 'Nẹp EBN86002 + EBN86001'"*, và §14 ② thì chốt 12 ô lộ — hai yêu cầu
+     cùng đúng được, chỉ cần lấy lại vài pixel ở chỗ không ai đo.
+   ⚠ Nút ✕ cao 36 px nên phần đệm 6 px vẫn đủ chỗ cho nó; đo lại sau khi sửa. */
+html.dt-on .dt-tam-dau{ padding-top:6px; padding-bottom:6px }
+.dt-tam-dau .dt-ten-chinh{ display:block; line-height:1.25 }
+.dt-tam-dau .dt-ten-phu{ display:block; font-weight:400; font-size:11.5px;
+  line-height:1.3; color:var(--muc3) }
+/* §26 · X4 — dòng thông số ở đầu bảng phải của bản máy tính. */
+.v3-bang-dau .v3-chon{ display:block; margin-top:4px; font-size:12.5px;
+  font-weight:400; color:var(--nhan) }
+
+/* ── NÚT GỌN TRÊN ẢNH: Mạch · Ánh sáng (TGĐ 27/09) ─────────────────────────────
+   Đặt ở GÓC DƯỚI TRÁI khung 3D: góc trên đã có hoàn tác/làm lại và hàng góc nhìn,
+   góc dưới phải là chỗ hud. Dùng CHUNG cho cả hai tầng — trên điện thoại chỉ đổi
+   cỡ chữ và mép, không dựng bản thứ hai. */
+/* ⚠ LÊN THANH NÚT TRÊN 3D (LỆNH bản 4 · D1 · M3). Trước 28/09 nó `position:absolute`
+   ở góc dưới trái và ĐÈ LÊN dòng nhắc: đo ở desktop 1440 che 172 px đầu chữ, ở khổ 390
+   chồng 87×28 px lên hộp nhắc. Nay nó là một phần của hàng nút, nên không còn chỗ nào
+   để đè. Hộp thả xuống vẫn `absolute`, neo theo chính chip. */
+.v3-tuy{ position:relative; display:inline-flex; align-items:center; gap:6px;
+  margin-left:6px; vertical-align:middle }
+.v3-tuy-hang{ display:flex; gap:6px }
+.v3-tuy-nut{ min-height:34px; padding:0 10px; border-radius:9px; font-size:12px;
+  font-weight:600; border:1px solid rgba(255,255,255,.35); background:rgba(20,26,22,.62);
+  color:#fff; backdrop-filter:blur(3px); white-space:nowrap }
+.v3-tuy-nut.ch{ border-color:var(--vang,#cc8d00); color:#ffd37a }
+.v3-tuy-hop{ background:#fff; border:1px solid var(--vien); border-radius:12px;
+  padding:10px 12px; box-shadow:0 10px 30px rgba(0,0,0,.22); max-width:min(78vw,300px) }
+.v3-tuy-hop b{ font-size:12.5px; display:block; margin-bottom:6px }
+.v3-tuy-nh{ font-size:11px; color:var(--muc3); display:block; margin:8px 0 4px }
+.v3-tuy-d{ display:flex; flex-wrap:wrap; gap:6px }
+.v3-tuy-d button{ min-height:34px; padding:0 10px; border-radius:8px; font-size:12px }
+.v3-tuy-tt{ font-size:11px; color:var(--muc3); margin:8px 0 0; line-height:1.45 }
+@media (max-width:860px){
+  .v3-tuy{ gap:5px; margin-left:4px }
+  .v3-tuy-nut{ min-height:32px; padding:0 9px; font-size:11.5px }
+  .v3-tuy-hop{ max-width:min(84vw,280px); padding:9px 10px }
+}
+
+/* Thẻ xếp tấm của mảng (Bổ sung 18 §3.2). Sơ đồ vẽ bằng SVG nên phóng to vẫn nét. */
+.tx-tom{ line-height:1.5 }
+.tx-so{ display:block; margin:8px 0 6px; max-width:100%; height:auto }
+/* §15 · T20 — dòng đọc sơ đồ xếp tấm: nói ra tấm nguyên, miếng cắt và m² thừa. */
+.tx-ct{ margin:2px 0 8px; font-size:11.5px; line-height:1.45; color:var(--muc2) }
+.tx-ghim{ font-size:11px; color:var(--muc3); white-space:nowrap }
+
+/* Câu tham khảo bắt buộc (LỆNH bản 4 §11.5) — nhạt hơn nội dung nhưng đọc được. */
+.bg-thamkhao,.v3-thamkhao{ margin:8px 0 0; font-size:11.5px; line-height:1.55;
+  color:var(--mo,#6b7280); border-top:1px solid var(--vien,#e5e7eb); padding-top:7px }
+/* Số "nối vân" trên thanh tổng điện thoại — đỏ khi > 0 (LỆNH bản 4 · M7). */
+html.dt-on .dt-so .dt-xau{ color:var(--sai,#c0392b); font-weight:700 }
+/* Chip "Xem" ở đầu thanh bước điện thoại (LỆNH bản 4 · M2) — hẹp hơn chip bước
+   vì nó là TRẠNG THÁI, không phải một bước phải đi qua. */
+html.dt-on #dtBuoc .dt-xem{ flex:0 0 auto; min-width:58px }
+
+/* ── LƯỚI MÀU TRÊN ĐIỆN THOẠI: 4 CỘT · Ô 72 px · 12 Ô LỘ RA ───────────────────
+   TGĐ chốt 28/09 (§14 ②): *"Ở 390 px không thể vừa ô ≥ 80 vừa 12 ô; chọn 12 ô lộ:
+   4 cột × ô 72 px (vẫn ≥ 44 px chạm được), mã ghi dưới ô cỡ 10 px, tiêu đề tấm gộp
+   vào hàng chip nhóm để lấy lại 40 px. Không thu 3D dưới 197 px."*
+   Đo trước đó: 6 cột · ô 57 px · mã ĐÈ lên ảnh; rồi 4 cột · ô 87 px · chỉ 8 ô lộ.
+   ⚠ Lấy 40 px bằng cách ẨN TIÊU ĐỀ "Màu vân" trên tầng điện thoại — đầu tấm đã ghi
+     "Màu tấm · nẹp", nên đó là dòng chữ thứ hai nói cùng một việc. KHÔNG thu 3D:
+     lệnh cấm, và Bổ sung 13 §2a đã phải đi giành lại chiều cao đó một lần. */
+html.dt-on .o-mau{ grid-template-columns:repeat(4,1fr); gap:6px }
+/* ⚠ Ba pixel cuối: lưới bắt đầu ở y=95 mà chỗ cho 3 hàng chỉ còn 92 px. Thu lề hàng
+   chip thay vì thu ô — ô 72 px là con số TGĐ chốt, lề thì không ai đo. */
+html.dt-on .dt-tam-than .loc-van{ margin:0 0 4px }
+html.dt-on #khuMauVan>.nh{ display:none }
+/* ══⚠⚠ §22 · X3 — BA LUẬT ĐÃ GỠ, ghi lại để không ai dựng lại ═══════════════════
+   TGĐ báo (ảnh 13:17): *"lưới màu vân xô lệch, mã màu chữ đen trên ô tối không đọc
+   được"*. Ba luật cũ ở đúng chỗ này là nguyên nhân, và chúng hỏng **cùng nhau**:
+
+       html.dt-on .o-mau i       { overflow:visible; padding-bottom:12px; max-height:72px }
+       html.dt-on .o-mau i>img   { inset:0 0 12px 0; height:auto }
+       html.dt-on .o-mau i>b     { background:none; color:var(--chu) }
+
+   Ý định là "đẩy mã xuống DƯỚI ảnh cho dễ đọc". Nhưng `height:auto` bỏ mất phép ép
+   ảnh vừa ô, nên ảnh cao theo tỉ lệ ảnh GỐC — mà 101 mã không cùng tỉ lệ; rồi
+   `overflow:visible` cho phần thừa tràn ra ngoài ô.
+
+   Đo trên tên miền (iPhone 13 giả lập, a693fd36) TRƯỚC khi gỡ:
+
+       ô 72 × 72 · ảnh cao 80…102 px · **92/101 ô tràn**, tràn tối đa **84 px**
+       26 mốc `top` khác nhau cho 101 ô  ⇒ hàng dưới bắt đầu trước khi hàng trên hết
+       nhãn `background: rgba(0,0,0,0)` · `color: rgb(31,41,55)`  ⇒ chữ đen trên vân tối
+
+   ⚠ Nhãn nằm ở y=677 trong khi ảnh chạy tới y≈700 — tức nó **vẫn nằm trên ảnh**, chỉ
+     là đã bị gỡ dải nền tối. Hai lỗi đến từ hai luật khác nhau nhưng cộng lại thành
+     một triệu chứng duy nhất người dùng thấy: "không đọc được mã".
+   ⚠ Luật GỐC `.o-mau i` (`overflow:hidden`) và `.o-mau i>img` (`inset:0; height:100%;
+     object-fit:cover`) vốn đã đúng cho cả hai vỏ — thứ cần cho điện thoại chỉ là SỐ
+     CỘT. Đè thêm ba luật là sửa một thứ không hỏng.
+   ⚠ Muốn mã nằm DƯỚI ảnh thật thì phải làm bằng `display:grid; grid-template-rows:
+     1fr auto` trong ô và ảnh có `aspect-ratio`, KHÔNG phải bằng `padding-bottom` +
+     `position:absolute` — đó là cách đã hỏng. Chưa làm, vì mã trên dải tối đọc được
+     và mỗi dòng CSS thêm vào đây là một chỗ đè lên luật gốc.
+   Giữ lại đúng một thứ: cỡ chữ 10 px (§14 ② TGĐ chốt) — nó KHÔNG đổi bố cục vì nhãn
+   `position:absolute`, chỉ làm dải nền dày thêm vài pixel. */
+/* ⚠⚠ TRẦN 72 px PHẢI GIỮ — §14 ② TGĐ chốt "4 cột × ô 72 px" để LỘ ĐỦ 12 Ô.
+   Lượt sửa X3 đầu tiên gỡ cả `max-height:72px` cùng với ba luật hỏng, nên ô nở theo
+   `aspect-ratio:1` ở 4 cột/390 px thành **87 px** và chỉ còn **8 ô lộ ra** — cổng 25c
+   bắt ngay. Thứ gây "xô lệch" là `height:auto` + `overflow:visible` trên ẢNH, KHÔNG
+   phải cái trần chiều cao của Ô.
+   ⚠ Bài học: gỡ một cụm luật hỏng thì phải tách ra luật nào trong cụm đang làm việc
+     thật. Gỡ cả cụm là đổi một lỗi lấy một lỗi khác. */
+html.dt-on .o-mau i{ max-height:72px }
+html.dt-on .o-mau i>b{ font-size:10px; line-height:1.45 }
+
+/* ⚠⚠ ĐÃ THỬ NỚI TẤM ĐỂ LỘ 3 HÀNG Ô MÃ VÀ GỠ RA — ghi lại để không ai thử lại.
+   Hai yêu cầu xung khắc ở khổ 390: M5 đòi ô ≥ 80 px, còn Bổ sung 7 §3 đòi ≥ 3 hàng
+   lộ ra → cần 386 px thân tấm, trong khi thân tấm đang 320 px.
+   Đã thử: thu 3D 56svh → 46svh (3D 472 → 388 px) VÀ nới `max-height` của tấm
+   40svh → 52svh. Đo lại: `max-height` computed = 438 px, tấm cao 378 px, mà **thân
+   tấm vẫn đúng 320 px và vẫn 8 ô** — chỗ vừa nhường ra không chảy vào thân tấm.
+   Tức là một thay đổi làm 3D nhỏ đi 84 px mà KHÔNG đạt được việc của nó. Giữ lại
+   một sửa đổi như thế là trả giá mà không mua được gì, nên gỡ.
+   ⇒ Hiện: 4 cột · ô 87 px · mã nằm dưới ô · **8 ô lộ ra**. Cần TGĐ chốt: ưu tiên ô
+     to (8 ô) hay ưu tiên 12 ô (ô ~66 px, dưới ngưỡng M5). */
+
+
+/* ── VIỀN FOCUS CHO MỌI NÚT (LỆNH bản 4 · E8) ─────────────────────────────────
+   Đo 28/09: thứ tự Tab hợp lý ở thanh đầu và cột bước, nhưng **nút trên khung 3D
+   không có viền focus nhìn thấy được** — đi bằng bàn phím thì không biết mình đang
+   đứng ở nút nào.
+   ⚠ `:focus-visible`, không phải `:focus`: bấm chuột cũng đặt focus, và một vòng
+     viền hiện sau mỗi cú bấm chuột là nhiễu chứ không phải trợ giúp. */
+.v3-cong button:focus-visible, .v3-goc button:focus-visible,
+.v3-tuy-nut:focus-visible, #dtBuoc button:focus-visible,
+.dt-tron:focus-visible, #v3Cot button:focus-visible{
+  outline:2px solid var(--vang,#cc8d00); outline-offset:2px; border-radius:9px }
+
+/* ── 900–1200 px: THU HAI CỘT BÊN, NHƯỜNG CHỖ CHO 3D (LỆNH bản 4 · E4) ────────
+   Đo 28/09 ở khổ 1024: ba cột vẫn 230 + 360, nên khung 3D chỉ còn **434 px** và
+   vách bị cắt hai bên. Người mở trình duyệt không toàn màn hình trên laptop
+   1366/1440 rơi đúng vào vùng này.
+   Cột bước thu thành dải chữ hẹp (không thành dải icon: tên bước tiếng Việt là thứ
+   duy nhất nói cho khách biết bước đó làm gì, bỏ chữ là đổi một vấn đề chỗ hẹp
+   thành một vấn đề không đọc được). Bảng phải 320 px theo đúng lệnh.
+   ⚠ Đặt CUỐI TỆP: `@media` không cộng độ đặc hiệu — bài học đã ghi trong CLAUDE.md. */
+@media (min-width:900px) and (max-width:1200px){
+  .v3{ grid-template-columns:150px minmax(0,1fr) 320px }
+  .v3-cot{ padding:8px 5px }
+  .v3-b{ padding:7px 6px; font-size:12px; gap:5px }
+  .v3-muc button{ font-size:11.5px; padding:6px 7px }
+}
+/* Ô link trong hộp "Lưu / Gửi link" (LỆNH bản 4 · E1). */
+.lv-link{ display:flex; gap:6px; align-items:center; margin-top:8px; flex-wrap:wrap }
+.lv-link input{ flex:1; min-width:140px; font-size:12px; padding:7px 8px;
+  border:1px solid var(--vien); border-radius:8px; background:var(--nen) }
+
+/* ⚠⚠ MỘT NÚT GỬI LINK MỖI NGỮ CẢNH (TGĐ 27/09, cổng 50n). Hàng "Gửi link vách này ·
+   Gửi Zalo · Sao chép" thêm vào `#lvKhoi` cho hộp *Lưu / Gửi link* bên bản máy tính
+   (E1). Nhưng `#lvKhoi` sống TRONG `.do`, mà `.do` lại được dời vào tấm Báo giá của
+   điện thoại — nên trên điện thoại hiện ra HAI nút gửi link: cái này và thẻ "Gửi link
+   sang máy tính". Ẩn hàng này ở tầng điện thoại; ở đó thẻ kia đã làm đúng việc. */
+html.dt-on #lvKhoi .lv-link{ display:none }
+
+/* ── THẺ MỐI NỐI (LỆNH bản 4 §13) ─────────────────────────────────────────────
+   Hai hàng phải PHÂN BIỆT ĐƯỢC NGAY: cạnh cao và cạnh thấp là hai thứ khác nhau ở
+   cùng một chỗ trên tường, và toàn bộ §13 sinh ra vì người dùng không tách được
+   chúng. Nên mỗi hàng có tên mảng, cốt, và một vạch màu riêng. */
+.mn-dau{ font-size:13.5px; margin:0 0 8px }
+.mn-hang{ border:1px solid var(--vien); border-radius:10px; padding:8px 9px;
+  margin-bottom:8px; background:var(--nen) }
+.mn-hang:nth-of-type(1){ border-left:3px solid var(--vang,#cc8d00) }
+.mn-hang:nth-of-type(2){ border-left:3px solid rgba(204,141,0,.42) }
+.mn-ten{ font-size:12px; font-weight:600; color:var(--muc); margin-bottom:6px }
+.mn-r{ margin-top:5px }
+.mn-r button{ min-width:44px }
+
+/* `.pc-only` — CHỈ MÁY TÍNH, ẩn hẳn trên tầng điện thoại.
+   Ẩn bằng `html.dt-on` chứ không bằng `.chi-pc`: `.dt-tam-than .chi-pc` bật lại hiển
+   thị khi khối rơi vào tấm điện thoại, nên `.chi-pc` ở đây sẽ hiện đúng chỗ phải ẩn.
+
+   Dùng cho:
+   · nút kéo tạo đợt — §11.2 nói rõ điện thoại "không kéo tay";
+   · nút "Áp cho mọi mảng cùng màu" + dòng đếm của nó, và hàng chia đều đợt — cả ba
+     đều phục vụ tập chọn bằng **Shift**, mà trên cảm ứng không có Shift.
+
+   ⚠⚠ VÀ CÒN MỘT LÝ DO ĐẮT HƠN: TGĐ chốt §14 ② rằng tấm "Màu" trên điện thoại phải
+     lộ ra **12 ô mẫu**. Thân tấm chỉ 320 px, nên MỖI dòng thêm vào phía trên lưới đều
+     ăn trực tiếp vào con số đó. Bản đầu của tôi để nút và dòng đếm hiện ở cả hai bản
+     → cổng 25c đo ra **8 ô**, tức tôi vừa lấy lại đúng 4 ô mà §14 ② vừa quyết định
+     giành được. Thêm một điều khiển vào bảng 2a là một quyết định về không gian, không
+     phải một quyết định về tính năng. */
+html.dt-on .pc-only{ display:none }
+/* Thẻ đợt đang chọn / trong tập Shift — nền nhạt, không đổi viền: viền trái của
+   `.mn-hang` đang chở thông tin khác (thứ tự hàng ở thẻ mối nối). */
+.mn-hang.mn-ch{ background:var(--green-050,#f2f7ef) }
+
+/* ── THẺ MỐI NỐI Ở KHỔ HẸP (LỆNH bản 4 §13.6) ─────────────────────────────────
+   §13.6: "Điện thoại: cùng thẻ, hai hàng xếp dọc."
+   Đo ở 390 px: thẻ ĐÃ xếp dọc sẵn (hai `.mn-hang` 370×118, không tràn ngang) — nên
+   phần "xếp dọc" không phải việc phải làm. Thứ thật sự hỏng là **vùng chạm**:
+   **16/16 nút cao 35 px**, dưới ngưỡng 44 px mà cả đợt rà mobile đang giữ.
+   ⚠ Đặt ở CUỐI TỆP: `@media` không cộng độ đặc hiệu, nên khối ghi đè cho khổ hẹp mà
+     nằm giữa tệp sẽ thua chính quy tắc gốc đứng sau nó (đã dính một lần, 30/08).
+   ⚠ Dùng ngưỡng BỀ RỘNG chứ không `html.dt-on`: thẻ này hôm nay chỉ có trên máy tính
+     (xem ghi chú §13.6 trong HANDOFF), nên `html.dt-on` sẽ không bao giờ khớp — một
+     quy tắc không bao giờ chạy thì không sửa được gì. */
+@media (max-width:620px){
+  .mn-hang{ padding:10px }
+  .mn-hang .hang button, .mn-r button{ min-height:44px; padding-block:10px }
+}
+
+/* D15 · ảnh xem trước trong hộp "Xuất ảnh & bản vẽ".
+   ⚠ `max-width:100%` + `height:auto` chứ không khai bề rộng cứng: canvas được dựng ở
+   760 px, còn hộp thì hẹp hơn trên điện thoại — khai cứng là tràn ngang đúng chỗ khách
+   đang xem để quyết có tải hay không. */
+/* ⚠ BS22 §1.2 — nút BƯỚC LỚN (±100 · ±50) hẹp hơn nút bước cơ sở và chữ nhỏ hơn,
+   để cụm bốn nút không đẩy ô số co lại. Vẫn giữ cao 44 px ở `pointer:coarse` nhờ quy
+   tắc chung của `.so-nut`; chỉ bề NGANG hẹp hơn, không bề cao. */
+/* ══⚠⚠ BS22 §1.1 — NÚT ICON TIẾT DIỆN: icon trên, chữ ngắn dưới ═══════════════════
+   Lệnh: *"Điện thoại: icon 44 × 44, chữ 11 px; máy tính: 56 × 56."*
+ ⚠ Cỡ do CSS quyết, `viewBox` của cả mười icon là 24×24 — nhân cỡ trong `viewBox` là
+   mười chỗ phải sửa khi đổi cỡ (lý do đã ghi ở chính bảng `ICON_TD`).
+ ⚠ Nút xếp DỌC (icon trên, chữ dưới) nên `flex-direction:column`; `.mn-hinh` cũ nằm
+   ngang cạnh chữ, nay cùng một quy tắc cho cả hai lớp để không còn hai kiểu nút kiểu.
+ ⚠ `min-height` 44 px vẫn giữ ở `pointer:coarse` — luật vùng chạm không đổi vì nút
+   đổi hình. */
+/* ⚠⚠ `:not([hidden])` TRÊN MỌI QUY TẮC ĐẶT `display` — §52.2. Cổng `112a` bắt đúng
+   bốn quy tắc tôi vừa thêm: `[hidden]{display:none}` có độ đặc hiệu (0,1,0) nên một
+   quy tắc `.ic-td{display:block}` (cũng 0,1,0) nằm SAU nó trong tệp sẽ thắng — tức
+   `el.hidden = true` thôi không ẩn được nữa, và cái đó hỏng **im lặng**.
+ ⚠ Tách: thuộc tính KHÔNG phải `display` để ở bộ chọn trần, chỉ `display` đi qua
+   `:not([hidden])`. Nhét cả khối vào `:not()` là nâng độ đặc hiệu của mọi thuộc tính
+   lên theo, rồi lần sau muốn ghi đè một bề rộng lại phải nâng tiếp. */
+.ic-td{ width:56px; height:56px; flex:0 0 auto }
+.ic-td:not([hidden]){ display:block }
+.ic-chu{ font-size:12px; line-height:1.2; text-align:center;
+  max-width:9em; overflow-wrap:anywhere }
+.ic-chu:not([hidden]){ display:block }
+#theNoi button[data-mn], #tuLoai button[data-tl]{
+  flex-direction:column; align-items:center; gap:3px;
+  padding:6px 8px; min-height:44px }
+#theNoi button[data-mn]:not([hidden]), #tuLoai button[data-tl]:not([hidden]){
+  display:inline-flex }
+/* ⚠⚠ VỎ ĐIỆN THOẠI NHẬN BIẾT BẰNG `html.dt-on`, KHÔNG BẰNG `pointer:coarse`.
+   Đo được: ở khổ 390 px trên máy không cảm ứng, `pointer:coarse` KHÔNG khớp nên icon
+   vẫn 56 px — tức quy tắc "điện thoại 44 px" của lệnh không bao giờ chạy ở chính khổ
+   mà Cowork đo. Vỏ nào đang dùng là một quyết định BỐ CỤC (lớp `dt-on`), không phải
+   một năng lực của thiết bị trỏ.
+ ⚠ Giữ CẢ `pointer:coarse` để máy tính có cảm ứng cũng được vùng chạm 44 px — hai điều
+   kiện cho hai lý do khác nhau, không phải một bản sao. */
+html.dt-on .ic-td{ width:44px; height:44px }
+html.dt-on .ic-chu{ font-size:11px }
+@media (pointer:coarse){
+  .ic-td{ width:44px; height:44px }
+  .ic-chu{ font-size:11px }
+}
+
+/* ⚠ BS22 §1.2 — hàng CHIP GIÁ TRỊ SẴN. Gói dòng (`flex-wrap`) vì ở 390 px bốn chip
+   cộng nhãn không vừa một dòng, mà cắt chip thì khách không biết còn chip nào. */
+.chip-gt{ flex-wrap:wrap; align-items:center; gap:4px }
+.chip-gt:not([hidden]){ display:inline-flex }   /* §52.2 — xem ghi chú ở `.ic-td` */
+.chip-gt .tt{ margin:0 2px 0 0 }
+.chip-gt button{ min-height:30px; padding:0 9px; border-radius:8px; font-size:12px;
+  border:1px solid var(--vien); background:#fff; color:var(--muc) }
+.chip-gt button.ch{ border-color:var(--xanh,#24700b); color:var(--xanh,#24700b);
+  font-weight:700 }
+@media (pointer:coarse){ .chip-gt button{ min-height:44px; padding:0 12px } }
+
+.so-nut-lon{ font-size:11.5px; padding-inline:5px; min-width:34px; opacity:.88 }
+.so-nut-lon:hover{ opacity:1 }
+
+.gu-xem{ margin:0 0 10px }
+.gu-xem canvas{ display:block; width:100%; max-width:100%; height:auto;
+  border:1px solid var(--vien); border-radius:10px; background:#fff }
+.gu-xem .tt{ margin:6px 0 0 }
+
+/* §7 · thẻ thông số mảng (giữ-chạm trên điện thoại · chuột phải trên máy tính).
+   ⚠ `max-height:38%` của khung 3D — §7 đòi "không che 3D quá 40 %". Để `auto` thì một
+   mảng có tủ + uốn + nhiều mạch đẩy thẻ cao gần hết khung, đúng thứ §7 cấm. */
+/* ⚠⚠ BS18 §4 — BỀ RỘNG THẺ = KHUNG 3D − 2 × 12 px, và MỌI DÒNG PHẢI GÓI CHỮ.
+   TGĐ 09:34: *"pop-up thông tin mảng khi nhấn giữ bị hiện thiếu, mất chữ."* Bề rộng cũ
+   `min(320px, 84vw)` tính theo BỀ RỘNG MÀN HÌNH, không theo khung 3D — mà ở vỏ điện
+   thoại khung 3D hẹp hơn màn hình (tờ dưới chiếm chỗ), nên thẻ rộng hơn chỗ nó được
+   phép nằm và phần thừa bị kẹp ra ngoài.
+ ⚠ `min-width:0` + `overflow-wrap` trên từng dòng: một mã dài (`EB68031G-8-HK2`) là MỘT
+   từ không có chỗ ngắt, nên không có hai thuộc tính này thì nó đẩy thẻ rộng ra rồi bị
+   cắt — chữ mất mà hộp vẫn trông bình thường.
+ ⚠ Giữ `max-height:38%` (§7: "không che 3D quá 40 %") và `overflow:auto` — thẻ cao hơn
+   khung thì cuộn TRONG thẻ, đúng BS18 §4. */
+.pop.ts{ width:min(320px,calc(100% - 24px)); max-width:calc(100% - 24px); min-width:0;
+  max-height:38%; overflow:auto; padding:12px 12px 10px }
+.pop.ts .ts-ten, .pop.ts .ts-d{ min-width:0; overflow-wrap:anywhere; white-space:normal }
+/* ⚠ Chừa chỗ cho nút ✕ (30 px + 6 px mép) ở dòng ĐẦU, nếu không nó đè lên tên mảng. */
+.pop.ts .ts-ten{ padding-right:34px }
+.pop.ts .ts-ten{ font-weight:700; font-size:13.5px; margin-bottom:6px }
+.pop.ts .ts-d{ font-size:12.5px; color:var(--muc); margin:3px 0; line-height:1.45 }
+.pop.ts .hang{ margin-top:10px }
+.pop.ts .hang button{ min-height:44px }
+
+/* ══ §28 · X5 — BẢNG THAO TÁC NỔI ═══════════════════════════════════════════════
+   Số đo của §28.2: tối đa 280 × ~360 px trên máy tính (92 % bề ngang trên điện
+   thoại), nền tối 90 %, chữ 13 px, mỗi nút cao ≥ 40 px.
+   ⚠ Nền TỐI là một đổi khác thấy rõ so với thẻ cũ (nền sáng): bảng nay nằm TRÊN
+     hình 3D và phải đọc được trên cả vách trắng lẫn vách đen. Nền sáng trên một
+     vách trắng là chữ xám trên nền trắng. */
+.pop.ts{ background:rgba(20,26,23,.92); color:#fff; border-color:rgba(255,255,255,.18);
+  backdrop-filter:blur(4px); width:min(280px,92vw); max-height:360px; font-size:13px }
+.pop.ts .ts-ten, .pop.ts .ts-d{ color:#fff }
+.pop.ts .ts-d{ color:rgba(255,255,255,.82) }
+.pop.ts .ts-x{ color:#fff }
+/* Hàng thông tin và vùng thao tác ngăn nhau bằng một vạch mảnh — hàng đầu là THÔNG
+   TIN (không nút), đúng §28.2. */
+.tt-viec{ margin-top:8px; border-top:1px solid rgba(255,255,255,.16); padding-top:8px;
+  display:flex; flex-direction:column; gap:6px }
+.tt-viec:empty{ display:none }
+.tt-viec .hang{ display:flex; gap:6px; flex-wrap:wrap }
+.tt-viec button{ flex:1 1 auto; min-height:40px; min-width:0; font-size:13px;
+  padding:6px 10px; border-radius:9px; border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.10); color:#fff; white-space:nowrap }
+.tt-viec button:disabled{ opacity:.42 }
+.tt-viec button.ch{ background:#1f7a3d; border-color:#1f7a3d }
+.tt-viec .tt-nhom{ font-size:11px; letter-spacing:.05em; text-transform:uppercase;
+  color:rgba(255,255,255,.62) }
+/* Mũi tên chỉ về điểm bấm — §28.2. Đặt bằng `left`/`top` từ JS. */
+.tt-mui{ position:absolute; width:12px; height:12px; background:rgba(20,26,23,.92);
+  border-left:1px solid rgba(255,255,255,.18); border-top:1px solid rgba(255,255,255,.18);
+  transform:rotate(45deg); display:none }
+.pop.ts.mo .tt-mui{ display:block }
+/* Thẻ mối nối được DỜI vào bảng (một nguồn sự thật cho thẻ hai hàng §13.2) — bỏ nền
+   sáng của nó khi nằm trong bảng tối. */
+.tt-viec #theNoi .mn-hang{ background:transparent; border-color:rgba(255,255,255,.16) }
+.tt-viec #theNoi .mn-ten{ color:rgba(255,255,255,.82) }
+.tt-viec #theNoi p.tt{ color:rgba(255,255,255,.72) }
+.ts-x{ position:absolute; top:6px; right:6px; width:30px; height:30px; line-height:1;
+  border:0; background:transparent; cursor:pointer; font-size:15px; color:var(--muc) }
+
+/* M4 · hộp "Nâng cao" trong tấm đáy điện thoại (độ dày · khổ tấm).
+   ⚠ `summary` cao ≥ 44 px: nó là vùng chạm duy nhất mở được hộp này. */
+.dt-nc{ margin:10px 0 0; border:1px solid var(--vien); border-radius:10px }
+.dt-nc>summary{ min-height:44px; display:flex; align-items:center; padding:0 12px;
+  font-size:13px; font-weight:600; cursor:pointer; list-style:none }
+.dt-nc>summary::-webkit-details-marker{ display:none }
+.dt-nc>summary::after{ content:"▾"; margin-left:auto; font-size:12px }
+.dt-nc[open]>summary::after{ content:"▴" }
+.dt-nc>*:not(summary){ padding:0 12px 12px }
+
+/* M8 · khối "Chia · gộp" khi rơi vào tấm đáy điện thoại: nút phải TO (≥44 px) —
+   M8 nói "ba nút to khi chạm mảng". Trên máy tính giữ nguyên cỡ cũ, nên khoá rule
+   trong `.dt-tam-than` chứ không dùng ngưỡng bề rộng. */
+.dt-tam-than #khuChiaGop .hang button{ min-height:44px; flex:1 1 auto }
+.dt-tam-than #khuChiaGop input[type=number],
+.dt-tam-than #khuChiaGop input[type=text]{ min-height:44px }
+
+/* T2 · nhãn chip bước: dài ở khổ rộng, NGẮN ở < 420 px.
+   Đo 28/09 ở 390 px: "Khối lượng & báo giá" cần 121 px trong ô 90 px → bị cắt cụt
+   thành "ối lượng & báo g". Ba chip kia vừa, nên chỉ đổi đúng nhãn cần đổi.
+   ⚠ Đặt ở CUỐI TỆP: `@media` không cộng độ đặc hiệu. */
+.dt-buoc button>.b-ngan{ display:none }
+@media (max-width:420px){
+  .dt-buoc button>.b-dai{ display:none }
+  .dt-buoc button>.b-ngan{ display:inline }
+}
+
+/* ─── §15 · T19 — nhãn số của mốc khổ tấm ────────────────────────────────────
+   Hổ phách là màu RIÊNG của mốc (viền chọn mảng nay trắng, mối nối nay xanh lá),
+   nên nhãn dùng đúng màu đó để mắt nối được nhãn với vạch. Viền trắng giữ cho nó
+   đọc được cả trên tường sáng lẫn mảng tối. */
+.dt-nhan-moc{background:#7a4c00;color:#ffd77a;border:1px solid #fff;
+  font-size:10px;letter-spacing:.02em;padding:1px 5px;border-radius:5px;
+  font-family:"IBM Plex Mono",monospace;opacity:.95}
+
+/* ─── §15 · T12 — hàng chip nổi trên 3D ở khổ hẹp ────────────────────────────
+   Thêm chip LED làm hàng chip rộng thêm 61 px. `#dtNoiP` neo PHẢI nên cả khối nở
+   sang TRÁI, và ở 390 px nó chạm vào nhóm nút tròn bên trái. Đã dời `⤢` sang nhóm
+   trái (chỗ đúng của nó — cùng loại icon điều khiển góc nhìn), nhưng hai nhóm vẫn
+   chỉ cách nhau 1 px. Thu đệm chip ở khổ hẹp để có khoảng hở thật.
+   ⚠ Chỉ thu ĐỆM, không thu chữ: ba chip là ba nhãn TGĐ đọc trên màn hình. */
+@media (max-width:430px){
+  .v3-tuy-nut{ padding:0 7px; font-size:11.5px }
+  .v3-tuy-hang{ gap:5px }
+}
+
+/* ─── §17 · U4 — thẻ thông số giữ-chạm: chỉ đọc, nền tối, chữ 13 px ──────────
+   TGĐ: "thẻ chỉ thông tin, nền tối 85 %, chữ 13 px, không nút". Nền tối vì thẻ nằm
+   ĐÈ LÊN khung 3D — nền sáng trên một cảnh sáng thì chữ chìm, mà thẻ này bật ra chỉ
+   trong khoảnh khắc giữ tay nên phải đọc được ngay. */
+.pop.ts{ background:rgba(16,21,19,.85); color:#eef2ef; border-color:rgba(255,255,255,.22) }
+.pop.ts .ts-than{ font-size:13px; line-height:1.5 }
+.pop.ts .ts-d{ color:#dfe6e1 }
+.pop.ts .ts-x{ color:#cfd8d2 }
+
+/* ─── §17 · U5 — chip "Chọn mẫu" ở khổ hẹp ──────────────────────────────────
+   Tên mới dài hơn "Xem" nên ở 390 px nó ăn mất chỗ của ba chip bước và cả bốn bị
+   cắt chữ (đo: "Tạo hình" cần 62 px, còn 50). Dùng đúng khuôn `b-dai`/`b-ngan` đã
+   có cho ba chip kia: rộng thì "Chọn mẫu", hẹp thì "Mẫu". */
+@media (max-width:420px){ .dt-xem .b-dai{ display:none } .dt-xem .b-ngan{ display:inline } }
+@media (min-width:421px){ .dt-xem .b-ngan{ display:none } }
+
+/* ══════ §29 · X6 — hàng "Ghép tấm theo từng mảng" (bước Vật liệu, máy tính) ═════
+   Một hàng = một mảng: tên mảng rồi ba nút. `gm-ch` = mảng đang được chọn trên 3D,
+   để mắt nối được hàng nào với hình nào mà không phải đếm.
+   ⚠ `gap` trên flex, không margin từng nút: margin thì nút đầu và nút cuối lệch mép
+     so với các hàng khác của cùng bảng, và lệch đó chỉ thấy khi có nhiều hàng. */
+#ghepMang{display:flex;flex-direction:column;gap:5px;margin-bottom:4px}
+.hang.gm{gap:5px;align-items:center;margin:0}
+.hang.gm>button{flex:0 0 auto;white-space:nowrap;padding:5px 9px;font-size:12px}
+.gm-ten{flex:0 0 46px;font-weight:600;font-size:12px;color:var(--muc2)}
+.hang.gm-ch{background:var(--nhan-nh);border-radius:6px;padding:3px 4px;margin:0 -4px}
+.hang.gm-ch .gm-ten{color:var(--nhan)}
+
+/* §25 — ô số ngưỡng "thêm tối đa n tấm" nằm GIỮA CÂU, nên phải nhỏ và không xuống dòng.
+   ⚠ `width` cố định chứ không `size`: `size` của input number không đổi bề rộng ở
+     Chromium, nên ô chiếm nguyên một dòng và câu ghi chú vỡ làm ba. */
+/* (ô số ngưỡng đã bỏ theo §33.1 — quy tắc gỡ theo) */
+
+/* §33.1 — hai nút Dọc / Ngang của "Hướng vân chung" nằm GIỮA CÂU ghi chú, nên nhỏ và
+   không xuống dòng; nút đang chọn tô như mọi nút `.ch` khác của công cụ. */
+.tu-hv{padding:2px 8px;margin:0 2px;font-size:12px;white-space:nowrap}
+
+/* §33.2 — hàng ô góc vểnh: chỉ hiện sau khi bấm "Vểnh mép ra". */
+.hang.mn-goc{gap:6px;align-items:center;margin-top:4px}
+.mn-al{width:56px;padding:2px 4px;font-size:12px}
+
+/* ══⚠⚠ §42 · P1 — LƯỚI MẪU TRÊN ĐIỆN THOẠI: 4 CỘT, KHÔNG 2 ═══════════════════════
+   Đo iPhone 13 (390 × 664): thân tờ cao **201 px**, ô mẫu 2 cột **181 × 146 px** ⇒
+   một hàng đã tràn, **0 ô** thấy được khi chưa cuộn. Khách mở trang thấy một tiêu đề
+   và khoảng trắng — không có dấu hiệu nào nói rằng bên dưới có lưới mẫu.
+   4 cột × ~88 px cho trọn một hàng 4 ô trong tầm nhìn, vẫn ≥ 44 px chạm được. Cùng
+   con số §14② đã chốt cho lưới màu, nên hai lưới trên cùng một màn hình không so le.
+   ⚠ Đặt CUỐI TỆP: `@media` không cộng độ đặc hiệu, mà `.bo-mau` gốc ở dòng 40 —
+     để khối này ở giữa tệp thì quy tắc gốc nằm sau và thắng. */
+html.dt-on .bo-mau{ grid-template-columns:repeat(4,1fr); gap:5px }
+html.dt-on .bo-mau button{ font-size:10px; line-height:1.15; padding:3px }
+html.dt-on .bo-mau .hinh{ aspect-ratio:1; height:auto }
+
+/* ══⚠⚠ §45.4 · P1 — MÀN NGẮN: Ô MẪU PHẢI LỌT VÀO TỜ, KHÔNG BẮT CUỘN ════════════════
+   TGĐ xếp P1 vào "hai việc CHẶN KHÁCH". Đo lại 01/10 trên hai khổ:
+
+       390 × 844   ô mẫu thấy được không cần cuộn: 4/32   ✓
+       390 × 664   ô mẫu thấy được không cần cuộn: 0/32   ✗   ← khổ lệnh nêu
+
+   Truy số: ở 664 thân tờ chỉ cao **134 px** (3D giữ 40 % = 264, cộng thanh trên 56 +
+   thanh bước 44 + thanh việc 52 + đầu tờ 49), mà **một ô mẫu cao 172 px**. Một ô còn
+   không lọt, nói gì bốn.
+   ⚠ KHÔNG hạ 3D xuống dưới 40 % để lấy chỗ: §42 · P2 chốt sàn ấy cho MỌI bước, và
+     TGĐ đang xếp P1 với P2 cạnh nhau — chữa cái này bằng cách phá cái kia là trả lời
+     một nửa. Chỗ nhường được là CỠ Ô, không phải khung 3D.
+   ⚠ Ngưỡng bám CHIỀU CAO (`max-height`), không bám bề rộng: cùng một máy xoay ngang
+     là màn ngắn đi, mà bề rộng thì không nói gì về chuyện ấy. */
+@media (max-height:720px){
+  html.dt-on .bo-mau{ grid-template-columns:repeat(4,1fr); gap:4px }
+  /* ⚠ 2/1 chứ không 16/10: đo sau bước thu đầu, bốn ô nằm ở `537..613` trong thân tờ
+     `468..602` — thiếu đúng **11 px**. Ảnh dẹt thêm một bậc cắt 12 px mỗi ô, vừa đủ,
+     và mẫu vách vốn là hình NGANG nên 2/1 đọc còn sát thực tế hơn ô vuông. */
+  html.dt-on .bo-mau .hinh{ aspect-ratio:2/1 }
+  html.dt-on .bo-mau button{ font-size:9.5px; line-height:1.1; padding:2px }
+  /* Tên mẫu thu về MỘT dòng, cắt bằng ba chấm: hai dòng chữ ăn thêm 11 px mỗi ô, mà
+     ô nào cũng có hình ngay trên — chữ ở đây là nhãn, không phải câu. */
+  html.dt-on .bo-mau button b{ display:block; white-space:nowrap;
+    overflow:hidden; text-overflow:ellipsis }
+  html.dt-on #khuMauKhoiDau>.nh{ margin-bottom:2px }
+  html.dt-on #khuMauKhoiDau>details>summary{ padding-top:4px; padding-bottom:4px }
+}
+
+/* ══⚠⚠ §46.3 — BƯỚC MẪU: LƯỚI 2 CỘT, VÀ MÀN NGẮN NHƯỜNG CHỖ CHO TỜ ════════════════
+   TGĐ 01/10: *"Màn ngắn thì bước Mẫu ưu tiên tờ: ở bước Mẫu, 3D cao 35 % màn (≈200 px
+   trên SE), tờ lấy phần còn lại; lưới mẫu 2 cột, ô cao ≥ 72 px, tên mẫu 12 px hai
+   dòng. Các bước khác giữ P2 (3D ≥ 40 %)."*  Cổng: SE ≥ 2 hàng, iPhone 13 ≥ 2 hàng.
+
+   Vì sao riêng bước Mẫu được nhường: ở đó khách chưa dựng gì — 3D đang hiện một vách
+   mặc định mà họ chưa chọn. Nhường 5 % cho cái lưới họ ĐANG tìm là đổi chỗ đúng.
+   ⚠ CHỈ bước Mẫu. `.dt-chon` / `.dt-bao` giữ nguyên 40 % — §42 · P2 vẫn đứng.
+   ⚠ Lưới 2 cột áp cho MỌI khổ điện thoại, không riêng màn ngắn: ở 390×844 lưới 4 cột
+     cũ cho ô cao 172 px nên chỉ ra **một** hàng, trong khi lệnh đòi iPhone 13 cũng
+     ≥ 2 hàng. Một luật cho cả hai khổ thì không có chỗ cho hai khổ lệch nhau.
+   ⚠ Ảnh khai CHIỀU CAO cố định, không khai tỉ lệ: hai cột ở khổ 390 cho ô rộng 181 px,
+     mà `aspect-ratio:16/9` ở bề rộng ấy ra ảnh 102 px → ô cao 139 px → hai hàng cần
+     284 px trong một thân tờ 168 px. Chiều cao cố định tách cỡ ảnh khỏi bề rộng ô, và
+     đó là thứ duy nhất giữ được CẢ HAI điều lệnh đòi: ô ≥ 72 px VÀ thấy ≥ 2 hàng.
+   ⚠ Tiêu đề khối và tên nhóm ĐẦU ẩn đi ở bước Mẫu: đầu tờ đã ghi "Chọn mẫu khởi đầu",
+     nên hai dòng ấy nhắc lại đúng điều vừa đọc và ăn mất ~42 px — bằng nửa một hàng ô.
+     Ba nhóm còn lại giữ `summary` vì chúng đang gập, bỏ đi là không mở ra được. */
+html.dt-on.dt-mau .bo-mau{ grid-template-columns:repeat(2,1fr); gap:6px }
+html.dt-on.dt-mau .bo-mau .hinh{ aspect-ratio:auto; height:40px }
+html.dt-on.dt-mau .bo-mau button{ font-size:12px; line-height:1.2; padding:3px;
+  min-height:72px }
+/* ══⚠⚠ THANH VIỆC ẨN Ở BƯỚC MẪU — MỌI KHỔ ĐIỆN THOẠI, không riêng màn ngắn ═══════
+   §47 · 26a kéo 3D ở 664 từ 35 % về 40 %, và chỗ 5 % ấy lấy đúng vào thân tờ: đo
+   được thân tờ còn **134 px** trong khi hai hàng ô mẫu 81 px cần ~164. Lệnh đòi
+   iPhone 13 cũng ≥ 2 hàng, nên phải tìm chỗ khác — và chỗ đó là thanh việc.
+   Ở bước Mẫu hàng chip chỉ có đúng MỘT mục *"Trên máy tính"*: 52 px cho một chip
+   không ai bấm, trong khi cái lưới khách đang tìm thì không lọt. Ẩn nó cho lại
+   52 px ⇒ thân tờ 186 px ⇒ hai hàng 81 px vừa.
+   ⚠ CHỈ ở bước Mẫu. Các bước khác còn chip thật để bấm, không đụng.
+   ⚠ `.dt-tam` phải lùi `top` lên 52 px theo, nếu không tờ để hở đúng khoảng vừa
+     giấu đi — hai thứ này là một cặp, sửa một bên là lệch. */
+/* ⚠ CHỈ ẨN Ở MÀN ≤ 720 px. Ẩn ở MỌI khổ là thừa và có giá: ở 390×844 thân tờ đã
+   295 px và ba hàng ô lọt thoải mái, nên 52 px kia không mua được gì — mà hai cổng
+   2b · 2d (thanh việc cao 52 px · nút ≥ 44 px) đo trên trang vừa mở, tức ở bước Mẫu,
+   nên chúng đỏ ngay với "0 px". Lấy chỗ ở nơi KHÔNG thiếu chỗ là tự tạo ra một ca đỏ
+   không đổi lại được gì. */
+@media (max-height:720px){ html.dt-app.dt-mau .dt-viec{ display:none } }
+/* ⚠⚠ KHOANH VÀO `min-height:600px` — ĐÃ DÍNH BẪY ĐỘ ĐẶC HIỆU NGAY TẠI ĐÂY.
+   Viết trần, chọn tử này là `html.dt-app.dt-mau.dt-chon .dt-tam` = (0,4,1), thắng
+   luật của khối màn ngắn `html.dt-app.dt-mau .dt-tam` = (0,3,1) — kể cả khi luật kia
+   nằm trong `@media`, vì `@media` KHÔNG cộng độ đặc hiệu (luật đã ghi ở đầu tệp và
+   đây là lần thứ ba dính). Hậu quả đo được: ở 390×568 tờ bắt đầu ở 40svh thay vì
+   35svh, thân tờ tụt 157 → 129 px, và hai hàng ô mẫu thành MỘT.
+   Khoanh vào đúng khoảng nó phục vụ thì hai luật không còn gặp nhau. */
+@media (min-height:600px) and (max-height:720px){
+  html.dt-app.dt-mau.dt-chon .dt-tam, html.dt-app.dt-mau.dt-bao .dt-tam{
+    top:calc(100px + env(safe-area-inset-top,0px) + 40svh) }
+}
+/* ⚠ LỀ TRÊN CỦA KHỐI VÀ CỦA NHÓM ĐẦU — gỡ ở MỌI khổ điện thoại, không riêng màn
+   ngắn. Đo ở 390×664 sau khi đã ẩn thanh việc: thân tờ 416..602, mà lưới bắt đầu ở
+   443 — tức **27 px lề** ăn mất chỗ, và hàng hai kết ở 610, thừa ra đúng **8 px**.
+   Gỡ lề là đủ, không phải thu ô: ô vẫn 81 px, trên mốc 72 px của lệnh. */
+html.dt-on.dt-mau #khuMauKhoiDau{ margin-top:0 }
+html.dt-on.dt-mau #khuMauKhoiDau>details:first-of-type{ margin-top:0 }
+html.dt-on.dt-mau #khuMauKhoiDau>.nh{ display:none }
+html.dt-on.dt-mau #khuMauKhoiDau>details:first-of-type>summary{ display:none }
+/* Tên mẫu HAI DÒNG rồi mới cắt — lệnh nêu rõ. `-webkit-line-clamp` là cách duy nhất
+   còn chạy trên Safari iOS cho việc cắt theo số dòng. */
+html.dt-on.dt-mau .bo-mau button b{ display:-webkit-box; -webkit-line-clamp:2;
+  -webkit-box-orient:vertical; overflow:hidden; white-space:normal }
+
+/* ⚠⚠ KHỐI MÀN NGẮN ĐẶT CUỐI, SAU các quy tắc chung của bước Mẫu ngay trên.
+   `@media` KHÔNG cộng độ đặc hiệu — luật đã ghi ở đầu tệp và vừa dính lại: quy tắc
+   ảnh 34 px của màn ngắn viết TRƯỚC quy tắc chung 40 px thì nó thua, và ô ở SE vẫn
+   cao 81 px nên hai hàng không lọt. Đặt sau là nó thắng.
+
+   ══⚠⚠ NGƯỠNG LÀ 600 px, KHÔNG PHẢI 720 — TGĐ sửa 01/10 (§47 · 26a) ════════════
+   Bản §46.3 của tôi để `max-height:720px`, nên **iPhone 13 (664) cũng tụt xuống
+   35 %** — mà lệnh chỉ nhường 5 % cho "màn ngắn", và iPhone 13 không phải màn ngắn.
+   Giá phải trả của ngưỡng rộng quá: một khổ máy rất phổ biến mất 5 % khung 3D để
+   đổi lấy chỗ mà nó **vốn đã có đủ** (ở 664, bước Mẫu giữ 52svh = 345 px thì tờ
+   còn 40svh = 266 px, dư cho hai hàng ô 72 px).
+   ⚠ Chỉ MỘT luật đi xuống 600: chiều cao khung 3D, cộng hai thứ bám theo nó
+     (`top` của tờ, và việc ẩn thanh việc — thanh ấy chỉ phải ẩn khi 3D đã lấy 35 %
+     mà thân tờ vẫn thiếu). Lưới 2 cột · ô ≥ 72 px · tên hai dòng giữ ở MỌI khổ
+     điện thoại, vì lệnh đòi iPhone 13 cũng ≥ 2 hàng.
+   ⚠ SE là 568 nên vẫn vào nhánh này; 664 và 844 thì không. Ba khổ, hai lối, và
+     ranh giới nằm đúng chỗ lệnh đặt. */
+@media (max-height:599px){
+  html.dt-app.dt-mau .san{ height:35svh; min-height:170px }
+  /* ⚠⚠ THANH VIỆC ẨN Ở BƯỚC MẪU, và đó là chỗ lấy được 52 px cuối cùng. Đo trên SE
+     (390×568): thanh trên 56 + thanh bước 44 + 3D 197 + **thanh việc 52** + đầu tờ 49
+     + thanh đáy 62 = 460, chỉ còn **105 px** cho thân tờ — hai hàng ô 72 px cần 150.
+     Mà ở bước Mẫu hàng chip chỉ có đúng một mục *"Trên máy tính"*: 52 px cho một chip
+     không ai bấm, trong khi cái lưới khách đang tìm thì không lọt.
+     ⚠ Chỉ ẩn ở MÀN NGẮN và CHỈ bước Mẫu — các bước khác còn chip thật để bấm. */
+  /* Thanh việc đã ẩn ở mọi khổ (xem khối chung bên trên); ở màn ngắn chỉ còn phải
+     lùi `top` theo chiều cao 35svh của riêng nhánh này. */
+  html.dt-app.dt-mau .dt-tam{ top:calc(100px + env(safe-area-inset-top,0px) + 35svh) }
+  /* Thân tờ nhường thêm phần đệm trên: 10 px ở đây bằng 1/7 một hàng ô. */
+  html.dt-app.dt-mau .dt-tam-than{ padding-top:2px }
+  /* Số đo ở SE sau khi đã ẩn thanh việc: thân tờ **157 px**, hai hàng cần
+     `2 × ô + gap`. Ô 75 px → 156, nhưng lưới bắt đầu thấp hơn mép thân ~8 px nên
+     hàng hai tràn 7 px. Ba chỗ nhường, mỗi chỗ vài px, giữ ô vẫn ≥ 72 px như lệnh. */
+  html.dt-on.dt-mau .bo-mau{ gap:2px }
+  /* Lề trên của khối và của nhóm đầu: ở SE còn **đúng 1 px** là hàng hai lọt, nên
+     khử nốt. Đo chứ không đoán — 157 px thân tờ, hai hàng 72 + gap 2 = 146, phần
+     chênh còn lại nằm hết ở mấy cái lề này. */
+  html.dt-on.dt-mau #khuMauKhoiDau{ margin-top:0 }
+  html.dt-on.dt-mau #khuMauKhoiDau>details{ margin-top:0; margin-bottom:2px }
+  html.dt-on.dt-mau .bo-mau button{ padding:2px }
+  html.dt-on.dt-mau .bo-mau .hinh{ height:32px }
+}
+
+
+/* ══ §49 · HÀNG BỐN BỘ PHỐI SÁNG — `#hopSang` ═════════════════════════════════
+   Một nguồn cho bốn nút (`#boSang`), hai chỗ đặt. Chip ☀ Ánh sáng lật `hidden`.
+   ⚠ Neo tuyệt đối trong `.v3-san` ở CẢ HAI vỏ, nhưng KHÁC CHỖ:
+     máy tính → ngay dưới chip, toạ độ do `_datChoSang()` trong `ui.js` đo từ rect
+                của chính chip (§49: "popover cạnh nút");
+     điện thoại → một DẢI ngang neo ĐÁY khung 3D (§49: "hàng 4 chip ngay dưới 3D").
+   Vì sao điện thoại không dùng popover: ở 390 px một hộp nổi cạnh chip che đúng
+   phần vách khách đang nhìn để chọn ánh sáng — đúng điều §15·T1 đã bác. */
+.v3-hop-sang{ position:absolute; z-index:5; left:10px; top:54px }
+.v3-hop-sang #boSang{ display:flex; flex-wrap:wrap; gap:6px }
+.v3-hop-sang #boSang button{ min-height:34px; padding:0 10px; border-radius:8px;
+  font-size:12px; white-space:nowrap }
+.v3-hop-sang #boSang button.ch{ border-color:var(--nhan); color:var(--nhan);
+  font-weight:700 }
+/* Điện thoại: dải ngang ở đáy 3D, cuộn ngang khi hẹp.
+   ⚠ `flex-wrap:nowrap` + cuộn ngang chứ không cho xuống hai hàng: bốn nút có emoji
+     và chữ, hai hàng thì dải cao gần 80 px và ăn vào chính khung 3D 40 %. Lý do này
+     chuyển nguyên từ ba quy tắc `.dt-tam-than #boSang` cũ đã gỡ. */
+html.dt-on .v3-hop-sang{ left:8px; right:8px; top:auto; bottom:8px;
+  max-width:none; padding:8px 9px }
+html.dt-on .v3-hop-sang b{ display:none }   /* chip ☀ ngay trên đã nói đủ */
+html.dt-on .v3-hop-sang #boSang{ flex-wrap:nowrap; overflow-x:auto;
+  scrollbar-width:none }
+html.dt-on .v3-hop-sang #boSang::-webkit-scrollbar{ display:none }
+html.dt-on .v3-hop-sang #boSang button{ flex:0 0 auto }
+
+/* ══ §51.2 · THU DẢI CHE TRÊN KHUNG 3D — ĐIỆN THOẠI ═══════════════════════════════
+   TGĐ 02/10 bác cái giá của §50 (vách nhỏ đi 30 % để chừa dải che): *"thu dải che,
+   không đẩy camera"*. Đích: dải che ≤ 36 px kể cả lề, vách cao ≥ 200 px trên canvas
+   264 px của iPhone 13.
+   Dải cũ cao 50 px = lề trên 10 + nút tròn 40. Nay lề 4 + nút 32 = 36. */
+html.dt-on .dt-noi{ top:4px }
+html.dt-on .dt-noi-t{ left:8px } html.dt-on .dt-noi-p{ right:8px }
+html.dt-on .dt-tron{ width:32px; height:32px; font-size:15px }
+/* Nút gộp 28 px theo lệnh; ba nút sau nó ẩn tới khi bấm. */
+html.dt-on .dt-gom{ width:28px; height:28px; font-size:16px; line-height:1 }
+html.dt-on .dt-noi-t #dtUndo,
+html.dt-on .dt-noi-t #dtRedo,
+html.dt-on .dt-noi-t #dtVua{ display:none }
+html.dt-on .dt-noi-t.mo #dtUndo,
+html.dt-on .dt-noi-t.mo #dtRedo,
+html.dt-on .dt-noi-t.mo #dtVua{ display:inline-flex }
+html.dt-on .dt-noi-t.mo .dt-gom{ border-color:var(--vang,#cc8d00); color:#ffd37a }
+/* Ba chip thành icon tròn 32 px, KHÔNG chữ. Nhãn vẫn còn trong DOM cho trình đọc màn
+   hình và cho `title`; chỉ ẩn bằng mắt.
+   ⚠ `clip-path:inset(50%)` thay vì `display:none`: trình đọc màn hình bỏ qua node
+     `display:none`, mà ba icon này không có chữ nào khác để đọc lên. */
+/* ⚠⚠ `:not([hidden])` KHÔNG PHẢI CHO GỌN — THIẾU NÓ LÀ MẤT MỘT LUẬT. Quy tắc này đặt
+   `display:inline-flex`, mà `[hidden]` chỉ là `display:none` của bảng kiểu UA — mọi
+   quy tắc `display` của tác giả đều thắng nó. §24.1 ẩn chip "Mốc tấm" ở bước Báo giá
+   bằng `bm.hidden=true` (nút bật mà hình không đổi là nút nói dối), và bản đầu của tôi
+   làm nó HIỆN LẠI ở mọi bước. Cổng 82r2 bắt ngay: "bước 1 hiện true · bước 3 hiện
+   true". Đọc CSS không thấy: cả hai quy tắc đều đúng khi đọc riêng lẻ. */
+html.dt-on #v3Tuy .v3-tuy-nut:not([hidden]){ width:32px; height:32px; min-height:32px;
+  padding:0; border-radius:50%; display:inline-flex; align-items:center;
+  justify-content:center; font-size:15px }
+html.dt-on #v3Tuy .v3-tuy-nut .chu{ position:absolute; width:1px; height:1px;
+  overflow:hidden; clip-path:inset(50%); white-space:nowrap }
+html.dt-on #v3Tuy .v3-tuy-hang{ gap:6px }
+html.dt-on #v3Tuy{ margin-left:0; gap:6px }
+/* ══⚠⚠ BS93 §2.1 — SƠ ĐỒ THAY CHỖ 3D (điện thoại) THÌ ẨN CỤM CHIP TRÊN 3D ══════════
+   Hai chip trong `#v3Tuy` điều khiển khung 3D, mà ở chế độ này khung 3D không có trên
+   màn hình. Đo 19/10: cụm `146×32 @236,105` KHÔNG bị sơ đồ đè, và có 4 vật VẼ RA của
+   sơ đồ nằm dưới nó (2 `path.sd-o` + 2 `line.sd-net`) — vừa là nút im (§350) vừa che
+   hình. Lớp `md-thaycho` do `ui.js::soDoMD()` lật.
+ ⚠ Phải là một QUY TẮC CSS, không phải `hidden`: `.v3-tuy` có `display:inline-flex` của
+   tác giả nên thắng `display:none` của bảng kiểu UA — xem chú thích `:not([hidden])`
+   ngay dưới đây, cùng cái bẫy.
+ ⚠ Chỉ cho vỏ ĐIỆN THOẠI (`html.dt-on`): ở máy tính sơ đồ là một CỘT bên cạnh, khung
+   3D vẫn còn nên hai chip ấy vẫn đúng việc. */
+/* ⚠⚠ ẨN CÁC CHIP, **GIỮ LẠI NÚT ◫** — bản đầu ẩn cả cụm và đó là một cái bẫy: nút ◫
+   (`#v3TuyMd`, thứ ĐƯA KHÁCH VỀ 3D) nằm NGAY TRONG `#v3Tuy`, nên ẩn cả cụm là khách mở
+   sơ đồ xong **không còn đường quay lại**. Cổng `BS93-1c` bắt đúng điều đó: bấm ◫ lần
+   thứ hai không đổi gì (`sơ đồ=true` cả hai lượt) vì nút đã 0×0.
+ ⚠ Đây là chỗ nửa WEB **đi chệch câu chữ của BS93 §2.1** ("ẩn cụm `.v3-tuy`") để giữ
+   đúng ý của nó: ẩn thứ điều khiển một khung 3D không có trên màn hình, chứ không ẩn
+   đường thoát. Đã nêu trong báo cáo.
+ ⚠ Độ đặc hiệu: `(2,3,1)` — hai `id` (`#v3Tuy` và `#v3TuyMd` trong `:not`) nên nó thắng
+   `html.dt-on #v3Tuy .v3-tuy-nut:not([hidden])` `(1,3,1)` ngay dưới đây. */
+html.dt-on.md-thaycho #v3Tuy .v3-tuy-nut:not(#v3TuyMd){ display:none }
+/* Dòng nhắc đáy: cao ≤ 24 px (§51.2 ②). Nó KHÔNG tính vào dải che — vách được phép
+   nằm sau nó vì nó mờ 70 %. */
+html.dt-on .dt-nhac{ max-height:24px; padding-block:3px; font-size:11.5px;
+  line-height:1.45; overflow:hidden }
+
+/* ══ §53.1 · X9 — TỜ DƯỚI: THU HỒI CHỖ TRỐNG VÀ CHO CUỘN TỚI NÚT CUỐI ═══════════════
+   TGĐ 02/10 (ảnh `soat-53-phone-to-bi-day.png`): khoảng trắng giữa 3D và tờ, và nút ở
+   hàng dưới nằm dưới thanh đáy nên chạm không tới.
+   ① Thanh việc RỖNG không được chiếm chỗ. `dt.js::veViec()` bật `dt-noviec` theo SỐ CHIP
+     THẬT; ở đây ẩn thanh và bỏ luôn phần `+52px` mà `.dt-tam` chừa cho nó.
+   ⚠ Độ đặc hiệu: `html.dt-app.dt-noviec.dt-chon .dt-tam` = (0,4,1), bằng đúng luật của
+     khối màn ngắn `html.dt-app.dt-mau.dt-chon .dt-tam`. Hai bộ lớp khác nhau nên khi cả
+     hai khớp thì THỨ TỰ NGUỒN quyết định — vì thế khối này đặt ở CUỐI tệp. Đây là lần
+     thứ tư cái bẫy ấy xuất hiện trong tệp này. */
+html.dt-on.dt-noviec .dt-viec{ display:none }
+html.dt-app.dt-noviec.dt-chon .dt-tam,
+html.dt-app.dt-noviec.dt-bao  .dt-tam{
+  top:calc(100px + env(safe-area-inset-top,0px) + 40svh) }
+/* ② Thân tờ phải cuộn được tới nút CUỐI, và cuộn được nó LÊN ĐẦU vùng nhìn thấy —
+   nếu không thì phép tự cuộn ở ③ không có chỗ để cuộn tới.
+   ⚠ `padding-bottom` chỉ thêm chỗ ở ĐUÔI vùng cuộn, không thu nhỏ phần nhìn thấy. */
+html.dt-on .dt-tam-than{ padding-bottom:calc(var(--dt-day, 64px) + 16px) }
+
+/* ══ §53.3 · X11 — BƯỚC MẪU: KHÔNG 3D, TOÀN MÀN LÀ LƯỚI MẪU ═══════════════════════════
+   TGĐ 02/10: *"ảnh mẫu không hiện đủ nên khó nhìn"* → *"Bước Mẫu (điện thoại và máy tính
+   1a): KHÔNG hiện 3D; toàn màn là lưới mẫu, ô có ảnh tỉ lệ 4:3 đủ lớn (điện thoại 2 cột,
+   ô ≥ 160 px; máy tính 4 cột), tên mẫu dưới ảnh."*
+   Trước bản này ô mẫu ở bước Mẫu cao 40 px ảnh + chữ — một dải màu, không nhìn ra hình.
+   ⚠⚠ ẨN BẰNG `visibility` + `height:1px`, KHÔNG `display:none`. Khung 3D chứa `<canvas>`
+     của WebGL; `display:none` làm nó 0×0, mà `maTran()` chia cho `cv.height` ⇒ NaN, và
+     `coLai()` đọc `clientHeight` mỗi khung hình nên bộ đệm cũng về 0. Quay lại bước Tạo
+     hình thì phải dựng lại ngữ cảnh — một đường hỏng không cần thiết. 1 px thì mọi phép
+     chia vẫn hữu hạn và canvas không mất.
+   ⚠ `pointer-events:none` kèm theo: một khung 1 px vô hình mà còn bắt cú chạm là nó ăn
+     cú chạm ở mép trên lưới mẫu. */
+/* ⚠⚠ ĐỘ ĐẶC HIỆU — LẦN THỨ NĂM CÁI BẪY NÀY XUẤT HIỆN TRONG TỆP. `@media` KHÔNG cộng độ
+   đặc hiệu, nên hai luật đang có sẵn sẽ thắng một chọn tử viết trần:
+     `html.dt-app.dt-chon .san{height:40svh}`                     (0,3,1)
+     `html.dt-app.dt-mau.dt-chon .dt-tam{top:… + 40svh}`           (0,4,1) ← §51
+   Nếu viết `html.dt-on.dt-mau .v3-san` (0,3,1) và `html.dt-app.dt-mau .dt-tam` (0,3,1)
+   thì khung 3D vẫn 40svh và tờ vẫn bắt đầu sau 40svh — tức ẩn 3D xong còn một dải trống
+   40svh, đúng cái §53.1 vừa dọn. Nên cả hai luật dưới đây viết ở (0,4,1) và đặt CUỐI
+   TỆP, nơi thứ tự nguồn phá được thế cân bằng. */
+html.dt-on.dt-mau .v3-san.san{ visibility:hidden; height:1px; min-height:0;
+  pointer-events:none; border:0 }
+html.dt-app.dt-mau.dt-chon .dt-tam,
+html.dt-app.dt-mau.dt-bao  .dt-tam{ top:calc(100px + env(safe-area-inset-top,0px)) }
+/* Lưới: 2 cột, ảnh 4:3, tên dưới ảnh. Ô ≥ 160 px ở 390 px: (390 − 24 − 8)/2 = 179 px
+   ⇒ ảnh 179×134 + tên ~28 = ~162 px. */
+html.dt-on.dt-mau .bo-mau{ grid-template-columns:repeat(2,1fr); gap:8px }
+html.dt-on.dt-mau .bo-mau .hinh{ aspect-ratio:4/3; height:auto; border-radius:8px }
+html.dt-on.dt-mau .bo-mau button{ font-size:12.5px; line-height:1.25; padding:0 0 6px }
+html.dt-on.dt-mau .bo-mau button b{ display:block; -webkit-line-clamp:2;
+  padding:4px 6px 0 }
+/* ⚠ Thanh việc KHÔNG có ở bước Mẫu (không có mảng nào để làm việc gì), nên đừng chừa
+   chỗ cho nó — luật §51 đã ẩn nó ở ≤720px; ở đây ẩn ở MỌI khổ điện thoại vì tờ nay
+   chiếm trọn chỗ của 3D. */
+html.dt-on.dt-mau .dt-viec{ display:none }
+
+/* ── Máy tính · mục 1a: cùng luật, 4 cột ────────────────────────────────────────── */
+/* ⚠⚠ KHOANH VÀO `:not(.dt-on)` — LỚP CỦA VỎ MÁY TÍNH RÒ SANG VỎ ĐIỆN THOẠI.
+   `v3-mau` do `vo.js::moMuc("1a")` đặt trên `<html>`, và `moMuc` CHẠY MỘT LẦN lúc nạp kể
+   cả ở khổ điện thoại (vỏ máy tính dựng trước, `dt.js` bật tầng điện thoại sau). Lớp ấy
+   nằm lại VĨNH VIỄN vì tầng điện thoại không bao giờ gọi `moMuc` nữa.
+   Đo 02/10: sang bước Tạo hình trên điện thoại mà `.v3-san` vẫn `visibility:hidden` —
+   **khung 3D ẩn hẳn, không bao giờ hiện lại**. Chuỗi tổ tiên chỉ đúng `.v3-san`, mà luật
+   ẩn nó là luật của MỤC 1a bên vỏ kia.
+   ⚠ Chữa ở CSS chứ không nhờ `vo.js` xoá lớp: `vo.js` chạy TRƯỚC `dt.js` nên nó không
+     biết tầng điện thoại có bật hay chưa — một phép xoá ở đó lại phụ thuộc thứ tự nạp,
+     thứ kho này đã ghi là không được dựa vào. */
+html.v3-mau:not(.dt-on) .v3-san{ visibility:hidden; height:1px; min-height:0;
+  pointer-events:none; border:0 }
+/* ⚠ `.v3` là lưới `230px | 1fr | 360px` với `grid-template-areas`. Cho bảng trải từ
+   cột 2 sang hết là nó lấy luôn chỗ của khung 3D (cột 2) mà vẫn giữ cột bước bên trái.
+   ⚠ Phải ghi cả `grid-area`, không chỉ `grid-column`: phần tử đang được đặt bằng
+     `grid-area:bang` (tên vùng), và một `grid-column` trần thì bị `grid-area` ghi đè. */
+html.v3-mau:not(.dt-on) .v3-bang{ grid-column:san-start / bang-end; grid-row:san-start / san-end;
+  width:auto; max-width:none; border-left:0 }
+html.v3-mau:not(.dt-on) .bo-mau{ grid-template-columns:repeat(4,1fr); gap:10px }
+html.v3-mau:not(.dt-on) .bo-mau .hinh{ aspect-ratio:4/3; height:auto }
+
+/* ══⚠⚠ §53.1 · X9 — RUỘT CỦA `<details>` ĐANG ĐÓNG PHẢI THÔI ĐƯỢC VẼ ═══════════════════
+   Trình duyệt ẩn ruột `<details>` chưa mở bằng `display:none` của BẢNG KIỂU UA — mà bất kỳ
+   luật `display` nào của tác giả cũng thắng nó (đúng luật §52.2 về `[hidden]`, chỉ khác chỗ
+   áp dụng). Trong tệp này có hàng chục luật như thế: `.hang{display:flex}` · `.bo-mau{display:
+   grid}` · …
+
+   Hậu quả đo được 02/10, khổ 390×664 VÀ 390×844 (nên không phải chuyện màn ngắn):
+     #khuTieuChi (<details> ĐANG ĐÓNG)  cao  34 px   ← chỉ còn <summary>
+     #dsTieuChi  (.hang, ruột của nó)   cao 118 px   ← VẪN ĐƯỢC VẼ, tràn ra ngoài hộp cha
+   ⇒ Các khối sau nó (`mangDatLai` · `mangRong` · `mangCao`) xếp như thể chỗ đó chỉ cao 34 px,
+     rồi **vẽ đè lên** 7 nút của tờ. Cổng 114a (§53.1·X9) đo đúng cái đó: 7/56 nút **nằm
+     trong tầm nhìn** mà `elementFromPoint` ở tâm nút trả về một phần tử KHÁC.
+   ⇒ Khách thấy nút sáng, bấm vào thì trúng thứ khác. Đúng thứ X9 sinh ra để dập.
+
+   ⚠ Chữa bằng cách trả lại hành vi mặc định của trình duyệt, KHÔNG sửa từng luật: sửa từng
+     luật thì mỗi `display` thêm vào sau này lại mở lại đúng cái lỗ này.
+   ⚠ Độ đặc hiệu đủ thắng mà KHÔNG cần `!important`: `details:not([open])>*:not(summary)` là
+     (0,1,2), còn `.hang` là (0,1,0). Đo trước khi viết, vì một `!important` ở đây sẽ chặn cả
+     những chỗ cố ý mở bằng JS về sau.
+   ⚠ Đặt CUỐI TỆP theo luật đã ghi: `@media` không cộng độ đặc hiệu, nên khối ghi đè nằm
+     giữa tệp là thua chính luật gốc nằm sau nó. */
+details:not([open]) > *:not(summary){ display:none }
+
+/* ⚠ §Bổ sung 1 · R1 — trên tấm đáy điện thoại, `<details>` mượn sang đã được `doi()` mở
+   sẵn; ẩn `<summary>` của nó vì TIÊU ĐỀ TẤM đã nói đúng điều ấy. Hai dòng tiêu đề chồng
+   nhau đọc ra như một lỗi dựng. Chỉ trong tấm đáy — bản máy tính giữ nguyên hộp gập. */
+html.dt-on .dt-tam-than details[data-dt-mo] > summary{ display:none }
+
+/* ══⚠⚠ BỔ SUNG 9 §1.5 — HAI TẦNG, HAI DÁNG (nhìn là biết đang sửa cả vách hay một thứ)
+   TGĐ 04/10: *"Cần phân biệt rõ việc thao tác chung cho cả vách và thao tác riêng cho
+   từng mảng, mạch, tủ…"* Dáng là nửa sau của việc phân tầng: tách đúng khối mà hai tờ
+   nhìn y hệt nhau thì khách vẫn không biết mình đang ở tầng nào.
+ ⚠ ĐẶT CUỐI TỆP, có chủ ý — `@media` KHÔNG cộng độ đặc hiệu, và bài học đã ghi trong
+   CLAUDE.md (đợt mobile 30/08, mục (a)): khối ghi đè đặt giữa tệp thì quy tắc gốc nằm
+   SAU sẽ thắng ở cùng độ đặc hiệu, và hai trong bốn quy tắc "không ăn" mà trang vẫn
+   dựng ra bình thường.
+ ⚠ Màu viền trái do JS đặt từ `H.VIEN_LOAI` (một bảng, 3D và thẻ cùng đọc) — ở đây chỉ
+   khai BỀ DÀY và màu lót phòng khi JS chưa chạy. Gõ hex của từng loại vào CSS là tạo
+   bản thứ hai của bảng ấy. */
+/* ⚠⚠ `html.dt-on` Ở ĐẦU BỘ CHỌN LÀ BẮT BUỘC. Quy tắc gốc `html.dt-on .dt-tam{…}`
+   có độ đặc hiệu (0,2,1) và đặt `background` trắng; `.dt-tam.dt-tang-vach` chỉ (0,2,0)
+   nên **không ăn** — cổng `BS9e` đỏ với "tờ vách nền rgb(255,255,255)". Đặt cuối tệp
+   KHÔNG cứu được chuyện này: cuối tệp chỉ thắng khi độ đặc hiệu BẰNG nhau. */
+html.dt-on .dt-tam.dt-tang-vach{ background:#f4f5f6 }
+html.dt-on .dt-tam.dt-tang-vach .dt-tam-dau b{ letter-spacing:.2px }
+html.dt-on .dt-tam.dt-tang-dt{ background:#fff; border-left:4px solid #9aa3ab }
+/* Nhóm "Cho cả vách" trong thẻ đối tượng (BS9 §1.3): đứng CUỐI thẻ, sau một đường kẻ,
+   có nhãn — không bao giờ cùng hàng với nút riêng. */
+.vt-vach{ margin-top:14px; padding-top:10px; border-top:1px solid var(--vien) }
+.vt-vach>.nh{ color:#6b7280; font-size:12px; text-transform:uppercase;
+  letter-spacing:.6px; margin:0 0 6px }
+/* Bản máy tính — cùng hai dáng, cùng bảng màu (xem `datDangTangVo` trong vo.js) */
+.v3-bang.v3-tang-vach{ background:#f4f5f6 }
+.v3-bang.v3-tang-dt{ background:#fff; border-left:4px solid #9aa3ab }
+
+/* ══ §2 · NÚT "CẢ VÁCH" — ĐƯỜNG RA KHỎI KHUNG NHÌN GẦN ════════════════════════════
+   Neo ĐÁY GIỮA khung 3D: dải nút trên (↶ ↷ ⤢ · Mốc · Ánh sáng) đã chật, và §51.2 còn
+   đo từng pixel của dải che trên. Đáy giữa thì không chạm dải nào, và nó là chỗ mắt
+   rơi vào sau khi vừa bấm một chip ở tờ dưới.
+   ⚠ `z-index` phải trên `.v3-nhac` (dòng nhắc cũng neo ở đáy): không thì cú bấm rơi
+     vào dòng chữ. */
+.v3-cavach{ position:absolute; left:50%; transform:translateX(-50%); bottom:12px;
+  z-index:6; padding:9px 16px; min-height:44px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.35); background:rgba(17,24,20,.86); color:#fff;
+  font:600 14px/1 inherit; letter-spacing:.2px; cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.28); backdrop-filter:blur(3px) }
+.v3-cavach:hover{ background:rgba(17,24,20,.95) }
+.v3-cavach:focus-visible{ outline:2px solid var(--nhan); outline-offset:2px }
+/* Điện thoại: tránh dải nhắc và thanh việc ở đáy. */
+@media (max-width:860px){ .v3-cavach{ bottom:8px; padding:8px 14px; font-size:13px } }
+
+/* ══════════════════════════════════════════════════════════════════════════════════
+   SƠ ĐỒ MẶT ĐỨNG 2D  (Bổ sung 22 §2.1 điện thoại · §3.1 máy tính)
+ ⚠ Khối ghi đè cho mobile nằm CUỐI TỆP (xem §(a) trong CLAUDE.md: `@media` không cộng
+   độ đặc hiệu, nên một khối mobile đặt giữa tệp bị chính bản gốc đứng sau đè mất).
+══════════════════════════════════════════════════════════════════════════════════ */
+.so-do{ position:absolute; inset:0; z-index:4; background:var(--nen,#fff);
+  overflow:hidden; touch-action:pan-x pan-y pinch-zoom }
+.so-do[hidden]{ display:none!important }
+.sd-sv{ display:block; width:100%; height:100% }
+.sd-t{ font:600 11px/1.2 var(--font,system-ui,sans-serif); fill:#2b322d;
+  paint-order:stroke; stroke:rgba(255,255,255,.85); stroke-width:3px }
+/* ⚠ Chấm bấm: vòng TRONG SUỐT cỡ đầy đủ là mục tiêu chạm, vòng nhỏ đặc là thứ mắt
+   thấy. Tách hai vòng vì luật 44 px nói về VÙNG CHẠM, còn một đĩa 44 px tô đặc thì
+   che mất chính cái hình nó đang trỏ tới. */
+/* ══ BS35 — BA HÌNH KHÁC NHAU cho ba loại vật, không còn chấm tròn đồng loạt ═════
+   Lệnh §3.2 kiểm "ba loại hình khác nhau" BẰNG LỚP CSS và hình học, nên mỗi loại có
+   một lớp riêng và một hình riêng: ô (không tay cầm) · mạch (viên thuốc dẹt) · góc
+   (vuông, hoặc cung khi đã bo). */
+.sd-o{ cursor:pointer }
+.sd-o:hover{ filter:brightness(1.06) }
+.sd-o:focus-visible{ outline:2px solid var(--nhan,#24700B); outline-offset:2px }
+/* BS60 §2b.4 — dải chân đợt trên lam: VÙNG KHÔNG ỐP, tường lộ ra để đợt bắt vít.
+ ⚠ Không `cursor:pointer` và không `role` — dải là HỆ QUẢ của đợt, sửa nó là sửa đợt,
+   mà đợt đã có mục tiêu bấm riêng nằm ngay trên nó. */
+.sd-khongop{ fill:#cfd4cf; stroke:#8d948d; stroke-width:.6; pointer-events:none }
+.sd-dai{ cursor:pointer }                 /* dải chạm của mạch: TRONG SUỐT, chỉ để bấm */
+.sd-net{ pointer-events:none }            /* nét là hình, không phải mục tiêu chạm */
+.sd-tay{ cursor:pointer }
+.sd-tay:focus-visible{ outline:2px solid var(--nhan,#24700B); outline-offset:2px }
+/* ⚠ BS42 — `.sd-tay-mach` (viên thuốc của mạch ngắn) đã bỏ hẳn: TGĐ phải hỏi nó là
+   gì, nó trồi ra ngoài đỉnh vách, và nó hiện cả ở tờ không có dải mạch. Mạch ngắn nay
+   chạm được nhờ đĩa cắt co theo độ dài (`trimM` trong `sodo.js`). Giữ hai dòng này ở
+   dạng chú thích để người sau không "khôi phục" lại một hình đã bị bác. */
+.sd-tay-goc rect{ fill:#fff; stroke:#3a423d; stroke-width:1.6 }
+.sd-tay-goc:hover rect{ stroke:var(--nhan,#24700B); stroke-width:2.2 }
+/* ══ BS50 §3.2 — dấu góc ĐÃ BO là một CHẤM TRÒN ĐẶC ở trung điểm cung ═══════════════
+   Bản trước là một cung xanh vẽ lại hình bo (`.sd-tay-gocbo path`). Cung ấy không trùng
+   đường bo đang vẽ ngay bên cạnh, và nó nói lại điều mắt đã thấy — nên nay là một chấm:
+   nó TRỎ vào góc chứ không MÔ TẢ góc. Viền trắng mảnh để chấm đọc được trên cả ô sáng
+   lẫn ô tối (cùng cách `.sd-chip` đang làm). */
+.sd-cham-goc{ fill:#0d6b31; stroke:#fff; stroke-width:1.2 }
+.sd-tay-gocbo:hover .sd-cham-goc{ fill:var(--nhan,#24700B); stroke-width:1.6 }
+.sd-tay-chon .sd-cham-goc{ fill:var(--vang,#cc8d00) }
+/* ══ BS39 §2.2 — GÓC VỪA CHẠM SÁNG LÊN. Khách phải thấy mình đang sửa góc nào, nếu
+   không thì tờ Bo góc mở ra mà không biết nó nói về đâu. */
+.sd-tay-chon rect{ fill:#1ac75c; stroke:#0d6b31; stroke-width:2.2 }
+.sd-tay-chon path{ stroke:#1ac75c; stroke-width:3.4 }
+/* Một dòng ở đầu ô chú thích tờ Bo góc: "Đang sửa góc n của M5 — chọn R bên dưới" */
+.tt-goc-chon{ font-weight:700; color:var(--nhan,#24700B); margin:0 0 4px }
+/* ══ BS40 §1.3 — lam sóng: lớp gạch sọc phủ lên màu mảng, KHÔNG nhận chạm (ô ở dưới
+   mới là vùng chạm). §1.4 — nẹp nối: nét dày 3 px đúng màu nẹp, cũng không nhận chạm
+   (dải chạm trong suốt của mạch nằm trên). */
+.sd-lam, .sd-nep, .sd-nep-vien, .sd-net-vo{ pointer-events:none }
+/* ══ BS40 §1.5 — NỀN CHIP CỦA NHÃN. Vẽ hẳn thành `<rect>` thay vì dựa vào viền chữ
+   `paint-order:stroke`: đo trên trang thì viền ấy ra `none`, nên chữ tối trên mảng
+   tối chỉ còn 2,4 : 1. Chip trắng đục cho ~11 : 1 ở mọi màu mảng, và nó là một HỘP
+   đo được — thứ phép tránh chồng nhãn (BS39 §2.5) cần. */
+.sd-chip{ fill:rgba(255,255,255,.93); stroke:rgba(0,0,0,.10); stroke-width:1 }
+/* BS35 §2.5 — một dòng gợi ý, chỉ lần đầu mở Sơ đồ trong phiên */
+.sd-goi{ flex:none; padding:6px 10px 8px; font-size:11.5px; line-height:1.35;
+         color:var(--muc2,#4a524c); border-top:1px solid var(--vien) }
+/* Nút "Sơ đồ" chỉ có việc ở vỏ điện thoại — ở máy tính sơ đồ là cột thường trực.
+   ⚠ ẨN, không XOÁ khỏi DOM: cổng §3.1 đòi "không có nút nào chỉ có ở một trong ba
+   phần", nên nó phải còn đó để đo được. */
+html:not(.dt-on) .v3-chi-dt{ display:none }
+
+/* ══════════════════════════════════════════════════════════════════════════════════
+   §3.1 — SƠ ĐỒ LÀ CỘT THỨ TƯ, chỉ ở màn ĐỦ RỘNG
+   Lệnh: *"Máy tính có chỗ nên hiện thường trực"*. Câu đó có một điều kiện trong chính
+   nó — **có chỗ**. Lưới hiện tại là `230 | 1fr | 360`; ở 1440 px phần 3D còn ~850 px,
+   chèn thêm một cột 300 px là bóp 3D còn ~550 px, tức lấy chỗ của phần chính để bày
+   phần phụ.
+ ⚠ Nên cột sơ đồ chỉ mở từ **1560 px** — đo ngược từ yêu cầu: 230 + 360 + 300 + 670
+   (3D không hẹp hơn 670 px thì mảng cao 2800 mm vẫn đọc được số) = 1560.
+ ⚠ Dưới ngưỡng đó KHÔNG mất sơ đồ: nút ◫ vẫn bấm được (chế độ thay chỗ, đúng §2.1).
+   Một bản mã, hai chỗ đặt — khác nhau đúng ở `mdCot`, do `vo.js` đặt theo khổ màn.
+══════════════════════════════════════════════════════════════════════════════════ */
+@media (min-width:1560px){
+  html:not(.dt-on) .v3.v3-co-md{ grid-template-columns:230px minmax(670px,1fr) 300px 360px;
+    grid-template-areas:"dau dau dau dau" "cot san md bang" "day day day day" }
+  html:not(.dt-on) .v3.v3-co-md .so-do{ grid-area:md; position:relative; inset:auto;
+    border-left:1px solid var(--vien); z-index:0 }
+  html:not(.dt-on) .v3.v3-co-md .v3-chi-dt{ display:none }
+}
+/* Dưới ngưỡng: nút ◫ phải hiện lại trên máy tính, vì lúc đó sơ đồ là CHẾ ĐỘ.
+ ⚠ Đặt sau khối trên để nó thắng khi lưới 4 cột không bật — `@media` không cộng độ
+   đặc hiệu, nên thứ tự trong tệp là thứ quyết định. */
+@media (max-width:1559px){ html:not(.dt-on) .v3-chi-dt{ display:inline-flex } }
+
+/* ══ §2.2 · §3.2 — MẶT CẮT NHỎ TRONG THẺ MẠCH ═══════════════════════════════════ */
+.ts-td{ display:block; margin:8px 0 0; background:var(--the2,#f6f7f5);
+  border:1px solid var(--vien); border-radius:8px }
+.td-mat{ fill:none; stroke:var(--nhan,#24700B); stroke-width:1.8;
+  stroke-linejoin:round; stroke-linecap:round }
+.td-tam{ stroke:#1ac75c; stroke-width:1; stroke-dasharray:3 3; opacity:.8 }
+.td-ghi{ font:600 9px/1 var(--font,system-ui,sans-serif); fill:var(--muc2,#4a524c) }
+/* §3.2 — khối mặt cắt thường trực dưới sơ đồ, chỉ ở cột máy tính. */
+.so-do{ display:flex; flex-direction:column }
+.sd-sv{ flex:1 1 auto; min-height:0 }
+.sd-td{ flex:none; border-top:1px solid var(--vien); padding:8px 10px 10px;
+  background:var(--the,#fff) }
+.sd-td-t{ font-size:11.5px; font-weight:700; color:var(--muc2,#4a524c); margin:0 0 6px }
+.sd-td-n{ font-size:11.5px; color:var(--muc3,#7a827c) }
+.ts-td-to{ width:100%; height:auto }
+.td-kt{ stroke:var(--muc2,#4a524c); stroke-width:1 }
+.td-kt-c{ font-weight:700 }
+/* §2.1 — khung sơ đồ cuộn được khi đang phóng; ở mức 1:1 thì không cuộn gì. */
+.so-do.sd-phong{ overflow:auto }
+.sd-so{ cursor:pointer; text-decoration:underline; text-decoration-style:dotted;
+  text-underline-offset:2px }
+.sd-so:hover{ fill:var(--nhan,#24700B) }
+.sd-so:focus-visible{ outline:2px solid var(--nhan,#24700B); outline-offset:1px }
+
+/* ══⚠⚠ BS26 §2 — Ô NHẬP ≥ 16 px Ở VỎ ĐIỆN THOẠI, VÀ KHÔNG CHẶN PHÓNG TO ═════════════
+   TGĐ 11/10: *"hay bị nhảy zoom, mất chữ"*. Safari trên iPhone **tự phóng cả trang**
+   khi tiêu điểm vào một ô nhập có `font-size` dưới 16 px. Đo trên gói `9b049edc`:
+       .kt-sua input  14px  ·  .lv-o input   13px
+       .lv-link input 12px  ·  .bg-form …    15px  (form gửi báo giá — khách để số)
+       input[type=number] 12.5px  ·  .bg-ma input 12.5px
+   ⚠⚠ KHÔNG chữa bằng `maximum-scale=1` hay `user-scalable=no`: lệnh cấm thẳng, và
+     cấm đúng — chặn phóng là lấy mất thao tác của người cần chữ to để đổi lấy tiện
+     cho mình. Chữa ở ĐÚNG nguyên nhân: nâng cỡ chữ.
+ ⚠ ĐẶT CUỐI TỆP và bọc trong `html.dt-on`. Hai lý do, cả hai đã có tiền lệ ghi trong
+   CLAUDE.md: `@media`/lớp KHÔNG cộng độ đặc hiệu nên khối ghi đè phải nằm SAU khối
+   gốc; và nâng cỡ chữ cho cả vỏ máy tính là đổi hình học của bản desktop — thứ luật
+   "sửa mobile thì desktop không được đổi" cấm.
+ ⚠ `.kt-sua input` thì nâng cho CẢ HAI vỏ (xem khối dưới): ô nổi không tồn tại lúc
+   trang ở trạng thái nghỉ nên nó không nằm trong mốc desktop, mà cổng 5 của BS26 §2
+   lại đòi chữ trong ô ấy ≥ 16 px ở 1440 px. */
+html.dt-on input, html.dt-on textarea, html.dt-on select,
+html.dt-on input[type=number], html.dt-on input[type=text],
+html.dt-on .lv-o input, html.dt-on .lv-link input, html.dt-on .bg-ma input,
+html.dt-on .bg-form input[type=text], html.dt-on .bg-form input:not([type]),
+html.dt-on .bg-form textarea{ font-size:16px }
+
+/* ⚠⚠ BỎ HẲN Ô NỔI TRÊN VỎ ĐIỆN THOẠI (BS26 §2). `_ktTuNhan()` không mở nó nữa, nhưng
+   luật là "bỏ hẳn" chứ không phải "thôi mở": một khối còn dựng được thì một đường gọi
+   còn sót sẽ dựng nó ra, và lúc ấy lỗi mất chữ quay lại y nguyên. Hai lớp chặn. */
+html.dt-on .kt-sua{ display:none !important }
+
+/* ══⚠⚠ ĐÒI LẠI VÀI PIXEL Ở BIỂU MẪU BÁO GIÁ, VỎ ĐIỆN THOẠI ════════════════════════
+   Nâng cỡ chữ ô nhập lên 16 px (khối trên) làm cao biểu mẫu tăng, và ở khổ **360 × 640**
+   nút Gửi tụt ra ngoài khung **đúng 2 px** — cổng `23c` bắt được ngay lượt chạy đầu.
+   Cổng ấy canh một thứ thật: *"nút Gửi trong tầm nhìn khi hộp vừa mở"*; một cái phễu
+   bị bịt ở miệng thì không báo gì cả (chú thích của chính cổng ghi: trước đó nút ở
+   y = 1113, tức ngoài khung).
+ ⚠ KHÔNG đòi lại bằng cách hạ `min-height` của ô nhập: 44 px là mức vùng chạm, có cổng
+   riêng canh. Đòi ở chỗ KHÔNG ai chạm vào — lề của nhãn ghi chú và chiều cao tối thiểu
+   của ô ghi chú (một ô văn bản dài, 56 px vẫn đủ hai dòng ở 16 px).
+ ⚠ Đòi 18 px cho một chỗ thiếu 2 px là CHỦ Ý: một cổng đạt nhờ 1 px sẽ lật ở lần đổi
+   phông kế tiếp, và lúc ấy không ai nối được nó với thay đổi này. */
+html.dt-on .bg-form .bg-ghi{ margin-top:4px }
+html.dt-on .bg-form input[type=text], html.dt-on .bg-form input:not([type]),
+html.dt-on .bg-form textarea{ margin-top:2px }
+html.dt-on .bg-form button[type=submit]{ margin-top:8px }
+html.dt-on .bg-hang{ gap:6px; margin:6px 0 }
+
+/* Ô nổi của vỏ MÁY TÍNH: cỡ chữ ≥ 16 px (cổng 5). Chiều rộng nới theo cho khỏi cắt số. */
+.kt-sua input{ font-size:16px; width:96px }
+
+/* ⚠ Nháy viền ô vừa được đưa tới (BS26 §2: *"cuộn tới đúng ô và làm ô ấy nháy viền
+   khoảng 1 giây"*). Dùng `box-shadow` chứ không `outline`: `outline` của ô số đang là
+   tín hiệu tiêu điểm bàn phím, chồng hai nghĩa lên một thuộc tính thì người dùng bàn
+   phím không còn phân biệt được "đang gõ ở đây" với "vừa nhảy tới đây".
+ ⚠ Tôn trọng `prefers-reduced-motion`: ở đó bỏ animation và để một viền tĩnh — JS vẫn
+   gỡ lớp bằng hẹn giờ dự phòng nên nó không nằm lại. */
+@keyframes ktNhay{ 0%,100%{ box-shadow:0 0 0 0 rgba(36,112,11,0) }
+                   30%,70%{ box-shadow:0 0 0 3px rgba(36,112,11,.55) } }
+.kt-nhay{ animation:ktNhay 1s ease-in-out 1 }
+@media (prefers-reduced-motion: reduce){
+  .kt-nhay{ animation:none; box-shadow:0 0 0 3px rgba(36,112,11,.55) }
+}
+
+/* ══⚠⚠ NÚT BƯỚC LỚN TRÊN VỎ ỨNG DỤNG — CHỮ TRÀN RA NGOÀI CHÍNH CÁI NÚT ═════════════
+   TGĐ báo 11/10 (ảnh 21:29): "vẫn bị tràn số ra ngoài". Đo trên tên miền thật, khổ
+   390 px:
+       nút ±100   hộp 46 px  ·  chữ 46,9–47,5 px ở font-size 20  ·  padding 5+5
+                  ⇒ nội dung còn 36 px cho 47 px chữ, `overflow:visible` nên chữ
+                    tràn qua cả hai mép nút
+       nút ± đơn  chữ 12 px trong 46 px — không sao
+   ⚠⚠ ĐÂY LÀ VA CHẠM ĐỘ ĐẶC HIỆU, không phải thiếu quy tắc. `.so-nut-lon` ĐÃ khai
+     `font-size:11.5px` (dòng ~1494) — nhưng `html.dt-app .so-nut` là **(0,2,1)** còn
+     `.so-nut-lon` chỉ **(0,1,0)**, nên trên vỏ ứng dụng con số 20 px thắng và nút nhỏ
+     mang cỡ chữ của nút to. Cùng cái bẫy đã ghi hai lần trong kho này (`.ct-ma` ở đợt
+     mobile 30/08 · `.article nav` ở trang bài viết): **một khối đặt sau KHÔNG tự thắng
+     nếu độ đặc hiệu thấp hơn.**
+   ⚠ KHÔNG chữa bằng cách thu hẹp nút: 46 px là mức vùng chạm, có cổng riêng canh. Chữa
+     ở CỠ CHỮ và lề trong — đúng chỗ sinh ra tràn.
+   ⚠ 14 px chứ không 11,5 px: vỏ ứng dụng cố ý dùng nút to hơn, nên hạ thẳng về cỡ của
+     vỏ máy tính là đổi một lỗi thành một lỗi khác (chữ bé tí trong nút to). Đo: 14 px
+     ⇒ chữ ≈ 33 px, lề trong 3+3 ⇒ nội dung 40 px — dư 7 px. */
+html.dt-app .so-nut-lon{ font-size:14px; padding-inline:3px }
+
+/* ══⚠⚠ CHIP KÍCH THƯỚC ẨN TRONG LÚC THẺ THÔNG TIN ĐANG MỞ ═════════════════════════
+   Khoá vào CHÍNH trạng thái của thẻ (`#theTS.mo`), KHÔNG vào một cờ riêng trên `<html>`.
+   Bản đầu dùng cờ `html.tt-mo` và đó là **hai nguồn cho một trạng thái**: đường nào
+   đóng thẻ mà không qua `dongTheTS()` sẽ để cờ nằm lại và chip ẩn vĩnh viễn.
+ ⚠ `:has()` — nếu trình duyệt quá cũ không hiểu, quy tắc bị BỎ QUA: chip hiện trở lại và
+   ta quay về đúng cảnh chồng chữ, chứ không vỡ gì. Hỏng về phía an toàn.
+ ⚠ Nhắm qua `.v3-san` chứ không `body:has(...)`: hai node này là con của sân, và giới
+   hạn phạm vi giúp quy tắc không phải xét lại cả cây mỗi lần lớp `.mo` đổi. */
+.v3-san:has(#theTS.mo) #ktNhan{ display:none !important }
+
+/* ⚠ BS94 §2.5 — lớp phủ ảnh của BS90 ĐÃ GỠ: bấm "Lưu / gửi ảnh vách" nay mở
+   thẳng bảng chia sẻ của máy, không hiện ảnh trên trang (TGĐ chốt 18/10).
+   Các lớp `.anh-nen` · `.anh-hop` · `.anh-than` gỡ theo, không để lại quy tắc
+   mồ côi — `kiem_lop_css()` chỉ bắt lớp DÙNG mà thiếu quy tắc, không bắt chiều
+   ngược, nên quy tắc chết thì phải tự dọn. */
+
+/* ══ BS130 §3 · HỘP `#hopXem` — chế độ Màu · X-ray · Nét + công tắc lớp ═══════════════
+   Neo như `#hopSang`: máy tính ngay dưới chip (toạ độ do `_datChoHop()` đo), điện thoại
+   dải ngang đáy khung 3D. Hai hàng: chế độ (chọn một) · lớp (bật/tắt từng lớp). */
+.v3-hop-xem{ position:absolute; z-index:5; left:10px; top:54px; max-width:min(92vw,420px) }
+.v3-xem-che, .v3-xem-lop{ display:flex; flex-wrap:wrap; gap:6px }
+.v3-xem-lop{ margin-top:8px }
+.v3-hop-xem button{ min-height:34px; padding:0 10px; border-radius:8px; font-size:12px;
+  white-space:nowrap }
+.v3-hop-xem button[aria-pressed="true"]{ border-color:var(--nhan); color:var(--nhan);
+  font-weight:700 }
+.v3-xem-lop button[aria-pressed="false"]{ opacity:.55; text-decoration:line-through }
+/* BS75 §4 · chặng D — thanh ĐỘ BUNG 0 → 100 %. Cả hàng là vùng chạm ≥ 36 px cao. */
+.v3-xem-bung{ display:flex; align-items:center; gap:8px; margin-top:8px; min-height:36px;
+  font-size:12px }
+.v3-xem-bung input{ flex:1 1 auto; min-width:120px; height:28px; accent-color:var(--nhan) }
+html.v3-bung-on #v3Moc, html.v3-bung-on #dtNhan{ visibility:hidden }
+/* BS75 §4.2 — nhãn mã khi bung: chip nhỏ, không chặn chạm (chạm xuyên xuống vật để mở thẻ). */
+.v3-nhan-bung{ position:absolute; inset:0; pointer-events:none; z-index:3 }
+.v3-nb{ position:absolute; padding:1px 5px; border-radius:6px; background:rgba(20,40,30,.82);
+  color:#fff; font-size:11px; line-height:16px; font-weight:600; white-space:nowrap }
+/* BS75 §4.3 — THẺ CHI TIẾT: góc phải trên khung 3D (máy tính), dải đáy (điện thoại). */
+.v3-the-ct{ position:absolute; z-index:6; right:10px; top:54px; width:min(92%,340px);
+  max-height:calc(100% - 64px); overflow:auto; padding:8px 10px; border-radius:10px;
+  background:rgba(255,255,255,.96); box-shadow:0 4px 18px rgba(0,0,0,.18); font-size:12px }
+.v3-the-dau{ display:flex; align-items:center; gap:8px; margin-bottom:6px }
+.v3-the-dau b{ font-size:14px } .v3-the-dau span{ color:var(--muc3); flex:1 1 auto }
+.v3-the-x{ min-width:36px; min-height:36px; border-radius:8px; font-size:18px; line-height:1 }
+.v3-the-bang{ width:100%; border-collapse:collapse }
+.v3-the-bang th{ text-align:left; font-weight:600; color:var(--muc3); padding:3px 8px 3px 0;
+  white-space:nowrap; vertical-align:top }
+.v3-the-bang td{ padding:3px 0; overflow-wrap:anywhere }
+.v3-the-ghi{ margin-top:6px; color:var(--muc3) }
+html.dt-on .v3-the-ct{ left:8px; right:8px; top:auto; bottom:8px; width:auto; max-height:55% }
+.v3-xem-bung output{ min-width:3.2em; text-align:right; font-variant-numeric:tabular-nums }
+.v3-xem-ghi{ display:block; font-size:11px; color:var(--muc3); margin-top:6px }
+.v3-xem-ghi:empty{ display:none }
+html.dt-on .v3-hop-xem{ left:8px; right:8px; top:auto; bottom:8px; max-width:none;
+  padding:8px 9px }
+/* ⚠ Hàng CHẾ ĐỘ một dòng (3 nút, luôn vừa); hàng LỚP được XUỐNG DÒNG: đo ở 390 px hàng
+   lớp `tu` dài hơn khung, nút cuối ("Khung xương") nằm ngoài mép — phải vuốt mới thấy,
+   mà không có gì báo là còn nút. Hai dòng cao thêm ~42 px nhưng không nút nào trốn. */
+html.dt-on .v3-xem-che{ flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none }
+html.dt-on .v3-xem-che::-webkit-scrollbar, html.dt-on .v3-xem-lop::-webkit-scrollbar{ display:none }
+html.dt-on .v3-hop-xem button{ flex:0 0 auto; min-height:36px }
+/* Nhãn "khung xương minh hoạ" trên khung 3D (#1159 điều kiện 4) — góc trên trái, dưới
+   hàng nút; không chặn chạm (pointer-events:none) để khỏi che chỗ chọn mảng. */
+.v3-xem-nhan{ position:absolute; z-index:4; left:10px; top:54px; max-width:min(70%,420px);
+  padding:4px 8px; border-radius:6px; background:rgba(255,255,255,.88); color:#7a3d00;
+  font-size:11px; line-height:1.35; pointer-events:none }
+html.dt-on .v3-xem-nhan{ top:40px; left:8px; max-width:calc(100% - 16px); font-size:10.5px }
+
+/* ══ #1174 chặng E · BS75 §6 — HÀNG ĐIỀU KHIỂN TRÌNH TỰ THI CÔNG: đáy khung 3D, ≤ 30 % chiều cao
+   khung (cổng 8 đo ở 390 px). Hai dòng: nút + thanh kéo bước · câu "Bước n/N · tên — câu". */
+.v3-xem-tt{ display:block; margin-top:8px }
+.v3-tt{ position:absolute; z-index:6; left:10px; right:10px; bottom:10px; padding:6px 8px;
+  border-radius:10px; background:rgba(255,255,255,.95); box-shadow:0 4px 18px rgba(0,0,0,.16);
+  font-size:12px }
+.v3-tt-nut{ display:flex; align-items:center; gap:6px }
+.v3-tt-nut button{ min-width:36px; min-height:36px; border-radius:8px; font-size:15px; line-height:1;
+  padding:0 8px }
+.v3-tt-nut input{ flex:1 1 auto; min-width:60px; height:28px; accent-color:var(--nhan) }
+.v3-tt-chu{ margin-top:4px; line-height:1.35; overflow:hidden; display:-webkit-box;
+  -webkit-line-clamp:2; -webkit-box-orient:vertical }
+html.dt-on .v3-tt{ left:6px; right:6px; bottom:6px; padding:4px 6px }
+/* BS132 §3 — dòng dưới: mô tả bước + nút thoát CÓ CHỮ "Thoát trình tự" */
+.v3-tt-duoi{ display:flex; align-items:flex-start; gap:8px; margin-top:4px }
+.v3-tt-duoi .v3-tt-chu{ flex:1 1 auto; margin-top:0 }
+.v3-tt-ra{ flex:0 0 auto; min-height:32px; border-radius:8px; padding:0 10px; font-size:13px; white-space:nowrap }
+.v3-tt-ngan{ display:none }
+/* THU GỌN: một dòng ‹ ▶ › · "Bước i/N" · ✕, cao ≤ 10 % khung 3D ở 390 px (cổng BS132-3.3) */
+.v3-tt.gon, html.dt-on .v3-tt.gon{ padding:1px 6px }   /* `html.dt-on .v3-tt` (0,2,1) thắng `.v3-tt.gon` (0,2,0) */
+.v3-tt.gon .v3-tt-duoi, .v3-tt.gon #ttKeo, .v3-tt.gon #ttToc{ display:none }
+.v3-tt.gon .v3-tt-ngan{ display:block; flex:1 1 auto; text-align:left; min-height:26px; font-size:13px; background:none; border:0 }
+.v3-tt.gon .v3-tt-nut button{ min-width:30px; min-height:26px; height:26px; font-size:14px }
+.v3-tt.gon .v3-tt-ra .chu{ display:none }
+html.v3-tt-on #v3Moc, html.v3-tt-on #dtNhan{ visibility:hidden }
+/* BS131 A5 · G8 — trình phát mở: nhãn kích thước (nổi · cao · rộng · mép trái) và dòng nhắc
+   "Chạm vào một mảng để xem" đè lên hàng nút / hiện lờ mờ dưới câu bước ⇒ ẩn hẳn */
+html.v3-tt-on #ktNhan, html.v3-tt-on #dtNhac{ display:none !important }
+
+/* ══ BS132 §2 — BÀY PHẲNG (`bay.js`): lớp phủ trong khung 3D. Một dải nút trên (cách bày ·
+   lọc nhóm · lọc màu · ✕), vùng SVG kéo để cuộn / chụm để phóng, thẻ chi tiết dùng lại khuôn
+   `.v3-the-ct`. Trong trình tự (bước Pha 1) lớp phủ nằm DƯỚI thanh trình phát (z 5 < 6). */
+.v3-bay{ position:absolute; left:0; top:0; width:100%; height:100%; z-index:5; display:flex; flex-direction:column;
+  background:#f3f1ec; border-radius:inherit; overflow:hidden }
+.v3-bay[hidden]{ display:none }
+.bp-thanh{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding:6px 8px;
+  background:rgba(255,255,255,.95); box-shadow:0 1px 6px rgba(0,0,0,.08); font-size:12px }
+.bp-che, .bp-loc{ display:flex; gap:4px; flex-wrap:wrap; align-items:center }
+.bp-thanh button, .bp-mau{ min-height:32px; border-radius:8px; padding:0 9px; font-size:12px }
+.bp-thanh button[aria-pressed="true"]{ background:var(--nhan); color:#fff }
+.bp-loc button[aria-pressed="false"]{ opacity:.55; text-decoration:line-through }
+.bp-dong{ margin-left:auto; min-width:36px }
+.bp-sv{ flex:1 1 auto; width:100%; min-height:0; touch-action:none; cursor:grab; display:block }
+.bp-to{ fill:#fff; stroke:#8a8a8a; stroke-width:4; stroke-dasharray:24 14 }
+.bp-m rect{ stroke:#3a3a3a; stroke-width:3 }
+.bp-m.ch rect{ stroke:#e0007a; stroke-width:14 }
+.bp-ranh{ stroke:#7a3d00; stroke-width:2.5; opacity:.7 }
+.bp-chu{ fill:#1b1b1b; text-anchor:middle; dominant-baseline:central; pointer-events:none;
+  paint-order:stroke; stroke:rgba(255,255,255,.75); stroke-width:6 }
+.bp-nhan{ fill:#333; font-size:72px; font-weight:600; cursor:pointer }
+.bp-the .bp-xem{ display:block; width:100%; min-height:36px; margin-top:8px; border-radius:8px;
+  background:var(--nhan); color:#fff; font-weight:600 }
+.v3-bay.tt .bp-thanh{ display:none }
+/* điện thoại, mở bằng nút "Bày tấm": tấm phủ toàn màn (khung 3D chỉ ~180 px cao) */
+.v3-bay.toan{ position:fixed; left:0; top:0; width:100vw; height:100vh; height:100dvh; z-index:60; border-radius:0 }
+html.dt-on .bp-thanh{ padding:4px 6px; gap:4px; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none }
+html.dt-on .bp-thanh::-webkit-scrollbar{ display:none }
+html.dt-on .bp-che, html.dt-on .bp-loc{ flex:0 0 auto; flex-wrap:nowrap }
+html.dt-on .bp-thanh button, html.dt-on .bp-mau{ flex:0 0 auto; font-size:12px }
+html.dt-on .bp-mau{ max-width:150px }
+html.dt-on .bp-dong{ position:sticky; right:0; background:#fff }
+/* "Xem trên vách": khung nháy tại miếng vừa chọn (chiếu hộp bao lên màn) */
+.v3-nhay{ position:absolute; z-index:4; pointer-events:none; border:3px solid #e0007a;
+  border-radius:4px; box-shadow:0 0 0 3px rgba(255,255,255,.7); animation:v3nhay .45s ease-in-out 4 alternate }
+@keyframes v3nhay{ from{ opacity:1 } to{ opacity:.15 } }
+html.v3-bay-on #ktNhan, html.v3-bay-on #dtNhac, html.v3-bay-on #v3Moc, html.v3-bay-on #dtNhan{ visibility:hidden }

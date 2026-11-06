@@ -535,12 +535,12 @@ export default function HomePage() {
       {/* ========================================================
           SECTION 7: ƯỚC TÍNH CHI PHÍ VẬT TƯ TRONG MỘT PHÚT
           ======================================================== */}
-      <section className="py-20 bg-gradient-to-br from-bamboo-900 to-bamboo-950 text-white border-b border-bamboo-800">
+      <section className="py-20 bg-gradient-to-br from-stone-900 via-stone-950 to-amber-950/90 text-white border-b border-amber-900/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             <div className="lg:col-span-7 space-y-4">
-              <span className="text-xs font-bold uppercase tracking-widest text-wood-400">Tiện ích trực tuyến</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-amber-400">Tiện ích trực tuyến</span>
               <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
                 Ước tính chi phí vật tư trong một phút
               </h2>
@@ -551,7 +551,7 @@ export default function HomePage() {
               <div className="flex flex-wrap items-center gap-4 pt-3">
                 <a
                   href="/tinh-chi-phi"
-                  className="px-6 py-3.5 rounded-xl bg-wood-500 hover:bg-wood-600 text-white font-bold text-sm shadow-md transition-all"
+                  className="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-stone-900 font-bold text-sm shadow-md transition-all"
                 >
                   Mở công cụ tính chi phí vật tư
                 </a>
@@ -566,16 +566,19 @@ export default function HomePage() {
             </div>
 
             <div className="lg:col-span-5 grid grid-cols-1 gap-3 text-xs">
-              <div className="p-4 rounded-2xl bg-white/10 border border-white/15">
-                <div className="font-bold text-wood-300 text-sm">Tính cả nẹp và hao hụt</div>
+              <div className="p-4 rounded-2xl bg-stone-800/60 border border-amber-500/20 backdrop-blur-sm">
+                <div className="font-bold text-amber-300 text-sm">Tính cả nẹp và hao hụt</div>
                 <div className="text-gray-300 mt-1">Nẹp 5mm và 8mm có thể dùng chung trong một công trình.</div>
               </div>
-              <div className="p-4 rounded-2xl bg-white/10 border border-white/15">
-                <div className="font-bold text-emerald-400 text-sm">Theo giá niêm yết đang áp dụng</div>
-                <div className="text-gray-300 mt-1">Số liệu lấy trực tiếp từ bảng giá công bố, không phải giá ước lượng.</div>
+              <div className="p-4 rounded-2xl bg-amber-950/50 border border-amber-500/40 backdrop-blur-sm">
+                <div className="font-bold text-amber-400 text-sm flex items-center">
+                  <span className="inline-block w-2 h-2 rounded-full bg-amber-400 mr-2 animate-pulse"></span>
+                  Theo giá niêm yết đang áp dụng
+                </div>
+                <div className="text-gray-200 mt-1">Số liệu lấy trực tiếp từ bảng giá công bố, không phải giá ước lượng.</div>
               </div>
-              <div className="p-4 rounded-2xl bg-white/10 border border-white/15">
-                <div className="font-bold text-wood-300 text-sm">Xuất bảng dự toán</div>
+              <div className="p-4 rounded-2xl bg-stone-800/60 border border-amber-500/20 backdrop-blur-sm">
+                <div className="font-bold text-amber-300 text-sm">Xuất bảng dự toán</div>
                 <div className="text-gray-300 mt-1">In hoặc tải về để gửi khách hàng và so sánh phương án.</div>
               </div>
             </div>
@@ -727,7 +730,7 @@ export default function HomePage() {
       {/* ========================================================
           SECTION 11: CALLOUT BANNER GỌI TƯ VẤN BÁO GIÁ
           ======================================================== */}
-      <section className="py-16 bg-gradient-to-r from-bamboo-950 via-bamboo-900 to-wood-950 text-white">
+      <section className="py-16 bg-gradient-to-r from-stone-950 via-stone-900 to-amber-950 text-white border-t border-amber-900/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="space-y-2">
             <h2 className="text-2xl sm:text-3xl font-black tracking-tight">

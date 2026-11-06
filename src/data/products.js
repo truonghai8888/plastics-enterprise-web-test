@@ -154,13 +154,13 @@ export const PRODUCTS = [
     colorHex: '#f4f4f4',
     image: '/images/ecobamboo/EB68038-w800.webp',
     swatchImage: '/images/ecobamboo/EB68038_sm.webp',
-    fullBoardImage: '/images/ecobamboo/EB68038-w400.webp',
+    fullBoardImage: '/images/ecobamboo/EB68038-w800.webp',
     sceneImage: '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp',
     lamSongImage: '/images/ecobamboo/Lam-song.webp',
     gallery: [
       '/images/ecobamboo/EB68038-w800.webp',
       '/images/ecobamboo/EB68038_sm.webp',
-      '/images/ecobamboo/EB68038-w400.webp',
+      '/images/ecobamboo/EB68038-w800.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
     ]

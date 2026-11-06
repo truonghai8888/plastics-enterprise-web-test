@@ -100,7 +100,7 @@ export default function DistributorPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-2xl overflow-hidden border border-eco-gray-200 shadow-sm bg-eco-gray-100">
                 <img
-                  src="/images/nhuaamc/z6092044827018_6ab77d337d138d8f8952b61efda1fa1c.jpg"
+                  src="/images/nhuaamc/z6331362085391_c046f657eaf9de4bdca2141b524223e8-scaled.jpg"
                   alt={`Kệ bảng mẫu tấm ốp than tre ${BRAND.shortName}`}
                   className="w-full h-40 object-cover"
                 />
@@ -110,7 +110,7 @@ export default function DistributorPage() {
               </div>
               <div className="rounded-2xl overflow-hidden border border-eco-gray-200 shadow-sm bg-eco-gray-100">
                 <img
-                  src="/images/nhuaamc/z6092044738595_8a571fba251c65d9fc6bfd9ea184f4bf.jpg"
+                  src="/images/nhuaamc/z6350848322843_fb4c93706de3bc63dd4aa97e0a2e5035-scaled.jpg"
                   alt={`Kho tấm ốp và vật tư nhà máy ${BRAND.shortName}`}
                   className="w-full h-40 object-cover"
                 />

@@ -238,9 +238,9 @@ export default function ProductDetailPage({ product = PRODUCTS[0], onSelectProdu
                   Mã màu: {product.code}
                 </span>
                 <span className="text-eco-gray-400">|</span>
-                <span className="text-eco-gray-600">Thương hiệu: <strong>Eco Bamboo</strong></span>
+                <span className="text-eco-gray-600">Thương hiệu: <strong>{BRAND.brandName}</strong></span>
                 <span className="text-eco-gray-400">|</span>
-                <span className="text-wood-700 font-bold">Bảo hành 10 năm</span>
+                <span className="text-wood-700 font-bold">Bảo hành {BRAND.warrantyYears || 10} năm</span>
               </div>
             </div>
 
@@ -406,7 +406,7 @@ export default function ProductDetailPage({ product = PRODUCTS[0], onSelectProdu
                   <li><strong>Chuẩn bị bề mặt cốt tường:</strong> Đảm bảo tường phẳng, sạch bụi hoặc bắn hệ khung xương sắt hộp / thanh gỗ nhựa nếu tường ẩm mốc nặng.</li>
                   <li><strong>Kỹ thuật soi rãnh V 90°:</strong> Sử dụng máy phay cầm tay gắn mũi dao soi hình chữ V 90°. Điều chỉnh cữ ăn sâu chỉ giữ lại lớp film PETG bề mặt (~0.3mm), sau đó bẻ gập vuông góc mà không cần nẹp.</li>
                   <li><strong>Kỹ thuật uốn vòm cong R:</strong> Soi các đường rãnh song song cách nhau 5-10mm ở mặt sau tấm than tre để uốn cong theo các góc bo tròn hoặc cột tròn.</li>
-                  <li><strong>Dán keo:</strong> Bôi keo dán chuyên dụng (keo Titebond, keo dán than tre Eco Bamboo) thành hình zíc zắc kèm băng keo xốp 2 mặt định vị tạm thời.</li>
+                  <li><strong>Dán keo:</strong> Bôi keo dán chuyên dụng (keo Titebond, keo dán than tre {BRAND.shortName}) thành hình zíc zắc kèm băng keo xốp 2 mặt định vị tạm thời.</li>
                 </ol>
               </div>
             )}

@@ -6,6 +6,7 @@ import ColorLibraryPage from './pages/ColorLibraryPage';
 import RoomVisualizerPage from './pages/RoomVisualizerPage';
 import PricingTable from './pages/PricingTable';
 import CostCalculator from './pages/CostCalculator';
+import WallDesignerPage from './pages/WallDesignerPage';
 import LeadForms from './pages/LeadForms';
 import ProjectsGallery from './pages/ProjectsGallery';
 import ConstructionGuide from './pages/ConstructionGuide';
@@ -213,7 +214,7 @@ export default function App() {
         }} />
       )}
       {currentRoute.page === 'calculator' && <CostCalculator />}
-      {currentRoute.page === 'wall-designer' && <CostCalculator />}
+      {currentRoute.page === 'wall-designer' && <WallDesignerPage />}
       {currentRoute.page === 'projects' && <ProjectsGallery />}
       {currentRoute.page === 'guide' && <ConstructionGuide />}
       {currentRoute.page === 'news' && <NewsPage />}
