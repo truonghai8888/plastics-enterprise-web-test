@@ -245,9 +245,15 @@ export default function Header() {
                 onMouseLeave={handleDropdownLeave}
               >
                 <button
-                  className={`flex items-center px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap rounded-lg transition-colors ${
-                    activeDropdown === 'products' ? 'text-bamboo-600 bg-bamboo-50' : 'text-eco-gray-800 hover:text-bamboo-600 hover:bg-bamboo-50/70'
+                  type="button"
+                  className={`flex items-center px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap rounded-lg !bg-transparent !border-0 !border-transparent !outline-none !shadow-none transition-colors ${
+                    activeDropdown === 'products' ? '!text-bamboo-600 !bg-bamboo-50' : '!text-eco-gray-800 hover:!text-bamboo-600 hover:!bg-bamboo-50/70'
                   }`}
+                  style={{
+                    backgroundColor: activeDropdown === 'products' ? '#f0fdf4' : 'transparent',
+                    border: 'none',
+                    boxShadow: 'none'
+                  }}
                 >
                   Sản phẩm chính
                   <ChevronDownIcon className={`ml-1 w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'products' ? 'rotate-180 text-bamboo-600' : ''}`} />
@@ -352,9 +358,15 @@ export default function Header() {
                 onMouseLeave={handleDropdownLeave}
               >
                 <button
-                  className={`flex items-center px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap rounded-lg transition-colors ${
-                    activeDropdown === 'colors' ? 'text-bamboo-600 bg-bamboo-50' : 'text-eco-gray-800 hover:text-bamboo-600 hover:bg-bamboo-50/70'
+                  type="button"
+                  className={`flex items-center px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap rounded-lg !bg-transparent !border-0 !border-transparent !outline-none !shadow-none transition-colors ${
+                    activeDropdown === 'colors' ? '!text-bamboo-600 !bg-bamboo-50' : '!text-eco-gray-800 hover:!text-bamboo-600 hover:!bg-bamboo-50/70'
                   }`}
+                  style={{
+                    backgroundColor: activeDropdown === 'colors' ? '#f0fdf4' : 'transparent',
+                    border: 'none',
+                    boxShadow: 'none'
+                  }}
                 >
                   Thư viện mã màu
                   <ChevronDownIcon className={`ml-1 w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'colors' ? 'rotate-180 text-bamboo-600' : ''}`} />
@@ -398,9 +410,15 @@ export default function Header() {
                 onMouseLeave={handleDropdownLeave}
               >
                 <button
-                  className={`flex items-center px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap rounded-lg transition-colors ${
-                    activeDropdown === 'pricing' ? 'text-bamboo-600 bg-bamboo-50' : 'text-eco-gray-800 hover:text-bamboo-600 hover:bg-bamboo-50/70'
+                  type="button"
+                  className={`flex items-center px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap rounded-lg !bg-transparent !border-0 !border-transparent !outline-none !shadow-none transition-colors ${
+                    activeDropdown === 'pricing' ? '!text-bamboo-600 !bg-bamboo-50' : '!text-eco-gray-800 hover:!text-bamboo-600 hover:!bg-bamboo-50/70'
                   }`}
+                  style={{
+                    backgroundColor: activeDropdown === 'pricing' ? '#f0fdf4' : 'transparent',
+                    border: 'none',
+                    boxShadow: 'none'
+                  }}
                 >
                   <CalculatorIcon className="w-3.5 h-3.5 mr-1 text-bamboo-600" />
                   Báo giá & Dự toán
@@ -498,8 +516,9 @@ export default function Header() {
                 <PhoneIcon className="w-5 h-5" />
               </a>
               <button
+                type="button"
                 onClick={() => setMobileMenuOpen(true)}
-                className="p-2 text-eco-gray-700 hover:text-bamboo-700 hover:bg-eco-gray-100 rounded-lg transition-colors"
+                className="p-2 text-eco-gray-700 hover:text-bamboo-700 hover:bg-eco-gray-100 rounded-lg transition-colors bg-transparent border-0 border-transparent shadow-none"
                 aria-label="Mở menu"
               >
                 <MenuIcon className="w-6 h-6" />
@@ -526,8 +545,9 @@ export default function Header() {
                 <span className="font-extrabold text-lg tracking-wider">{BRAND.shortName.toUpperCase()}</span>
               </div>
               <button
+                type="button"
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1 rounded-lg text-white hover:bg-bamboo-800 transition-colors"
+                className="p-1 rounded-lg text-white hover:bg-bamboo-800 transition-colors bg-transparent border-0 border-transparent shadow-none"
                 aria-label="Đóng menu"
               >
                 <CloseIcon className="w-6 h-6" />
@@ -547,8 +567,9 @@ export default function Header() {
               {/* Accordion Sản phẩm chính */}
               <div>
                 <button
+                  type="button"
                   onClick={() => toggleMobileSubmenu('products')}
-                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-base font-semibold text-eco-gray-800 hover:bg-bamboo-50 hover:text-bamboo-700"
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-base font-semibold text-eco-gray-800 hover:bg-bamboo-50 hover:text-bamboo-700 bg-transparent border-0 border-transparent shadow-none"
                 >
                   <span>Sản phẩm chính</span>
                   <ChevronDownIcon className={`w-4 h-4 transition-transform ${mobileSubmenu.products ? 'rotate-180' : ''}`} />
@@ -567,8 +588,9 @@ export default function Header() {
               {/* Accordion Thư viện mã màu */}
               <div>
                 <button
+                  type="button"
                   onClick={() => toggleMobileSubmenu('colors')}
-                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-base font-semibold text-eco-gray-800 hover:bg-bamboo-50 hover:text-bamboo-700"
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-base font-semibold text-eco-gray-800 hover:bg-bamboo-50 hover:text-bamboo-700 bg-transparent border-0 border-transparent shadow-none"
                 >
                   <span>Thư viện mã màu</span>
                   <ChevronDownIcon className={`w-4 h-4 transition-transform ${mobileSubmenu.colors ? 'rotate-180' : ''}`} />
@@ -585,8 +607,9 @@ export default function Header() {
               {/* Accordion Báo giá & Dự toán (Gộp làm 1, ưu tiên Dự toán trước) */}
               <div>
                 <button
+                  type="button"
                   onClick={() => toggleMobileSubmenu('pricing')}
-                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-base font-semibold text-eco-gray-800 hover:bg-bamboo-50 hover:text-bamboo-700"
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-base font-semibold text-eco-gray-800 hover:bg-bamboo-50 hover:text-bamboo-700 bg-transparent border-0 border-transparent shadow-none"
                 >
                   <span className="flex items-center">
                     <CalculatorIcon className="w-4 h-4 mr-2 text-bamboo-600" />

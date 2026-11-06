@@ -1,0 +1,8 @@
+with open('live_desktop_dom.html', 'r', encoding='utf-8', errors='ignore') as f:
+    text = f.read()
+
+import re
+matches = [m.start() for m in re.finditer(r'<!--vo-->', text)]
+print("<!--vo--> count:", len(matches))
+for idx in matches:
+    print(text[max(0, idx-50):min(len(text), idx+100)])

@@ -21,45 +21,8 @@ inner_html = re.sub(r'data-endpoint="[^"]+"', 'data-endpoint="/api/web-lead"', i
 inner_html = re.sub(r'<button id="qUndo"[^>]*>.*?</button>', '', inner_html)
 inner_html = re.sub(r'<button id="qLai"[^>]*>.*?</button>', '', inner_html)
 
-# 4. CONSOLIDATED TOP BAR: 3 CLEAN BALANCED ZONES IN 1 ROW
-consolidated_top_bar = '''<header class="v3-dau">
-    <!-- ZONE 1: BRAND & DESIGN CODE (LEFT) -->
-    <div class="v3-dau-trai">
-      <a class="v3-logo" href="/" target="_top" aria-label="Nhựa AMC — về trang chủ">
-        <img src="/images/nhuaamc/logo-amc2.jpg" alt="AMC" />
-        <span class="v3-logo-chu">
-          <b>NHỰA AMC</b>
-          <i>3D STUDIO</i>
-        </span>
-      </a>
-      <span class="v3-ma-pill" id="v3Ma" title="Mã thiết kế vách"></span>
-    </div>
-
-    <!-- ZONE 2: HISTORY, STATS & STEP NAVIGATION (CENTER) -->
-    <div class="v3-dau-giua">
-      <div class="v3-nhom-nut">
-        <button type="button" id="qUndo" class="v3-btn-icon" title="Hoàn tác (Ctrl+Z)">↺ Hoàn tác</button>
-        <button type="button" id="qLai" class="v3-btn-icon" title="Làm lại (Ctrl+Y)">↻ Làm lại</button>
-      </div>
-
-      <!-- Thống kê vách (Kích thước, Số tấm, Số nẹp, Tạm tính từ đáy dời lên) -->
-      <div class="v3-dau-so" id="v3So"></div>
-
-      <div class="v3-nhom-nut">
-        <button type="button" id="v3Lui" class="v3-btn-nav ph" title="Quay lại bước trước">← Lùi</button>
-        <button type="button" id="v3Toi" class="v3-btn-nav to" title="Tiếp tục bước tiếp theo">Tiếp →</button>
-      </div>
-    </div>
-
-    <!-- ZONE 3: ACTIONS & QUOTE (RIGHT) -->
-    <div class="v3-dau-phai">
-      <button type="button" id="qLuu" class="v3-btn-action" title="Lưu vách hoặc lấy link gửi cho thợ">💾 Gửi thợ</button>
-      <button type="button" id="qXuat" class="v3-btn-action" title="Xuất hồ sơ: bản vẽ thi công và bảng khối lượng">📄 Xuất hồ sơ</button>
-      <button type="button" id="qBaoGia" class="v3-btn-cta" title="Xem tạm tính và gửi yêu cầu báo giá">⚡ Báo giá</button>
-    </div>
-  </header>'''
-
-inner_html = re.sub(r'<header class="v3-dau">.*?</header>', consolidated_top_bar, inner_html, flags=re.DOTALL)
+# 4. REMOVE <header class="v3-dau"> entirely from inner_html because it is now rendered in parent component
+inner_html = re.sub(r'<header class="v3-dau">.*?</header>', '', inner_html, flags=re.DOTALL)
 
 # Hide/remove original footer .v3-day
 inner_html = re.sub(r'<footer class="v3-day">.*?</footer>', '', inner_html, flags=re.DOTALL)
@@ -77,4 +40,4 @@ if inner_html.endswith('</main>'):
 with open('src/data/vachStudioInnerHtml.js', 'w', encoding='utf-8') as f:
     f.write('export const VACH_STUDIO_INNER_HTML = ' + repr(inner_html) + ';\n')
 
-print(f"Generated clean src/data/vachStudioInnerHtml.js ({len(inner_html)} bytes)")
+print(f"Generated clean src/data/vachStudioInnerHtml.js ({len(inner_html)} bytes) - <header class='v3-dau'> removed from inner HTML.")

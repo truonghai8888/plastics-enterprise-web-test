@@ -1,43 +1,25 @@
 import urllib.request
-import urllib.error
+import re
 
-urls = [
-    'http://localhost:3000/',
-    'http://localhost:3000/tu-thiet-ke-vach',
-    'http://localhost:3000/tinh-chi-phi',
-    'http://localhost:3000/bang-gia',
-    'http://localhost:3000/thu-vien-ma-mau',
-    'http://localhost:3000/thu-vien-ma-mau/phoi-mau/',
-    'http://localhost:3000/tin-tuc',
-    'http://localhost:3000/nha-phan-phoi',
-    'http://localhost:3000/san-pham-chinh',
-    'http://localhost:3000/san-pham-chinh/tam-op-than-tre',
-    'http://localhost:3000/assets/css/vach.css',
-    'http://localhost:3000/assets/js/vach.js',
-    'http://localhost:3000/assets/js/vach-data.js',
-    'http://localhost:3000/assets/img/vach/mau-1.webp',
-    'http://localhost:3000/assets/img/products/EB89001_sm.webp'
-]
-
-results = []
-for u in urls:
+endpoints = ['/', '/tu-thiet-ke-vach', '/thu-vien-ma-mau', '/san-pham-chinh', '/bang-gia', '/tinh-chi-phi']
+for ep in endpoints:
+    url = f'http://localhost:3000{ep}'
     try:
-        req = urllib.request.Request(u, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=5) as res:
-            code = res.getcode()
-            length = len(res.read())
-            results.append((u, code, length, "OK"))
+        with urllib.request.urlopen(url) as res:
+            print(f'{ep}: status {res.status}, length {len(res.read())}')
     except Exception as e:
-        results.append((u, 0, 0, str(e)))
+        print(f'{ep}: ERROR {e}')
 
-print("VERIFICATION TEST RESULTS:")
-all_ok = True
-for u, code, length, status in results:
-    print(f"[{code}] {u} - {length} bytes - {status}")
-    if code != 200:
-        all_ok = False
+# Check the live bundle content
+with urllib.request.urlopen('http://localhost:3000/tu-thiet-ke-vach') as res:
+    html = res.read().decode('utf-8')
 
-if all_ok:
-    print("\nALL URLS RETURNED HTTP 200 OK!")
-else:
-    print("\nSOME URLS FAILED!")
+scripts = re.findall(r'<script[^>]+src=[\'"]([^\'"]+)[\'"]', html)
+for s in scripts:
+    with urllib.request.urlopen(f'http://localhost:3000{s}') as res:
+        js = res.read().decode('utf-8')
+        print(f'Checking {s} for Header buttons:')
+        matches = [m.start() for m in re.finditer(r'Sản phẩm chính', js)]
+        if matches:
+            idx = matches[0]
+            print(js[max(0, idx-150):min(len(js), idx+200)])

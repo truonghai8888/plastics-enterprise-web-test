@@ -1,16 +1,11 @@
-with open('scraped_data/ecobamboo_tu_thiet_ke_vach.html', 'r', encoding='utf-8') as f:
-    html = f.read()
+with open('scraped_data/html/tu-thiet-ke-vach.html', 'r', encoding='utf-8') as f:
+    text = f.read()
 
 import re
-all_html_ids = set(re.findall(r'id="([^"]+)"', html))
-print("Total IDs in scraped HTML:", len(all_html_ids))
+print('Has bgHop:', 'id="bgHop"' in text)
+print('Has bgNen:', 'id="bgNen"' in text)
+print('Has bgTamTinh:', 'id="bgTamTinh"' in text)
 
-with open('public/assets/js/vach.js', 'r', encoding='utf-8') as f:
-    js = f.read()
-
-called_ids = set(re.findall(r'\$\([\'"]([^\'"]+)[\'"]\)', js))
-called_ids.update(re.findall(r'getElementById\([\'"]([^\'"]+)[\'"]\)', js))
-
-missing_from_html = called_ids - all_html_ids
-print("IDs in vach.js but NOT in scraped HTML:", len(missing_from_html))
-print(missing_from_html)
+# Find all id="..." in scraped HTML
+ids_in_scraped = set(re.findall(r'id=["\']([a-zA-Z0-9_\-]+)["\']', text))
+print('Total IDs in scraped HTML:', len(ids_in_scraped))

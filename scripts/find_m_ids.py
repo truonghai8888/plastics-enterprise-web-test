@@ -1,10 +1,9 @@
-with open('public/vach-studio.html', 'r', encoding='utf-8') as f:
-    html = f.read()
-
 import re
-matches = re.findall(r'id=["\']m[A-Z][a-zA-Z0-9]+["\']', html)
-print(matches)
-for m in matches:
-    idx = html.find(m)
-    print(html[max(0, idx-30):min(len(html), idx+150)])
-    print('='*50)
+with open('public/assets/js/vach.js', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+for word in ['doKL', 'guKhoi', 'bangKL']:
+    print(f"=== {word} ===")
+    matches = [m.start() for m in re.finditer(word, text)]
+    for idx in matches[:5]:
+        print(text[max(0, idx-100):min(len(text), idx+100)])

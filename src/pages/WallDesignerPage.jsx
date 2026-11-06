@@ -7,7 +7,7 @@ export default function WallDesignerPage() {
   const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    // 1. Chỉ load duy nhất vach.css (đã được cô lập, KHÔNG load eb.css để không ảnh hưởng Header website)
+    // 1. Nạp vach.css (đã loại bỏ hoàn toàn các quy tắc fullscreen fixed và ẩn header)
     if (!document.getElementById('vach-css-link')) {
       const linkVach = document.createElement('link');
       linkVach.id = 'vach-css-link';
@@ -16,7 +16,14 @@ export default function WallDesignerPage() {
       document.head.appendChild(linkVach);
     }
 
-    // 2. Nạp tuần tự vach-data.js rồi đến vach.js
+    // 2. Hàm kích hoạt / tái kích hoạt Studio
+    const initStudio = () => {
+      if (typeof window.VACH_REINIT === 'function') {
+        window.VACH_REINIT();
+      }
+    };
+
+    // 3. Nạp tuần tự vach-data.js rồi đến vach.js
     const loadScript = (src, id) => {
       return new Promise((resolve, reject) => {
         let s = document.getElementById(id);
@@ -34,21 +41,23 @@ export default function WallDesignerPage() {
       });
     };
 
+    // Nếu script đã có sẵn trong DOM (khi chuyển tab quay lại), kích hoạt ngay
+    if (window.VACH_REINIT) {
+      setTimeout(initStudio, 50);
+      setTimeout(initStudio, 300);
+    }
+
     loadScript('/assets/js/vach-data.js', 'script-vach-data')
       .then(() => loadScript('/assets/js/vach.js', 'script-vach-engine'))
       .then(() => {
-        // Khởi tạo hoặc tái khởi tạo DOM của Studio
-        setTimeout(() => {
-          if (window.VACH_REINIT) {
-            window.VACH_REINIT();
-          }
-        }, 50);
+        setTimeout(initStudio, 50);
+        setTimeout(initStudio, 350);
       })
       .catch((err) => {
         console.warn('[WallDesigner] Script initialization error:', err);
       });
 
-    // 3. Xử lý an toàn form báo giá liên kết với /api/web-lead
+    // 4. Xử lý an toàn form báo giá liên kết với /api/web-lead
     const handleFormSubmit = (e) => {
       const form = e.target.closest('form[data-eb-form]');
       if (!form) return;
@@ -89,6 +98,7 @@ export default function WallDesignerPage() {
     };
 
     document.addEventListener('submit', handleFormSubmit);
+
     return () => {
       document.removeEventListener('submit', handleFormSubmit);
       const link = document.getElementById('vach-css-link');
@@ -99,573 +109,475 @@ export default function WallDesignerPage() {
 
   return (
     <MainLayout>
-      {/* 1. HERO BREADCRUMB & INTRO */}
-      <div className="bg-gradient-to-b from-[#181614] via-[#221f1b] to-[#181614] text-white py-5 border-b border-amber-500/20 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center space-x-2 text-xs text-stone-400 mb-2" aria-label="Breadcrumb">
+      {/* 1. HERO BREADCRUMB & INTRO BANNER - ĐỒNG BỘ CHUẨN AMC VỚI CÁC TRANG KHÁC */}
+      <div className="bg-gradient-to-b from-bamboo-950 via-bamboo-900 to-bamboo-950 text-white py-10 sm:py-12 border-b border-bamboo-800 relative overflow-hidden">
+        <div className="absolute right-10 top-0 w-96 h-96 bg-bamboo-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <nav className="flex items-center space-x-2 text-xs text-eco-gray-300 mb-3" aria-label="Breadcrumb">
             <a href="/" className="hover:text-amber-400 transition-colors">Trang chủ</a>
             <span>/</span>
             <a href="/thu-vien-ma-mau" className="hover:text-amber-400 transition-colors">Thư viện mã màu</a>
             <span>/</span>
-            <span className="text-amber-400 font-semibold">Tự thiết kế vách 3D Studio</span>
+            <span className="text-amber-300 font-bold">Tự thiết kế vách 3D Studio</span>
           </nav>
 
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-full">
-                  WebGL 3D Engine
-                </span>
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-stone-800 text-stone-300 border border-stone-700 px-2.5 py-0.5 rounded-full">
-                  Bóc Tách Khối Lượng Tự Động
-                </span>
-              </div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="space-y-2">
+              <span className="inline-block text-xs font-bold text-amber-400 uppercase tracking-widest bg-amber-950/60 px-3 py-1 rounded-full border border-amber-600/30">
+                WebGL 3D Studio — {BRAND.shortName}
+              </span>
+              <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
                 TỰ THIẾT KẾ VÁCH 3D STUDIO — {BRAND.shortName.toUpperCase()}
               </h1>
+              <p className="text-xs sm:text-sm text-eco-gray-200 max-w-2xl leading-relaxed font-light">
+                Công cụ dựng mảng vách ốp than tre và lam sóng thời gian thực: Dễ dàng chia mảng, phối ghép mã màu vân gỗ/vân đá, xem trước hiệu ứng đèn LED và bóc tách khối lượng tự động.
+              </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-3">
               <a
-                href="/bang-gia"
-                className="px-3 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold border border-amber-500/30 transition-all flex items-center gap-1.5"
+                href="/thu-vien-ma-mau"
+                className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-all shadow-sm flex items-center"
               >
-                <span>📊 Bảng giá {getCurrentYear()}</span>
+                ← Thư viện 160+ mã màu
               </a>
               <a
-                href="/thu-vien-ma-mau/phoi-mau/"
-                className="px-3 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-amber-400 text-xs font-bold border border-amber-500/40 transition-all flex items-center gap-1.5"
+                href={`tel:${BRAND.hotline.replace(/\\./g, '')}`}
+                className="px-4 py-2.5 rounded-xl bg-gradient-bamboo hover:bg-bamboo-700 text-white text-xs font-extrabold uppercase tracking-wider shadow-soft hover:shadow-hover transition-all flex items-center"
               >
-                <span>🎨 Phối màu 3D phòng mẫu</span>
-              </a>
-              <a
-                href="/nhan-mau"
-                className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-stone-950 text-xs font-black shadow-md transition-all flex items-center gap-1.5"
-              >
-                <span>📦 Nhận mẫu thử tận nơi</span>
+                Hotline hỗ trợ: {BRAND.hotlineDisplay}
               </a>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. DIRECT INLINE 3D STUDIO (KHÔNG DÙNG IFRAME NHÚNG) */}
-      <div className="bg-[#121110] py-4 sm:py-6">
+      {/* 2. MAIN 3D STUDIO WORKSPACE - HIỂN THỊ TRỰC TIẾP TRÊN NỀN SÁNG CHUẨN CỦA WEBSITE */}
+      <div className="bg-eco-gray-50 py-6 sm:py-8 border-b border-eco-gray-200">
         <div className="max-w-[1740px] mx-auto px-2 sm:px-4">
-          {/* CÔ LẬP TOÀN BỘ CSS CỦA STUDIO TRONG PHẠM VI #vachStudioMount & .v3 - TUYỆT ĐỐI KHÔNG ẢNH HƯỞNG HEADER WEBSITE */}
+
+          {/* CÔ LẬP TOÀN BỘ CSS CỦA STUDIO TRONG PHẠM VI #vachStudioMount VÀ .v3-dau-parent */}
           <style dangerouslySetInnerHTML={{ __html: `
-            #vachStudioMount {
+            #vachStudioMount, .v3-dau-parent {
               --xanh: #deaa26;
               --nhan: #deaa26;
-              --nhan-nh: rgba(222, 170, 38, 0.15);
+              --nhan-nh: rgba(222, 170, 38, 0.12);
               --ok: #deaa26;
-              --muc: #fdf6e7;
-              --muc2: #d1c7bc;
-              --muc3: #9e9488;
-              --nen: #141312;
-              --the: #1e1c19;
-              --vien: rgba(222, 170, 38, 0.25);
-              --green-900: #1e1c19;
-              --green-800: #26231f;
+              --muc: #111827;
+              --muc2: #4b5563;
+              --muc3: #9ca3af;
+              --nen: #f9fafb;
+              --the: #ffffff;
+              --vien: #e5e7eb;
+              --vien2: #f3f4f6;
+              --green-900: #111827;
+              --green-800: #1f2937;
               --green-700: #deaa26;
               --green-600: #b88b1b;
               --green-500: #e6b83b;
-              --green-100: #fdf6e7;
+              --green-100: #fef9ee;
             }
 
             /* KHUNG CHÍNH STUDIO */
             #vachStudioMount .v3 {
               position: relative !important;
               top: 0 !important;
-              height: calc(100vh - 120px) !important;
-              min-height: 660px !important;
-              max-height: 980px !important;
-              border-radius: 14px !important;
-              box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7) !important;
-              border: 1.5px solid rgba(222, 170, 38, 0.35) !important;
+              height: calc(100vh - 176px) !important;
+              min-height: 600px !important;
+              max-height: 920px !important;
+              border: none !important;
+              box-shadow: none !important;
+              border-radius: 0 0 16px 16px !important;
               display: grid !important;
               grid-template-columns: 240px minmax(0, 1fr) 380px !important;
-              grid-template-rows: 56px minmax(0, 1fr) !important;
-              grid-template-areas: "dau dau dau" "cot san bang" !important;
-              background: #141312 !important;
+              grid-template-rows: minmax(0, 1fr) !important;
+              grid-template-areas: "cot san bang" !important;
+              background: #ffffff !important;
               overflow: hidden !important;
             }
 
-            /* 1. GỘP HEADER & FOOTER CỦA STUDIO THÀNH 1 DÒNG DUY NHẤT Ở TRÊN ĐẦU */
-            #vachStudioMount .v3-dau {
-              grid-area: dau !important;
-              background: #1e1c19 !important;
-              border-bottom: 1.5px solid rgba(222, 170, 38, 0.3) !important;
+            /* 1. CONSOLIDATED TOP BAR: ĐƯA RA COMPONENT CHA, 3 ZONES GỌN GÀNG */
+            .v3-dau-parent {
+              background: #ffffff !important;
+              border-bottom: 1.5px solid #e5e7eb !important;
               height: 56px !important;
-              padding: 0 14px !important;
+              padding: 0 16px !important;
               display: flex !important;
               align-items: center !important;
               justify-content: space-between !important;
-              gap: 10px !important;
+              gap: 12px !important;
               overflow-x: auto !important;
               scrollbar-width: none !important;
               box-sizing: border-box !important;
+              border-radius: 16px 16px 0 0 !important;
             }
-            #vachStudioMount .v3-dau::-webkit-scrollbar { display: none !important; }
-
-            /* Zone 1: Thương hiệu & Mã vách */
-            #vachStudioMount .v3-dau-trai {
-              display: flex !important;
-              align-items: center !important;
-              gap: 8px !important;
-              flex-shrink: 0 !important;
-            }
-            #vachStudioMount .v3-logo {
-              display: flex !important;
-              align-items: center !important;
-              gap: 8px !important;
-              text-decoration: none !important;
-            }
-            #vachStudioMount .v3-logo img {
-              height: 30px !important;
-              border-radius: 6px !important;
-              border: 1px solid rgba(222, 170, 38, 0.4) !important;
-              background: #fff;
-              padding: 1px;
-            }
-            #vachStudioMount .v3-logo-chu {
-              display: flex !important;
-              flex-direction: column !important;
-              line-height: 1.1 !important;
-            }
-            #vachStudioMount .v3-logo-chu b {
-              color: #deaa26 !important;
-              font-size: 14px !important;
-              font-weight: 900 !important;
-              letter-spacing: 0.5px !important;
-            }
-            #vachStudioMount .v3-logo-chu i {
-              color: #d1a56c !important;
-              font-size: 9.5px !important;
-              font-weight: 700 !important;
-              font-style: normal !important;
-              letter-spacing: 1px !important;
-            }
-            #vachStudioMount .v3-ma-pill {
-              color: #deaa26 !important;
-              font-weight: 700 !important;
-              background: rgba(222, 170, 38, 0.12) !important;
-              padding: 2px 7px !important;
-              border-radius: 6px !important;
-              border: 1px solid rgba(222, 170, 38, 0.3) !important;
-              font-size: 11px !important;
-              white-space: nowrap !important;
-            }
-
-            /* Zone 2: Công cụ, Thống kê & Điều hướng bước */
-            #vachStudioMount .v3-dau-giua {
-              display: flex !important;
-              align-items: center !important;
-              gap: 10px !important;
-              flex-shrink: 0 !important;
-            }
-            #vachStudioMount .v3-nhom-nut {
-              display: flex !important;
-              align-items: center !important;
-              gap: 5px !important;
-            }
+            .v3-dau-parent::-webkit-scrollbar { display: none !important; }
 
             /* Chuẩn hóa nút bấm: KHÔNG BỊ XÔ LỆCH, CĂN GIỮA TUYỆT ĐỐI */
+            .v3-dau-parent button,
             #vachStudioMount .v3-dau button {
               height: 34px !important;
-              line-height: 34px !important;
-              padding: 0 11px !important;
-              border-radius: 7px !important;
-              font-size: 12px !important;
-              font-weight: 600 !important;
-              cursor: pointer !important;
+              line-height: 1 !important;
               display: inline-flex !important;
               align-items: center !important;
               justify-content: center !important;
-              gap: 5px !important;
-              white-space: nowrap !important;
+              font-size: 12px !important;
+              font-weight: 600 !important;
+              padding: 0 12px !important;
               margin: 0 !important;
               box-sizing: border-box !important;
+              border-radius: 7px !important;
+              cursor: pointer !important;
+              white-space: nowrap !important;
+              text-decoration: none !important;
               vertical-align: middle !important;
-              transition: all 0.15s ease !important;
+              transition: all 0.15s ease-in-out !important;
             }
 
-            /* Nút công cụ nhỏ (Hoàn tác / Làm lại / Lùi) */
+            /* Nút công cụ (Undo / Redo / Lùi) */
+            .v3-dau-parent .v3-btn-icon,
+            .v3-dau-parent .v3-btn-nav.ph,
             #vachStudioMount .v3-btn-icon,
             #vachStudioMount .v3-btn-nav.ph {
-              background: #282522 !important;
-              color: #e5ded4 !important;
-              border: 1px solid rgba(222, 170, 38, 0.3) !important;
+              background: #f3f4f6 !important;
+              border: 1px solid #d1d5db !important;
+              color: #374151 !important;
             }
+            .v3-dau-parent .v3-btn-icon:hover,
+            .v3-dau-parent .v3-btn-nav.ph:hover,
             #vachStudioMount .v3-btn-icon:hover,
             #vachStudioMount .v3-btn-nav.ph:hover {
-              background: #36322d !important;
-              border-color: #deaa26 !important;
-              color: #fff !important;
+              background: #e5e7eb !important;
+              border-color: #9ca3af !important;
+              color: #111827 !important;
             }
 
             /* Nút bước tiếp theo */
+            .v3-dau-parent .v3-btn-nav.to,
             #vachStudioMount .v3-btn-nav.to {
-              background: linear-gradient(135deg, #deaa26, #b88b1b) !important;
-              color: #141312 !important;
-              font-weight: 800 !important;
-              border: none !important;
-              box-shadow: 0 2px 8px rgba(222, 170, 38, 0.3) !important;
+              background: linear-gradient(135deg, #2e2b27, #deaa26) !important;
+              border: 1px solid #b88b1b !important;
+              color: #ffffff !important;
             }
+            .v3-dau-parent .v3-btn-nav.to:hover,
             #vachStudioMount .v3-btn-nav.to:hover {
-              background: linear-gradient(135deg, #f0b930, #c8961e) !important;
-              box-shadow: 0 3px 10px rgba(222, 170, 38, 0.5) !important;
+              background: #b88b1b !important;
+              border-color: #997112 !important;
+              color: #ffffff !important;
             }
 
-            /* Thống kê kích thước & số liệu (dời từ thanh đáy lên) */
+            /* Thống kê vách (Kích thước, Số tấm, Số nẹp, Tạm tính dời lên) */
+            .v3-dau-parent .v3-dau-so,
             #vachStudioMount .v3-dau-so {
               display: flex !important;
               align-items: center !important;
               gap: 12px !important;
-              background: rgba(36, 33, 29, 0.75) !important;
-              border: 1px solid rgba(222, 170, 38, 0.25) !important;
-              border-radius: 8px !important;
-              padding: 0 12px !important;
               height: 34px !important;
-              box-sizing: border-box !important;
+              line-height: 1 !important;
+              padding: 0 14px !important;
+              background: #fef9ee !important;
+              border: 1px solid rgba(222, 170, 38, 0.4) !important;
+              border-radius: 8px !important;
               white-space: nowrap !important;
+              font-size: 12px !important;
+              box-sizing: border-box !important;
             }
+            .v3-dau-parent .v3-dau-so span,
             #vachStudioMount .v3-dau-so span {
               display: inline-flex !important;
-              align-items: baseline !important;
+              align-items: center !important;
               gap: 4px !important;
-              font-size: 11px !important;
-              color: #a89f91 !important;
               line-height: 1 !important;
             }
+            .v3-dau-parent .v3-dau-so b,
             #vachStudioMount .v3-dau-so b {
-              color: #deaa26 !important;
+              color: #b88b1b !important;
               font-weight: 800 !important;
-              font-size: 12.5px !important;
+              font-size: 13px !important;
             }
+            .v3-dau-parent .v3-dau-so small,
             #vachStudioMount .v3-dau-so small {
-              color: #a89f91 !important;
-              font-size: 10px !important;
+              color: #6b7280 !important;
+              font-size: 11px !important;
             }
 
-            /* Zone 3: Nút hành động & Báo giá */
-            #vachStudioMount .v3-dau-phai {
-              display: flex !important;
-              align-items: center !important;
-              gap: 7px !important;
-              flex-shrink: 0 !important;
-              margin-left: auto !important;
-            }
+            /* Zone 3: Hành động chính (Phải) */
+            .v3-dau-parent .v3-btn-action,
             #vachStudioMount .v3-btn-action {
-              background: #282522 !important;
-              color: #e5ded4 !important;
-              border: 1px solid rgba(222, 170, 38, 0.35) !important;
+              background: #f3f4f6 !important;
+              border: 1px solid #d1d5db !important;
+              color: #1f2937 !important;
             }
+            .v3-dau-parent .v3-btn-action:hover,
             #vachStudioMount .v3-btn-action:hover {
-              background: #36322d !important;
-              border-color: #deaa26 !important;
-              color: #fff !important;
+              background: #e5e7eb !important;
+              border-color: #b88b1b !important;
+              color: #b88b1b !important;
             }
+            .v3-dau-parent .v3-btn-cta,
             #vachStudioMount .v3-btn-cta {
-              background: linear-gradient(135deg, #deaa26, #b88b1b) !important;
-              color: #141312 !important;
-              font-weight: 900 !important;
-              border: none !important;
-              box-shadow: 0 2px 10px rgba(222, 170, 38, 0.45) !important;
+              background: linear-gradient(135deg, #2e2b27, #deaa26, #b88b1b) !important;
+              border: 1px solid #b88b1b !important;
+              color: #ffffff !important;
+              box-shadow: 0 2px 6px rgba(222, 170, 38, 0.35) !important;
             }
+            .v3-dau-parent .v3-btn-cta:hover,
             #vachStudioMount .v3-btn-cta:hover {
-              background: linear-gradient(135deg, #f0b930, #c8961e) !important;
-              box-shadow: 0 4px 14px rgba(222, 170, 38, 0.6) !important;
+              background: #b88b1b !important;
+              transform: translateY(-1px) !important;
             }
 
-            /* ẨN TOÀN BỘ THANH ĐÁY FOOTER DO ĐÃ DỜI LÊN HÀNG ĐẦU */
+            /* ẨN TOÀN BỘ THANH ĐÁY FOOTER CŨ CỦA STUDIO VÌ ĐÃ DỜI LÊN ĐẦU */
             #vachStudioMount .v3-day {
               display: none !important;
             }
 
-            /* 2. KHUNG NHÌN 3D VIEWPORT Ở GIỮA: LUÔN HIỂN THỊ 100%, KHÔNG BỊ ÁN NGỮ */
-            html.v3-mau:not(.dt-on) #vachStudioMount .v3-san,
+            /* KHUNG CANVAS 3D & BẢNG BƯỚC: BƯỚC 1A (MẪU KHỞI ĐẦU) VS BƯỚC TIẾP THEO */
+            html.v3-mau:not(.dt-on) #vachStudioMount .v3-san {
+              display: none !important;
+            }
+            html.v3-mau:not(.dt-on) #vachStudioMount .v3-bang {
+              grid-column: 2 / span 2 !important;
+              grid-row: san !important;
+              width: 100% !important;
+              max-width: none !important;
+              background: #ffffff !important;
+              border-left: 1.5px solid #e5e7eb !important;
+              overflow-y: auto !important;
+              scrollbar-width: thin !important;
+              padding: 20px 24px !important;
+              box-sizing: border-box !important;
+            }
+            html.v3-mau:not(.dt-on) #vachStudioMount .bo-mau {
+              display: grid !important;
+              grid-template-columns: repeat(4, 1fr) !important;
+              gap: 14px !important;
+            }
+
+            /* CÁC BƯỚC CÒN LẠI: CANVAS 3D CỘT 2, BẢNG ĐIỀU KHIỂN CỘT 3 (380px) */
+            html:not(.v3-mau):not(.dt-on) #vachStudioMount .v3-san,
             #vachStudioMount .v3-san {
+              display: flex !important;
               visibility: visible !important;
-              display: block !important;
-              position: relative !important;
               height: 100% !important;
-              min-height: 0 !important;
-              pointer-events: auto !important;
-              border: 0 !important;
-              z-index: 1 !important;
-              grid-area: san !important;
-              background: radial-gradient(circle at 50% 40%, #2b2722 0%, #151311 100%) !important;
+              min-height: 480px !important;
+              grid-column: 2 !important;
+              grid-row: san !important;
+              position: relative !important;
+              background: #181716 !important;
+              align-items: center !important;
+              justify-content: center !important;
+              overflow: hidden !important;
             }
             #vachStudioMount .v3-san canvas#c {
               width: 100% !important;
               height: 100% !important;
               display: block !important;
-              object-fit: contain !important;
+              touch-action: none !important;
             }
 
-            /* BẢNG BÊN PHẢI: KHÔNG BAO GIỜ TRÀN SANG CHIẾM CỘT GIỮA */
-            html.v3-mau:not(.dt-on) #vachStudioMount .v3-bang,
+            html:not(.v3-mau):not(.dt-on) #vachStudioMount .v3-bang,
             #vachStudioMount .v3-bang {
+              display: block !important;
               grid-column: 3 !important;
-              grid-area: bang !important;
+              grid-row: bang !important;
               width: 380px !important;
               max-width: 380px !important;
-              z-index: 2 !important;
-              background: #1e1c19 !important;
-              border-left: 1.5px solid rgba(222, 170, 38, 0.25) !important;
-              padding: 16px 14px !important;
-              color: #fdf6e7 !important;
+              background: #ffffff !important;
+              border-left: 1.5px solid #e5e7eb !important;
               overflow-y: auto !important;
+              scrollbar-width: thin !important;
+              padding: 16px !important;
+              box-sizing: border-box !important;
             }
 
-            /* Ẩn các overlay/màn hình gợi ý che chắn tầm nhìn 3D */
+            /* Ẩn các overlay án ngữ che chắn tầm nhìn 3D */
             #vachStudioMount .goiy,
             #vachStudioMount .v3-nhac {
               display: none !important;
             }
 
-            /* 3. TRIỆT TIÊU TOÀN BỘ MÀU XANH Ở CỘT TRÁI VÀ BẢNG PHẢI */
+            /* CỘT BÊN TRÁI */
             #vachStudioMount .v3-cot {
-              background: #1e1c19 !important;
-              border-right: 1.5px solid rgba(222, 170, 38, 0.25) !important;
-              padding: 12px 8px !important;
-              display: flex !important;
-              flex-direction: column !important;
-              gap: 8px !important;
+              grid-column: 1 !important;
+              grid-row: cot !important;
+              width: 240px !important;
+              background: #fafaf9 !important;
+              border-right: 1.5px solid #e5e7eb !important;
               overflow-y: auto !important;
-              grid-area: cot !important;
+              scrollbar-width: thin !important;
+              padding: 12px 10px !important;
+              box-sizing: border-box !important;
             }
             #vachStudioMount .v3-cot a,
             #vachStudioMount .v3-cot button {
-              border-radius: 9px !important;
-              padding: 9px 11px !important;
-              color: #d1c7bc !important;
-              font-size: 13px !important;
-              font-weight: 600 !important;
-              border: 1.5px solid transparent !important;
-              display: flex !important;
-              align-items: center !important;
-              gap: 9px !important;
-              text-decoration: none !important;
+              border-radius: 8px !important;
+              color: #4b5563 !important;
+              border: 1px solid transparent !important;
               transition: all 0.15s ease !important;
             }
             #vachStudioMount .v3-cot a:hover,
             #vachStudioMount .v3-cot button:hover {
               background: rgba(222, 170, 38, 0.1) !important;
-              color: #deaa26 !important;
+              color: #b88b1b !important;
             }
-            #vachStudioMount .v3-cot a.on,
+            #vachStudioMount .v3-cot button.ch,
             #vachStudioMount .v3-cot button.on {
-              background: linear-gradient(135deg, rgba(222, 170, 38, 0.2), rgba(222, 170, 38, 0.05)) !important;
-              border: 1.5px solid #deaa26 !important;
-              color: #deaa26 !important;
-              font-weight: 800 !important;
-              box-shadow: 0 0 10px rgba(222, 170, 38, 0.15) !important;
+              background: #fef9ee !important;
+              border-color: #deaa26 !important;
+              color: #b88b1b !important;
+              font-weight: 700 !important;
             }
 
-            /* Tiêu đề & thẻ thông tin bên phải */
-            #vachStudioMount .v3-bang .nh,
-            #vachStudioMount .v3-bang h3,
-            #vachStudioMount .v3-bang h4,
-            #vachStudioMount .v3-bang summary {
-              color: #deaa26 !important;
-              font-size: 13px !important;
-              font-weight: 800 !important;
-              text-transform: uppercase !important;
-              letter-spacing: 0.5px !important;
-            }
+            /* Thẻ cấu hình bên phải */
             #vachStudioMount .v3-bang section,
             #vachStudioMount .v3-bang .card,
             #vachStudioMount .v3-bang [data-tang] {
-              background: #25221e !important;
-              border: 1px solid rgba(222, 170, 38, 0.2) !important;
-              border-radius: 11px !important;
-              padding: 13px !important;
+              background: #f9fafb !important;
+              border: 1px solid #e5e7eb !important;
+              border-radius: 10px !important;
+              padding: 12px !important;
               margin-bottom: 12px !important;
             }
             #vachStudioMount .v3-bang .stt,
             #vachStudioMount .stt {
               background: #deaa26 !important;
-              color: #141312 !important;
-              font-weight: 900 !important;
-            }
-            #vachStudioMount .bo-mau button {
-              border-radius: 8px !important;
-              border: 2px solid rgba(222, 170, 38, 0.2) !important;
-              background: #282522 !important;
-            }
-            #vachStudioMount .bo-mau button:hover {
-              border-color: #deaa26 !important;
-            }
-            #vachStudioMount .bo-mau button.on,
-            #vachStudioMount .bo-mau .chon {
-              border-color: #deaa26 !important;
-              outline: 2px solid #deaa26 !important;
-              box-shadow: 0 0 10px rgba(222, 170, 38, 0.5) !important;
-            }
-            #vachStudioMount .so-cum {
-              background: #282522 !important;
-              border: 1.5px solid rgba(222, 170, 38, 0.35) !important;
-            }
-            #vachStudioMount .so-nut {
-              color: #deaa26 !important;
-              background: #332f2a !important;
-            }
-            #vachStudioMount .so-nut:hover {
-              background: #deaa26 !important;
-              color: #141312 !important;
-            }
-
-            /* Thanh camera dock nổi trên canvas */
-            #vachStudioMount .v3-cong {
-              position: absolute !important;
-              bottom: 14px !important;
-              left: 50% !important;
-              transform: translateX(-50%) !important;
-              display: flex !important;
-              align-items: center !important;
-              gap: 7px !important;
-              background: rgba(26, 24, 21, 0.88) !important;
-              backdrop-filter: blur(10px) !important;
-              border: 1px solid rgba(222, 170, 38, 0.35) !important;
-              border-radius: 30px !important;
-              padding: 5px 12px !important;
-              z-index: 10 !important;
-            }
-            #vachStudioMount .v3-cong button,
-            #vachStudioMount .v3-goc button {
-              background: rgba(46, 43, 39, 0.8) !important;
-              border: 1px solid rgba(222, 170, 38, 0.3) !important;
-              color: #fdf6e7 !important;
-              border-radius: 20px !important;
-              padding: 5px 11px !important;
-              font-size: 11.5px !important;
+              color: #ffffff !important;
               font-weight: 700 !important;
             }
-            #vachStudioMount .v3-cong button:hover,
-            #vachStudioMount .v3-goc button:hover {
-              background: #deaa26 !important;
-              color: #141312 !important;
+
+            /* Thẻ mẫu khởi đầu */
+            #vachStudioMount .mau-khoi {
+              background: #ffffff !important;
+              border: 1px solid #e5e7eb !important;
+              border-radius: 10px !important;
+              transition: all 0.2s ease !important;
             }
-            #vachStudioMount .v3-goc button.on {
-              background: #deaa26 !important;
-              color: #141312 !important;
+            #vachStudioMount .mau-khoi:hover {
+              border-color: #deaa26 !important;
+              box-shadow: 0 4px 12px rgba(222, 170, 38, 0.15) !important;
+              transform: translateY(-2px) !important;
             }
 
-            /* Modal báo giá (.bg-hop) */
+            /* Modal báo giá & xuất file */
             #vachStudioMount .bg-hop {
-              background: #1e1c19 !important;
-              border: 1.5px solid #deaa26 !important;
+              background: #ffffff !important;
+              color: #111827 !important;
+              border: 1px solid #e5e7eb !important;
+              box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
               border-radius: 16px !important;
-              box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85) !important;
-              color: #fdf6e7 !important;
-              padding: 24px !important;
-            }
-            #vachStudioMount .bg-hop h2,
-            #vachStudioMount .bg-hop h3 {
-              color: #deaa26 !important;
-              font-weight: 800 !important;
             }
             #vachStudioMount .bg-form input,
             #vachStudioMount .bg-form select,
             #vachStudioMount .bg-form textarea {
-              background: #25221e !important;
-              border: 1px solid rgba(222, 170, 38, 0.3) !important;
+              background: #ffffff !important;
+              color: #111827 !important;
+              border: 1px solid #d1d5db !important;
               border-radius: 8px !important;
-              color: #fff !important;
-              padding: 8px 12px !important;
             }
             #vachStudioMount .bg-form input:focus,
-            #vachStudioMount .bg-form select:focus {
+            #vachStudioMount .bg-form select:focus,
+            #vachStudioMount .bg-form textarea:focus {
               border-color: #deaa26 !important;
-              outline: none !important;
+              outline: 2px solid rgba(222, 170, 38, 0.2) !important;
             }
-          ` }} />
+          `}} />
 
-          {/* Direct DOM Mount của 3D Studio */}
-          <div
-            id="vachStudioMount"
-            className="w-full relative"
-            dangerouslySetInnerHTML={{ __html: VACH_STUDIO_INNER_HTML }}
-          />
+          {/* KHUNG CHÍNH STUDIO: CONSOLIDATED TOP BAR + 3D WORKSPACE */}
+          <div className="studio-card bg-white rounded-2xl shadow-xl border border-eco-gray-200 overflow-hidden">
+
+            {/* CONSOLIDATED TOP BAR: 3 CLEAN BALANCED ZONES IN 1 ROW (ĐƯA RA COMPONENT CHA, LOẠI BỎ v3-dau-trai) */}
+            <header className="v3-dau-parent flex items-center justify-between gap-4 px-4 sm:px-6 h-14 bg-white border-b border-eco-gray-200 overflow-x-auto scrollbar-none">
+              
+              {/* ZONE 1 (TRÁI): ĐIỀU HƯỚNG BƯỚC & HOÀN TÁC (LOẠI BỎ HOÀN TOÀN v3-dau-trai) */}
+              <div className="v3-topbar-nav flex items-center gap-2.5 shrink-0">
+                <div className="flex items-center gap-1.5">
+                  <button type="button" id="qUndo" className="v3-btn-icon" title="Hoàn tác (Ctrl+Z)">↺ Hoàn tác</button>
+                  <button type="button" id="qLai" className="v3-btn-icon" title="Làm lại (Ctrl+Y)">↻ Làm lại</button>
+                </div>
+                <div className="h-4 w-px bg-eco-gray-300 mx-1"></div>
+                <div className="flex items-center gap-1.5">
+                  <button type="button" id="v3Lui" className="v3-btn-nav ph" title="Quay lại bước trước">← Lùi</button>
+                  <button type="button" id="v3Toi" className="v3-btn-nav to" title="Tiếp tục bước tiếp theo">Tiếp →</button>
+                </div>
+                <span id="v3Ma" className="hidden" title="Mã thiết kế vách"></span>
+              </div>
+
+              {/* ZONE 2 (GIỮA): THỐNG KÊ VÁCH THỜI GIAN THỰC (KÍCH THƯỚC, SỐ TẤM, SỐ NẸP, TẠM TÍNH) */}
+              <div className="v3-topbar-stats flex items-center justify-center shrink-0">
+                <div className="v3-dau-so" id="v3So"></div>
+              </div>
+
+              {/* ZONE 3 (PHẢI): HÀNH ĐỘNG, HỒ SƠ & BÁO GIÁ */}
+              <div className="v3-topbar-actions flex items-center gap-2 shrink-0">
+                <button type="button" id="qLuu" className="v3-btn-action" title="Lưu vách hoặc lấy link gửi cho thợ">💾 Gửi thợ</button>
+                <button type="button" id="qXuat" className="v3-btn-action" title="Xuất hồ sơ: bản vẽ thi công và bảng khối lượng">📄 Xuất hồ sơ</button>
+                <button type="button" id="qBaoGia" className="v3-btn-cta" title="Xem tạm tính và gửi yêu cầu báo giá">⚡ Báo giá</button>
+              </div>
+            </header>
+
+            {/* VÙNG 3D STUDIO MOUNT: 3 CỘT (BƯỚC, CANVAS 3D, BẢNG ĐIỀU KHIỂN) */}
+            <div
+              id="vachStudioMount"
+              dangerouslySetInnerHTML={{ __html: VACH_STUDIO_INNER_HTML }}
+            />
+          </div>
+
         </div>
       </div>
 
-      {/* 3. STEP BY STEP GUIDE & HIGHLIGHTS */}
-      <div className="bg-gradient-to-b from-[#121110] to-[#1c1a17] py-12 sm:py-16 border-t border-amber-500/20 text-white">
+      {/* 3. TÍNH NĂNG NỔI BẬT */}
+      <div className="py-12 sm:py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <span className="text-xs font-bold uppercase tracking-widest text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/30">
-              Quy Trình Sử Dụng 3D Studio
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <span className="text-xs font-bold uppercase tracking-widest text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+              Quy Trình 4 Bước Đơn Giản
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black text-white mt-3 tracking-tight">
-              4 Bước Kiến Tạo Vách Đẹp Hoàn Mỹ Cùng {BRAND.shortName}
+            <h2 className="text-2xl sm:text-3xl font-black text-eco-gray-900 tracking-tight mt-3">
+              Từ Ý Tưởng Thiết Kế Đến Bản Vẽ Thi Công Thực Tế
             </h2>
-            <p className="text-xs sm:text-sm text-stone-300 mt-2 font-light">
-              Dễ dàng thiết kế, xem trước không gian và nhận dự toán kinh phí chuẩn xác chỉ trong vài phút.
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-[#24211d] rounded-2xl p-6 border border-amber-500/20 hover:border-amber-500/50 transition-all shadow-lg group">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-400 flex items-center justify-center font-black text-lg mb-4 group-hover:scale-105 transition-transform">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-eco-gray-50 rounded-2xl p-6 border border-eco-gray-200 hover:border-amber-400 hover:shadow-soft transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center font-black text-lg mb-4 group-hover:scale-105 transition-transform">
                 01
               </div>
-              <h3 className="text-base font-bold text-white mb-2">Chọn Mẫu & Kích Thước</h3>
-              <p className="text-xs text-stone-300 leading-relaxed font-light">
-                Chọn mẫu vách tivi, vách điểm nhấn và điền kích thước thực tế (chiều cao, chiều rộng) của công trình.
+              <h3 className="text-sm font-bold text-eco-gray-900 mb-1">Khởi Tạo Kích Thước</h3>
+              <p className="text-xs text-eco-gray-600 leading-relaxed">
+                Nhập chiều rộng, chiều cao bức tường thực tế hoặc lựa chọn nhanh các kích thước tiêu chuẩn phòng khách, phòng ngủ.
               </p>
             </div>
 
-            <div className="bg-[#24211d] rounded-2xl p-6 border border-amber-500/20 hover:border-amber-500/50 transition-all shadow-lg group">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-400 flex items-center justify-center font-black text-lg mb-4 group-hover:scale-105 transition-transform">
+            <div className="bg-eco-gray-50 rounded-2xl p-6 border border-eco-gray-200 hover:border-amber-400 hover:shadow-soft transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center font-black text-lg mb-4 group-hover:scale-105 transition-transform">
                 02
               </div>
-              <h3 className="text-base font-bold text-white mb-2">Phối Màu Vật Liệu</h3>
-              <p className="text-xs text-stone-300 leading-relaxed font-light">
-                Tự do thay đổi mã màu tấm than tre (vân đá, vân gỗ, kim loại, da), lam sóng và kiểu nẹp chữ T, U, H, V.
+              <h3 className="text-sm font-bold text-eco-gray-900 mb-1">Chia Mảng & Hộp Vách</h3>
+              <p className="text-xs text-eco-gray-600 leading-relaxed">
+                Chia dọc, chia ngang, giật cấp hộp tivi và tạo các khoang âm trang trí tùy biến linh hoạt.
               </p>
             </div>
 
-            <div className="bg-[#24211d] rounded-2xl p-6 border border-amber-500/20 hover:border-amber-500/50 transition-all shadow-lg group">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-400 flex items-center justify-center font-black text-lg mb-4 group-hover:scale-105 transition-transform">
+            <div className="bg-eco-gray-50 rounded-2xl p-6 border border-eco-gray-200 hover:border-amber-400 hover:shadow-soft transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center font-black text-lg mb-4 group-hover:scale-105 transition-transform">
                 03
               </div>
-              <h3 className="text-base font-bold text-white mb-2">Quan Sát 3D Đa Chiều</h3>
-              <p className="text-xs text-stone-300 leading-relaxed font-light">
-                Xoay 360°, phóng to/thu nhỏ, chuyển đổi các góc nhìn camera và thử nghiệm hiệu ứng ánh sáng ngày & đêm chân thực.
+              <h3 className="text-sm font-bold text-eco-gray-900 mb-1">Chọn Vân Màu & Nẹp LED</h3>
+              <p className="text-xs text-eco-gray-600 leading-relaxed">
+                Phối mã màu tấm than tre, lam sóng và gắn nẹp nhôm mạ anod (Vàng xước, Đen bóng, Nẹp LED hắt sáng).
               </p>
             </div>
 
-            <div className="bg-[#24211d] rounded-2xl p-6 border border-amber-500/20 hover:border-amber-500/50 transition-all shadow-lg group">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-400 flex items-center justify-center font-black text-lg mb-4 group-hover:scale-105 transition-transform">
+            <div className="bg-eco-gray-50 rounded-2xl p-6 border border-eco-gray-200 hover:border-amber-400 hover:shadow-soft transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center font-black text-lg mb-4 group-hover:scale-105 transition-transform">
                 04
               </div>
-              <h3 className="text-base font-bold text-white mb-2">Bóc Tách & Báo Giá</h3>
-              <p className="text-xs text-stone-300 leading-relaxed font-light">
-                Hệ thống tự động bóc tách số lượng tấm, thanh lam, cây nẹp và xuất bản vẽ hồ sơ PDF hoặc nhận báo giá trực tiếp.
+              <h3 className="text-sm font-bold text-eco-gray-900 mb-1">Xuất Hồ Sơ & Báo Giá</h3>
+              <p className="text-xs text-eco-gray-600 leading-relaxed">
+                Tải bản vẽ chi tiết cho thợ thi công hoặc gửi thông tin nhận báo giá dự toán khối lượng vật tư tức thì.
               </p>
-            </div>
-          </div>
-
-          {/* Trust Badges */}
-          <div className="mt-12 pt-8 border-t border-stone-800 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div className="p-4 rounded-xl bg-[#24211d]/60 border border-stone-800">
-              <div className="text-xl font-black text-amber-400">E0</div>
-              <div className="text-xs text-stone-300 mt-1">An toàn tuyệt đối cho sức khỏe</div>
-            </div>
-            <div className="p-4 rounded-xl bg-[#24211d]/60 border border-stone-800">
-              <div className="text-xl font-black text-amber-400">B1</div>
-              <div className="text-xs text-stone-300 mt-1">Khả năng chống cháy lan đạt chuẩn</div>
-            </div>
-            <div className="p-4 rounded-xl bg-[#24211d]/60 border border-stone-800">
-              <div className="text-xl font-black text-amber-400">PUR</div>
-              <div className="text-xs text-stone-300 mt-1">Công nghệ phủ dán màng nhiệt Hotmelt</div>
-            </div>
-            <div className="p-4 rounded-xl bg-[#24211d]/60 border border-stone-800">
-              <div className="text-xl font-black text-amber-400">{BRAND.warrantyYears} Năm</div>
-              <div className="text-xs text-stone-300 mt-1">Bảo hành chính hãng nhà máy</div>
             </div>
           </div>
         </div>

@@ -24,9 +24,7 @@
   src:url(/assets/fonts/bvp-400.ttf) format('truetype')}
 @font-face{font-family:'EB Ve';font-style:normal;font-weight:700;font-display:block;
   src:url(/assets/fonts/bvp-700.ttf) format('truetype')}
-:root{--nen:#eef1ee;--the:#fff;--muc:#15201b;--muc2:#41514a;--muc3:#767c78;--nhan:#deaa26;--nhan-nh:rgba(222,170,38,0.15);--sai:#ac3a2b;--sai-nh:#fbeceb;--vang:#8a6a1e;--vang-nh:#f7efd9;--vien:#d4dad5;--vien2:#e8ebe8;--chon:#deaa26;--bong:0 1px 2px rgba(21,32,27,.06),0 10px 28px -14px rgba(21,32,27,.18)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--nen:#101514;--the:#181e1b;--muc:#e8eeea;--muc2:#a9b5af;--muc3:#7d8b85;--nhan:#deaa26;--nhan-nh:rgba(222,170,38,0.15);--sai:#f08b7c;--sai-nh:#331c19;--vang:#d9b45e;--vang-nh:#3a3016;--vien:#2b3430;--vien2:#222a26;--chon:#deaa26;--bong:0 1px 2px rgba(0,0,0,.45),0 12px 32px -16px rgba(0,0,0,.8)}}
-:root[data-theme="dark"]{--nen:#101514;--the:#181e1b;--muc:#e8eeea;--muc2:#a9b5af;--muc3:#7d8b85;--nhan:#deaa26;--nhan-nh:rgba(222,170,38,0.15);--sai:#f08b7c;--sai-nh:#331c19;--vang:#d9b45e;--vang-nh:#3a3016;--vien:#2b3430;--vien2:#222a26;--chon:#deaa26;--bong:0 1px 2px rgba(0,0,0,.45),0 12px 32px -16px rgba(0,0,0,.8)}
+:root, #vachStudioMount{--nen:#f9fafb;--the:#fff;--muc:#15201b;--muc2:#41514a;--muc3:#767c78;--nhan:#deaa26;--nhan-nh:rgba(222,170,38,0.15);--sai:#ac3a2b;--sai-nh:#fbeceb;--vang:#8a6a1e;--vang-nh:#f7efd9;--vien:#d4dad5;--vien2:#e8ebe8;--chon:#deaa26;--bong:0 1px 2px rgba(21,32,27,.06),0 10px 28px -14px rgba(21,32,27,.18)}
 *{box-sizing:border-box}
 #vachStudioMount{background:var(--nen);color:var(--muc);font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:14px;line-height:1.55;padding-block:0 40px;padding-left:16px;padding-right:16px}
 .bao{max-width:1300px;margin:0 auto}
@@ -44,10 +42,10 @@ code,.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nu
 .kyhieu{position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#fff;background:rgba(16,22,20,.82);padding:6px 11px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .12s}
 .kyhieu.hien{opacity:1}.kyhieu .bt{font-family:"IBM Plex Mono",monospace;font-size:15px;line-height:1}.kyhieu.ve{background:rgba(222,170,38,.92)}.kyhieu.sau{background:rgba(120,80,20,.9)}
 .nh{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--muc3);font-weight:600;margin:14px 0 7px}.nh:first-child{margin-top:0}
-#vachStudioMount .hang{display:flex;gap:6px;flex-wrap:wrap}.v3 button, .bg-hop button, .pop button, #vachStudioMount button, [data-tang] button{font-family:inherit;font-size:12.5px;font-weight:500;color:var(--muc);background:var(--nen);border:1px solid var(--vien);border-radius:8px;padding:7px 10px;cursor:pointer;transition:.12s}
-#vachStudioMount button:hover:not(:disabled), .v3 button:hover:not(:disabled){border-color:var(--nhan);color:var(--nhan)}#vachStudioMount button.ch, .v3 button.ch{background:var(--nhan);border-color:var(--nhan);color:#fff}#vachStudioMount button:disabled, .v3 button:disabled{opacity:.38;cursor:not-allowed}
-button.ph{color:var(--sai)}button.ph:hover:not(:disabled){border-color:var(--sai)}#vachStudioMount button.to, .v3 button.to{width:100%;text-align:left}
-#vachStudioMount input[type=number], .v3 input[type=number]{font-family:"IBM Plex Mono",monospace;font-size:12.5px;width:100%;padding:6px 8px;border:1px solid var(--vien);border-radius:7px;background:var(--nen);color:var(--muc)}
+#vachStudioMount .hang{display:flex;gap:6px;flex-wrap:wrap}#vachStudioMount .v3 button, #vachStudioMount .bg-hop button, #vachStudioMount .pop button, #vachStudioMount button, #vachStudioMount [data-tang] button{font-family:inherit;font-size:12.5px;font-weight:500;color:var(--muc);background:var(--nen);border:1px solid var(--vien);border-radius:8px;padding:7px 10px;cursor:pointer;transition:.12s}
+#vachStudioMount button:hover:not(:disabled), #vachStudioMount .v3 button:hover:not(:disabled){border-color:var(--nhan);color:var(--nhan)}#vachStudioMount button.ch, #vachStudioMount .v3 button.ch{background:var(--nhan);border-color:var(--nhan);color:#fff}#vachStudioMount button:disabled, #vachStudioMount .v3 button:disabled{opacity:.38;cursor:not-allowed}
+#vachStudioMount button.ph{color:var(--sai)}#vachStudioMount button.ph:hover:not(:disabled){border-color:var(--sai)}#vachStudioMount button.to, #vachStudioMount .v3 button.to{width:100%;text-align:left}
+#vachStudioMount input[type=number], #vachStudioMount .v3 input[type=number]{font-family:"IBM Plex Mono",monospace;font-size:12.5px;width:100%;padding:6px 8px;border:1px solid var(--vien);border-radius:7px;background:var(--nen);color:var(--muc)}
 /* ══⚠⚠ HÀNG `.kt2` PHẢI XUỐNG DÒNG ĐƯỢC — KHÔNG CÒN LÀ LƯỚI 3 CỘT CỨNG ═══════════════
    Từ BS22 §1.2 mỗi cụm có thêm hai nút bước lớn (`−100` · `+100`), tức 4 nút × 40 px =
    160 px MỘT CỤM. Hai cụm + dấu `×` = 327 px, trong khi khung chứa chỉ ~367 px ở vỏ
@@ -102,7 +100,7 @@ button.ph{color:var(--sai)}button.ph:hover:not(:disabled){border-color:var(--sai
 .bo-mau{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .mau-khoi{text-align:left;padding:0 0 6px;border-radius:9px;line-height:1.25;overflow:hidden}.mau-khoi .hinh{display:block;aspect-ratio:12/7;background-size:cover;background-position:center;border-bottom:1px solid var(--vien);margin-bottom:5px}.mau-khoi b{display:block;font-size:11.5px;padding:0 7px}i.stt{display:inline-block;font-style:normal;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:var(--nhan);color:#fff;border-radius:4px;padding:0 5px;margin-right:5px;vertical-align:1px}summary i.stt{margin-right:7px}.mau-khoi small{display:block;font-size:10.5px;color:var(--muc3);margin-top:2px}.mau-khoi em{display:inline-block;font-style:normal;font-size:9.5px;color:var(--muc3);border:1px solid var(--vien);border-radius:4px;padding:0 4px;margin:4px 7px 0}.nh .dem,summary .dem{font-weight:400;color:var(--muc3);font-size:11px}
 .tw{overflow-x:auto;border:1px solid var(--vien);border-radius:10px;margin-top:14px;background:var(--the)}
-.v3 table, .bg-hop table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:5px 8px;text-align:left;border-bottom:1px solid var(--vien2)}.v3 th, .bg-hop th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muc3);font-weight:600;white-space:nowrap}tbody tr:last-child td{border-bottom:none}
+.v3 table, .bg-hop table{border-collapse:collapse;width:100%;font-size:12px}#vachStudioMount th,#vachStudioMount td{padding:5px 8px;text-align:left;border-bottom:1px solid var(--vien2)}.v3 th, .bg-hop th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muc3);font-weight:600;white-space:nowrap}tbody tr:last-child td{border-bottom:none}
 td.n,th.n{text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
 .do{background:var(--the);border:1px solid var(--vien);border-radius:14px;padding:18px 20px;margin-top:14px;box-shadow:var(--bong)}.do h2{font-size:16px;margin:0 0 12px}
 .do-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));gap:10px}.do-grid>div{background:var(--nen);border-radius:10px;padding:11px 12px}
@@ -1182,19 +1180,7 @@ html.dt-on .vt-chenh{ bottom:auto; top:84px; font-size:11.5px; padding:4px 9px }
    ⚠ `.vach-h1` KHÔNG xoá khỏi trang, chỉ cho khuất mắt: trang phải còn đúng một
      `<h1>` cho cấu trúc tài liệu và trình đọc màn hình. Thanh đầu công cụ là `<span>`,
      không phải tiêu đề. */
-@media (min-width:861px){
-  html.v3-on .topbar, html.v3-on .hdr, html.v3-on .ft{ display:none }
-  html.v3-on .vach-phu{ display:none }
-  html.v3-on .vach-h1{ position:absolute; width:1px; height:1px; margin:-1px;
-    padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0 }
-  html.v3-on .vach-trang{ padding:0 }
-  html.v3-on .vach-trang>.wrap-wide{ padding:0; max-width:none }
-  html.v3-on .v3{ position:fixed; inset:0; height:100svh; min-height:0;
-    border:0; border-radius:0; box-shadow:none; z-index:20 }
-  /* Trang không còn gì để cuộn: mọi thứ nằm trong khung, và cuộn nền phía sau một
-     ứng dụng toàn màn hình chỉ làm khung trôi đi trong khi nội dung đứng yên. */
-  html.v3-on, html.v3-on body{ overflow:hidden; overscroll-behavior:none }
-}
+/* REMOVED FIXED FULLSCREEN OVERRIDE FOR v3-on */
 /* ⚠ §20 · W14 — câu này nay ở CUỐI BẢNG BƯỚC 3, không còn ở thanh đáy. Nên:
    · bỏ lề trái 18px (lề đó để tách nó khỏi ba con số trong thanh đáy);
    · bỏ `@media (max-width:1180px){display:none}` — ẩn theo bề rộng là đúng khi nó

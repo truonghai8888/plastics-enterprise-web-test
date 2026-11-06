@@ -27220,9 +27220,10 @@ const MD_NGUONG = 1560;
    nhận tầng từ chính `vo.js` thì nó chỉ chứng minh `vo.js` nhất quán với chính nó, mà
    thứ cần chứng minh là KHỐI TRÊN TRANG mang tầng gì. */
 /* ⚠ BS39 §2.3 — cửa đọc BƯỚC cho sơ đồ 2D (xem chú thích cùng tên ở `dt.js`). */
-window.VACH_VO={moMuc,mucDangMo:()=>muc,buocDang:()=>buocCua(TRA[muc]||{}),
-  MUC:MUC.map(m=>m.id),veDay,veMoc,danBaBuoc,
-  dsMuc:()=>MUC.map(m=>({id:m.id,node:(m.node||[]).slice()}))};
+window.VACH_VO={veCot,moMuc,mucDangMo:()=>muc,buocDang:()=>buocCua(TRA[muc]||{}),
+  MUC:MUC.map(m=>m.id),veDay,veMoc,danBaBuoc,traHet,
+  dsMuc:()=>MUC.map(m=>({id:m.id,node:(m.node||[]).slice()})),
+  clearCho:()=>{ try{ if(typeof CHO!=='undefined'&&CHO&&CHO.clear) CHO.clear(); }catch(_){} }};
 })();
 ;
 /* ==== dt.js ==== */
@@ -33529,11 +33530,16 @@ V.capNhat();
 ;
 window.VACH_REINIT = function() {
   try {
-    if (typeof veCot === 'function') veCot();
-    if (typeof moMuc === 'function') moMuc('1a');
-    if (typeof veDay === 'function') veDay();
-    if (typeof veMoc === 'function') veMoc();
-    document.documentElement.classList.add('v3-on');
+    if (window.VACH_VO) {
+      if (typeof window.VACH_VO.traHet === 'function') window.VACH_VO.traHet();
+      if (typeof window.VACH_VO.veCot === 'function') window.VACH_VO.veCot();
+      if (typeof window.VACH_VO.moMuc === 'function') window.VACH_VO.moMuc('1a');
+      if (typeof window.VACH_VO.veDay === 'function') window.VACH_VO.veDay();
+      if (typeof window.VACH_VO.veMoc === 'function') window.VACH_VO.veMoc();
+    }
+    if (window.VACH && typeof window.VACH.lamMoi === 'function') {
+      window.VACH.lamMoi(true);
+    }
     console.log('[vách] VACH_REINIT completed successfully');
   } catch(e) {
     console.warn('[vách] VACH_REINIT error:', e);
