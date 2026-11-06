@@ -1,5 +1,6 @@
 import React from 'react';
 import MainLayout from '../components/layout/MainLayout';
+import BRAND, { getCurrentYear, getCurrentDateFormatted, getTechDocTitle } from '../config/brandConfig';
 
 // ==========================================
 // ICON HELPER COMPONENTS (Lucide Style SVG)
@@ -49,42 +50,24 @@ const PhoneCallIcon = ({ className = "w-4 h-4" }) => (
   </svg>
 );
 
-// MOCK RELATED ARTICLES
-const RELATED_POSTS = [
-  {
-    id: 1,
-    title: "So Sánh Tấm Ốp Than Tre Đa Năng Và Nhựa PVC Nano: Đâu Là Lựa Chọn Tối Ưu?",
-    date: "28/10/2026",
-    link: "/tin-tuc/so-sanh-tam-than-tre-va-nhua-pvc"
-  },
-  {
-    id: 2,
-    title: "Kỹ Thuật Soi Rãnh V Và Uốn Cong Góc 90° Tấm Than Tre Không Cần Nẹp Ngoài",
-    date: "22/10/2026",
-    link: "/tin-tuc/huong-dan-soi-ranh-v"
-  },
-  {
-    id: 3,
-    title: "Tiêu Chuẩn Phát Thải Formaldehyde E0: Vì Sao Phòng Trẻ Em Cần Vật Liệu Xanh?",
-    date: "15/10/2026",
-    link: "/tin-tuc/tieu-chuan-e0-phong-tre-em"
-  },
-  {
-    id: 4,
-    title: "Chính Sách Bảo Hành 10 Năm Không Cong Vênh Bong Tróc Của Eco Bamboo",
-    date: "05/10/2026",
-    link: "/chinh-sach-bao-hanh"
-  }
-];
+import { ARTICLES } from '../data/news';
+
+// DYNAMIC RELATED ARTICLES THEO THƯƠNG HIỆU
+const RELATED_POSTS = (ARTICLES || []).slice(0, 4).map((art, idx) => ({
+  id: art.id || idx + 1,
+  title: art.title,
+  date: art.date,
+  link: `/tin-tuc#${art.id}`
+}));
 
 // ==========================================
 // CMS / BLOG / POLICY ARTICLE LAYOUT
 // ==========================================
 export default function ArticleLayout({
-  title = "So Sánh Tấm Ốp Than Tre Đa Năng Và Nhựa PVC Nano: Phân Tích Toàn Diện 2025",
+  title = `So Sánh Tấm Ốp Than Tre Đa Năng Và Nhựa PVC Nano: Phân Tích Toàn Diện ${getCurrentYear()}`,
   category = "Cẩm Nang Vật Liệu",
-  author = "Kỹ Sư Trần Tuấn - Ban Kỹ Thuật Eco Bamboo",
-  publishDate = "28/10/2026",
+  author = `Ban Kỹ Thuật ${BRAND.brandName}`,
+  publishDate = getCurrentDateFormatted(),
   readTime = "6 phút đọc",
   breadcrumb = [
     { name: "Trang chủ", link: "/" },
@@ -161,7 +144,7 @@ export default function ArticleLayout({
                     1. Cốt Vật Liệu: Bột Than Tre Hoạt Tính vs Hạt Nhựa PVC Tái Sinh
                   </h2>
                   <p>
-                    Điểm khác biệt cốt lõi nằm ở thành phần cấu tạo bên trong tấm. Tấm ốp Eco Bamboo sử dụng cốt sợi than tre thiên nhiên nén ép dưới áp suất thủy lực cực lớn cùng keo nhiệt PUR Jowat nhập khẩu từ CHLB Đức. Cốt than tre có mật độ cao ($\ge 0.85\text{ g/cm}^3$), màu đen đặc trưng và hoàn toàn không chứa clo hay chất làm dẻo độc hại.
+                    Điểm khác biệt cốt lõi nằm ở thành phần cấu tạo bên trong tấm. Tấm ốp {BRAND.shortName} sử dụng cốt sợi than tre thiên nhiên nén ép dưới áp suất thủy lực cực lớn cùng keo nhiệt PUR Jowat nhập khẩu từ CHLB Đức. Cốt than tre có mật độ cao (≥ 0.85 g/cm³), màu đen đặc trưng và hoàn toàn không chứa clo hay chất làm dẻo độc hại.
                   </p>
 
                   <p>
@@ -173,12 +156,12 @@ export default function ArticleLayout({
                     <div className="rounded-2xl overflow-hidden border border-eco-gray-200 aspect-[16/9] shadow-md">
                       <img
                         src="/images/ecobamboo/day-chuyen-phu-film-pur-nha-may-eco-bamboo.webp"
-                        alt="Dây chuyền phủ film PUR tự động tại nhà máy Eco Bamboo"
+                        alt={`Dây chuyền phủ film PUR tự động tại nhà máy ${BRAND.shortName}`}
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <p className="text-xs text-eco-gray-500 text-center italic">
-                      Hình 1: Dây chuyền phủ film keo nhiệt PUR tự động tại nhà máy Eco Bamboo - bảo đảm độ bám dính vĩnh cửu.
+                      Hình 1: Dây chuyền phủ film keo nhiệt PUR tự động tại nhà máy {BRAND.shortName} - bảo đảm độ bám dính vĩnh cửu.
                     </p>
                   </div>
 
@@ -186,7 +169,7 @@ export default function ArticleLayout({
                     2. Tiêu Chuẩn Phát Thải Formaldehyde E0 & An Toàn Hô Hấp
                   </h2>
                   <p>
-                    Nhiều gia chủ sau khi hoàn thiện nhà mới thường gặp phải triệu chứng cay mắt, cay mũi do nồng độ Formaldehyde từ keo dán công nghiệp bay hơi. Eco Bamboo cam kết đạt tiêu chuẩn E0 Châu Âu ($\le 0.5\text{ mg/L}$), có thể đưa vào sử dụng ngay sau khi thi công mà không cần mở cửa khử mùi nhiều tuần.
+                    Nhiều gia chủ sau khi hoàn thiện nhà mới thường gặp phải triệu chứng cay mắt, cay mũi do nồng độ Formaldehyde từ keo dán công nghiệp bay hơi. {BRAND.shortName} cam kết đạt tiêu chuẩn E0 Châu Âu (≤ 0.5 mg/L), có thể đưa vào sử dụng ngay sau khi thi công mà không cần mở cửa khử mùi nhiều tuần.
                   </p>
 
                   <blockquote className="border-l-4 border-wood-500 bg-wood-50/60 p-4 rounded-r-2xl my-4 text-xs sm:text-sm text-wood-950 space-y-1">
@@ -206,7 +189,7 @@ export default function ArticleLayout({
                       <thead className="bg-bamboo-900 text-white font-bold">
                         <tr>
                           <th className="p-3">Tiêu Chí Đánh Giá</th>
-                          <th className="p-3">Tấm Ốp Than Tre Eco Bamboo</th>
+                          <th className="p-3">Tấm Ốp Than Tre {BRAND.shortName}</th>
                           <th className="p-3">Tấm Nhựa PVC Nano Rỗng</th>
                         </tr>
                       </thead>
@@ -277,14 +260,14 @@ export default function ArticleLayout({
                 Cần Tư Vấn Mẫu Thử & Báo Giá Đại Lý?
               </h3>
               <p className="text-xs text-bamboo-100 leading-relaxed font-light">
-                Eco Bamboo cung cấp xâu mẫu thực tế (Sample Box 160 mã màu) miễn phí tận nơi cho kiến trúc sư và nhà thầu.
+                {BRAND.shortName} cung cấp xâu mẫu thực tế (Sample Box 160 mã màu) miễn phí tận nơi cho kiến trúc sư và nhà thầu.
               </p>
               <a
-                href="tel:0915189389"
+                href={`tel:${BRAND.hotline.replace(/\./g, '')}`}
                 className="w-full py-3 rounded-xl bg-white text-bamboo-900 font-extrabold text-xs uppercase tracking-wider text-center shadow hover:scale-[1.02] transition-all flex items-center justify-center"
               >
                 <PhoneCallIcon className="w-4 h-4 mr-2 text-wood-600 animate-pulse" />
-                Hotline: 0915.189.389
+                Hotline: {BRAND.hotlineDisplay}
               </a>
             </div>
 
@@ -314,7 +297,7 @@ export default function ArticleLayout({
 
             {/* Download Catalog Shortcut */}
             <div className="bg-eco-gray-50 rounded-2xl border border-eco-gray-200 p-4 text-xs space-y-2">
-              <div className="font-bold text-eco-gray-900">Tài Liệu Kỹ Thuật 2025</div>
+              <div className="font-bold text-eco-gray-900">{getTechDocTitle()}</div>
               <p className="text-[11px] text-eco-gray-600">
                 Tải về trọn bộ bảng kiểm định Formaldehyde E0 và chứng nhận chống cháy lan B1.
               </p>

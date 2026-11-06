@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import MainLayout from '../components/layout/MainLayout';
+import BRAND, { getCurrentYear, getPriceTableTitle } from '../config/brandConfig';
 
 // ==========================================
 // ICON HELPER COMPONENTS (Lucide Style SVG)
@@ -40,7 +41,7 @@ const ArrowRightIcon = ({ className = "w-4 h-4" }) => (
 );
 
 // ==========================================
-// PRICING DATA MOCK (ECOBAMBOO OFFICIAL 2025)
+// PRICING DATA MOCK (OFFICIAL FACTORY PRICE)
 // ==========================================
 export const PRICING_DATA = [
   {
@@ -142,7 +143,7 @@ export const PRICING_DATA = [
         retailPerSheet: 2664000,
         wholesalePerM2: 640000,
         wholesalePerSheet: 2186000,
-        stock: 'Kho Cầu Nổi'
+        stock: `Sẵn ${BRAND.warehouse?.title || 'Tổng kho Nhà Máy'}`
       }
     ]
   },
@@ -183,7 +184,7 @@ export const PRICING_DATA = [
         stock: 'Sẵn hàng'
       },
       {
-        surface: 'Keo Dán Chuyên Dụng Than Tre Eco Bamboo (Không mùi)',
+        surface: `Keo Dán Chuyên Dụng Than Tre ${BRAND.shortName} (Không mùi)`,
         codeRange: 'KEO-EB-300',
         specs: 'Chai tuýp 300ml (Dán được ~3.5 m²)',
         packaging: '24 tuýp / thùng',
@@ -222,15 +223,15 @@ export default function PricingTable({ onOpenCalculator }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-3">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-bamboo-800/80 border border-bamboo-600/40 text-bamboo-300 text-xs font-bold uppercase tracking-wider">
-              <span>Bảng Giá Niêm Yết Nhà Máy 2025</span>
+              <span>{getPriceTableTitle()}</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-              Bảng Giá Tấm Ốp Than Tre & Phụ Kiện
+              Bảng Giá Tấm Ốp Than Tre & Phụ Kiện {BRAND.brandName}
             </h1>
 
             <p className="text-xs sm:text-sm text-eco-gray-200 leading-relaxed font-light">
-              Báo giá minh bạch, xuất kho trực tiếp từ nhà máy Sơn Đồng & hệ thống tổng kho Hà Nội. Cam kết chuẩn an toàn Formaldehyde E0 và keo nhiệt PUR Jowat Đức.
+              Báo giá minh bạch, xuất kho trực tiếp từ {BRAND.factoryName} & {BRAND.warehouseAddress}. Cam kết chuẩn an toàn Formaldehyde E0 và keo nhiệt PUR siêu bền.
             </p>
 
             <div className="pt-3 flex flex-wrap gap-3">
@@ -254,7 +255,7 @@ export default function PricingTable({ onOpenCalculator }) {
             {downloadNotice && (
               <div className="p-3 rounded-xl bg-bamboo-900/90 text-bamboo-200 text-xs font-bold border border-bamboo-500 flex items-center animate-fade-in mt-3">
                 <CheckCircleIcon className="w-4 h-4 mr-2 text-emerald-400" />
-                Đang tải xuống tài liệu: Bang_Gia_EcoBamboo_2025_Chinh_Hang.pdf
+                Đang tải xuống tài liệu: {`Bang_Gia_${BRAND.id.toUpperCase()}_${getCurrentYear()}_Chinh_Hang.pdf`}
               </div>
             )}
           </div>
@@ -271,7 +272,7 @@ export default function PricingTable({ onOpenCalculator }) {
               Chi Tiết Bảng Giá Theo Từng Dòng Sản Phẩm
             </h2>
             <p className="text-xs text-eco-gray-500 mt-0.5">
-              Đơn giá xuất kho tại nhà máy Km8 Đại Lộ Thăng Long (chưa bao gồm VAT 8% và vận chuyển).
+              Đơn giá xuất kho tại {BRAND.factory?.title || BRAND.factoryName} ({BRAND.factory?.shortAddress || BRAND.factoryAddress}) (chưa bao gồm VAT 8% và vận chuyển).
             </p>
           </div>
 
@@ -382,7 +383,7 @@ export default function PricingTable({ onOpenCalculator }) {
             </div>
             <h3 className="font-bold text-sm text-eco-gray-900">Chiết Khấu Đơn Hàng &gt; 100m²</h3>
             <p className="text-xs text-eco-gray-500 leading-relaxed">
-              Hỗ trợ miễn phí cước vận chuyển nội thành Hà Nội trong bán kính 20km từ nhà máy Sơn Đồng.
+              Hỗ trợ miễn phí cước vận chuyển nội thành Hà Nội trong bán kính 20km từ {BRAND.factory?.title || BRAND.factoryName}.
             </p>
           </div>
 
@@ -392,7 +393,7 @@ export default function PricingTable({ onOpenCalculator }) {
             </div>
             <h3 className="font-bold text-sm text-eco-gray-900">Chính Sách Đại Lý Độc Quyền</h3>
             <p className="text-xs text-eco-gray-500 leading-relaxed">
-              Cam kết bảo hộ thị trường tỉnh, cung cấp xâu mẫu (Sample Box 160 mã) và catalog 2025 miễn phí.
+              Cam kết bảo hộ thị trường tỉnh, cung cấp xâu mẫu (Sample Box 160 mã) và catalog {getCurrentYear()} miễn phí.
             </p>
           </div>
         </div>
@@ -402,15 +403,15 @@ export default function PricingTable({ onOpenCalculator }) {
           <div className="space-y-1 text-center md:text-left">
             <h3 className="text-xl font-black">Cần Báo Giá Bóc Tách Khối Lượng Bản Vẽ Thiết Kế?</h3>
             <p className="text-xs sm:text-sm text-bamboo-100">
-              Gửi ngay file CAD hoặc kích thước mảng tường, kỹ sư Eco Bamboo sẽ gửi dự toán chi tiết trong 15 phút.
+              Gửi ngay file CAD hoặc kích thước mảng tường, kỹ sư {BRAND.shortName} sẽ gửi dự toán chi tiết trong 15 phút.
             </p>
           </div>
           <a
-            href="tel:0915189389"
+            href={`tel:${BRAND.hotline.replace(/\./g, '')}`}
             className="shrink-0 px-6 py-3 rounded-xl bg-white text-bamboo-900 font-extrabold text-xs uppercase tracking-wider shadow hover:scale-105 transition-all flex items-center"
           >
             <PhoneCallIcon className="w-4 h-4 mr-2 text-wood-600" />
-            Hotline Dự Án: 0915.189.389
+            Hotline Dự Án: {BRAND.hotlineDisplay}
           </a>
         </div>
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import MainLayout from '../components/layout/MainLayout';
+import BRAND from '../config/brandConfig';
 
 // ==========================================
 // ICON HELPER COMPONENTS (Lucide Style SVG)
@@ -61,7 +62,7 @@ export const CONSTRUCTION_STEPS = [
     step: '03',
     title: 'Kỹ Thuật Soi Rãnh V Gập Vuông 90° & Uốn Vòm Cong R',
     timeEst: 'Kỹ thuật cốt lõi',
-    desc: 'Đây là ưu điểm vượt trội chỉ có ở tấm than tre Eco Bamboo. Sử dụng máy phay cầm tay gắn mũi dao chữ V 90° để soi rãnh mặt sau tấm, chừa lại lớp màng film PETG bề mặt (~0.3mm) rồi bẻ gập nhẹ nhàng.',
+    desc: `Đây là ưu điểm vượt trội chỉ có ở tấm than tre ${BRAND.shortName}. Sử dụng máy phay cầm tay gắn mũi dao chữ V 90° để soi rãnh mặt sau tấm, chừa lại lớp màng film PETG bề mặt (~0.3mm) rồi bẻ gập nhẹ nhàng.`,
     keyPoints: [
       'Chỉnh cữ phay ăn sâu vừa chạm lớp film, tránh phay đứt film',
       'Đối với góc bo tròn: soi các đường rãnh song song cách nhau 8-10mm',
@@ -72,7 +73,7 @@ export const CONSTRUCTION_STEPS = [
     step: '04',
     title: 'Bơm Keo Dán Chuyên Dụng & Băng Keo Xốp Định Vị',
     timeEst: 'Gắn kết bền bỉ',
-    desc: 'Bơm keo chuyên dụng dán than tre Eco Bamboo (hoặc keo Titebond) theo đường zíc zắc đều khắp mặt sau tấm với định mức 1 tuýp 300ml dán được ~3.5 m².',
+    desc: `Bơm keo chuyên dụng dán than tre ${BRAND.shortName} (hoặc keo Titebond) theo đường zíc zắc đều khắp mặt sau tấm với định mức 1 tuýp 300ml dán được ~3.5 m².`,
     keyPoints: [
       'Dán thêm các đoạn băng keo xốp 2 mặt để cố định tấm tức thì trong lúc chờ keo khô',
       'Không bôi keo quá sát mép (cách mép 2cm) để tránh keo tràn ra ngoài mạch',
@@ -127,7 +128,7 @@ export default function ConstructionGuide() {
             Hướng Dẫn Thi Công Tấm Ốp Than Tre
           </h1>
           <p className="text-xs sm:text-sm text-eco-gray-200 leading-relaxed font-light">
-            Quy trình 6 bước chuẩn kỹ thuật từ chuyên gia Eco Bamboo. Nắm vững bí quyết soi rãnh V gập vuông góc 90° và uốn vòm cong R sắc sảo không vết lộ.
+            Quy trình 6 bước chuẩn kỹ thuật từ chuyên gia {BRAND.shortName}. Nắm vững bí quyết soi rãnh V gập vuông góc 90° và uốn vòm cong R sắc sảo không vết lộ.
           </p>
 
           <div className="pt-3 flex justify-center gap-3">
@@ -142,17 +143,17 @@ export default function ConstructionGuide() {
 
           {downloadSuccess && (
             <div className="p-3 rounded-xl bg-bamboo-900/90 text-bamboo-200 text-xs font-bold border border-bamboo-500 flex items-center justify-center animate-fade-in mt-3">
-              <CheckCircleIcon className="w-4 h-4 mr-2 text-emerald-400" />
-              Đang tải xuống: So_Tay_Huong_Dan_Thi_Cong_EcoBamboo_2025.pdf
+              <CheckCircleIcon className="w-4 h-4 mr-2 text-amber-400" />
+              {`Đang tải xuống: So_Tay_Huong_Dan_Thi_Cong_${BRAND.id.toUpperCase()}_${getCurrentYear()}.pdf`}
             </div>
           )}
         </div>
 
-        {/* SƠ ĐỒ QUY TRÌNH THỰC TẾ ECO BAMBOO */}
+        {/* SƠ ĐỒ QUY TRÌNH THỰC TẾ */}
         <div className="mt-8 max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-xl border border-eco-gray-200 bg-white">
           <img
             src="/images/ecobamboo/so-do-8-buoc-thi-cong-tam-op-eco-bamboo.webp"
-            alt="Sơ đồ 8 bước thi công tấm ốp than tre Eco Bamboo"
+            alt={`Sơ đồ 8 bước thi công tấm ốp than tre ${BRAND.shortName}`}
             className="w-full h-auto object-contain"
           />
         </div>
@@ -166,7 +167,7 @@ export default function ConstructionGuide() {
             <iframe
               className="w-full h-full"
               src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-              title="Hướng Dẫn Thi Công Tấm Ốp Than Tre Eco Bamboo"
+              title={`Hướng Dẫn Thi Công Tấm Ốp Than Tre ${BRAND.shortName}`}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>
@@ -177,13 +178,13 @@ export default function ConstructionGuide() {
             >
               <img
                 src="/images/ecobamboo/thi-cong-tam-op-than-tre-9c1301.webp"
-                alt="Thực tế thi công tấm ốp than tre Eco Bamboo"
+                alt={`Thực tế thi công tấm ốp than tre ${BRAND.shortName}`}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors"></div>
 
               {/* Play Button */}
-              <div className="relative z-10 w-20 h-20 rounded-full bg-emerald-600/90 text-white flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.7)] group-hover:scale-110 group-hover:bg-emerald-500 transition-all duration-300 pl-1 mb-4">
+              <div className="relative z-10 w-20 h-20 rounded-full bg-amber-500/90 text-white flex items-center justify-center shadow-[0_0_40px_rgba(222,170,38,0.7)] group-hover:scale-110 group-hover:bg-amber-400 transition-all duration-300 pl-1 mb-4">
                 <PlayIcon className="w-8 h-8" />
               </div>
 
@@ -203,11 +204,11 @@ export default function ConstructionGuide() {
 
         </div>
 
-        {/* SƠ ĐỒ QUY TRÌNH THỰC TẾ ECO BAMBOO */}
+        {/* SƠ ĐỒ QUY TRÌNH THỰC TẾ */}
         <div className="mt-8 max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-xl border border-eco-gray-200 bg-white">
           <img
             src="/images/ecobamboo/so-do-8-buoc-thi-cong-tam-op-eco-bamboo.webp"
-            alt="Sơ đồ 8 bước thi công tấm ốp than tre Eco Bamboo"
+            alt={`Sơ đồ 8 bước thi công tấm ốp than tre ${BRAND.shortName}`}
             className="w-full h-auto object-contain"
           />
         </div>
@@ -260,7 +261,7 @@ export default function ConstructionGuide() {
                   </span>
                   {stepItem.keyPoints.map((kp, kIdx) => (
                     <div key={kIdx} className="flex items-start text-xs text-eco-gray-700">
-                      <CheckCircleIcon className="w-3.5 h-3.5 mr-2 text-emerald-600 shrink-0 mt-0.5" />
+                      <CheckCircleIcon className="w-3.5 h-3.5 mr-2 text-amber-600 shrink-0 mt-0.5" />
                       <span>{kp}</span>
                     </div>
                   ))}
@@ -311,14 +312,14 @@ export default function ConstructionGuide() {
           <div className="space-y-1 text-center md:text-left">
             <h3 className="text-xl font-black">Bạn Là Thợ Thi Công Muốn Nâng Cao Tay Nghề?</h3>
             <p className="text-xs sm:text-sm text-bamboo-100">
-              Nhà máy Eco Bamboo tổ chức các buổi Workshop thực hành uốn vòm cong và soi rãnh V miễn phí hàng tháng tại Hà Nội.
+              {BRAND.factoryName} tổ chức các buổi Workshop thực hành uốn vòm cong và soi rãnh V miễn phí hàng tháng tại {BRAND.factoryAddress.split(',').slice(-2).join(',')}.
             </p>
           </div>
           <a
-            href="tel:0915189389"
+            href={`tel:${BRAND.hotline.replace(/\./g, '')}`}
             className="shrink-0 px-6 py-3 rounded-xl bg-wood-500 hover:bg-wood-600 text-white font-extrabold text-xs uppercase tracking-wider shadow hover:scale-105 transition-all"
           >
-            Đăng Ký Tham Gia Workshop
+            Đăng Ký Tham Gia Workshop ({BRAND.hotlineDisplay})
           </a>
         </div>
 

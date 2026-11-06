@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import MainLayout from '../components/layout/MainLayout';
 import { PRODUCTS } from '../data/products';
+import BRAND, { getCurrentYear } from '../config/brandConfig';
 
 // ==========================================
 // ICON HELPER COMPONENTS (Lucide Style SVG)
@@ -157,7 +158,7 @@ export default function ProductDetailPage({ product = PRODUCTS[0], onSelectProdu
 
               {/* Watermark & Tag */}
               <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-md rounded-xl p-3 text-white text-xs space-y-0.5">
-                <div className="font-mono font-bold text-emerald-400 text-sm">ECOBAMBOO {product.code}</div>
+                <div className="font-mono font-bold text-amber-400 text-sm">{BRAND.shortName.toUpperCase()} {product.code}</div>
                 <div className="text-[11px] text-gray-200">{product.name}</div>
               </div>
 
@@ -223,7 +224,7 @@ export default function ProductDetailPage({ product = PRODUCTS[0], onSelectProdu
                   {product.categoryName}
                 </span>
                 <span className="text-xs text-eco-gray-500 font-medium flex items-center">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+                  <span className="w-2 h-2 rounded-full bg-amber-500 mr-1.5 animate-pulse"></span>
                   {product.inStock ? 'Sẵn hàng tại kho' : 'Đặt sản xuất 3 ngày'}
                 </span>
               </div>
@@ -304,11 +305,11 @@ export default function ProductDetailPage({ product = PRODUCTS[0], onSelectProdu
 
                 {/* Nút Hotline báo giá dự án */}
                 <a
-                  href="tel:0915189389"
+                  href={`tel:${BRAND.hotline.replace(/\./g, '')}`}
                   className="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-wood-50 text-wood-800 border-2 border-wood-500 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center shadow-sm"
                 >
                   <PhoneCallIcon className="w-4 h-4 mr-2 text-wood-600 animate-pulse" />
-                  Báo Giá: 0915.189.389
+                  Báo Giá: {BRAND.hotlineDisplay}
                 </a>
               </div>
 
@@ -324,7 +325,7 @@ export default function ProductDetailPage({ product = PRODUCTS[0], onSelectProdu
               {downloadSuccess && (
                 <div className="p-2.5 rounded-xl bg-bamboo-50 text-bamboo-800 text-xs font-semibold border border-bamboo-200 flex items-center animate-fade-in">
                   <CheckCircleIcon className="w-4 h-4 mr-2 text-bamboo-600" />
-                  Đã tải xuống file Catalog Eco Bamboo 2025 thành công!
+                  Đã tải xuống file Catalog {BRAND.brandName} {getCurrentYear()} thành công!
                 </div>
               )}
             </div>
@@ -416,7 +417,7 @@ export default function ProductDetailPage({ product = PRODUCTS[0], onSelectProdu
                   Cam Kết Chất Lượng & An Toàn Sinh Thái
                 </h4>
                 <p>
-                  Sản phẩm tấm ốp than tre Eco Bamboo được kiểm nghiệm định kỳ tại các trung tâm đo lường chất lượng độc lập:
+                  Sản phẩm tấm ốp than tre {BRAND.shortName} được kiểm nghiệm định kỳ tại các trung tâm đo lường chất lượng độc lập:
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                   <div className="p-4 rounded-xl bg-bamboo-50 border border-bamboo-200">
@@ -507,7 +508,7 @@ export default function ProductDetailPage({ product = PRODUCTS[0], onSelectProdu
             </div>
 
             <p className="text-xs text-eco-gray-600 mb-4 leading-relaxed">
-              Nhà máy Eco Bamboo hỗ trợ gửi miễn phí mẫu cắt thực tế kích thước 15x20cm mã <strong>{product.code} - {product.name}</strong> để bạn kiểm tra thớ vân và thử nghiệm độ chống nước, uốn cong.
+              Nhà máy {BRAND.shortName} hỗ trợ gửi miễn phí mẫu cắt thực tế kích thước 15x20cm mã <strong>{product.code} - {product.name}</strong> để bạn kiểm tra thớ vân và thử nghiệm độ chống nước, uốn cong.
             </p>
 
             <form onSubmit={handleSampleSubmit} className="space-y-3.5">
@@ -567,9 +568,9 @@ export default function ProductDetailPage({ product = PRODUCTS[0], onSelectProdu
               </div>
 
               {sampleSuccess && (
-                <div className="p-3 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200 flex items-center">
-                  <CheckCircleIcon className="w-4 h-4 mr-2 text-emerald-600" />
-                  Đăng ký thành công! Bộ phận mẫu Eco Bamboo sẽ gửi hàng trong vòng 24 giờ.
+                <div className="p-3 rounded-xl bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200 flex items-center">
+                  <CheckCircleIcon className="w-4 h-4 mr-2 text-amber-600" />
+                  Đăng ký thành công! Bộ phận mẫu {BRAND.shortName} sẽ gửi hàng trong vòng 24 giờ.
                 </div>
               )}
             </form>

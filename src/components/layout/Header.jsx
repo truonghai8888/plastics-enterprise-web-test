@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import BRAND, { getCurrentYear, getCatalogTitle } from '../../config/brandConfig';
+import React, { useState, useEffect, useRef } from 'react';
 
 // ==========================================
 // ICON COMPONENTS (Lucide Style SVG)
@@ -95,6 +96,32 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [mobileSubmenu, setMobileSubmenu] = useState({});
+  const dropdownTimeoutRef = useRef(null);
+
+  const handleDropdownEnter = (menuKey) => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+      dropdownTimeoutRef.current = null;
+    }
+    setActiveDropdown(menuKey);
+  };
+
+  const handleDropdownLeave = () => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+    }
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 300);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (dropdownTimeoutRef.current) {
+        clearTimeout(dropdownTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -113,38 +140,30 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white transition-all duration-300 font-sans">
-      {/* 1. TOPBAR TIỆN ÍCH / LIÊN HỆ */}
-      <div className="hidden lg:block bg-bamboo-950 text-white text-xs py-2 border-b border-bamboo-800">
+      {/* 1. TOPBAR TIỆN ÍCH / LIÊN HỆ (ĐÃ ẨN TOÀN BỘ THEO YÊU CẦU) */}
+      {/*
+      <div className="hidden lg:block bg-bamboo-950 text-white text-xs py-1.5 border-b border-bamboo-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          {/* Thông điệp & cam kết chất lượng */}
-          <div className="flex items-center space-x-6">
-            <span className="flex items-center text-bamboo-300 font-medium">
-              <ShieldCheckIcon className="w-3.5 h-3.5 mr-1.5 text-bamboo-400" />
-              Chuẩn phát thải Formaldehyde E0 Đức • Keo PUR Jowat chống bong tróc
-            </span>
-            <span className="hidden xl:inline text-gray-400">|</span>
-            <span className="hidden xl:flex items-center text-gray-300">
-              <MapPinIcon className="w-3.5 h-3.5 mr-1.5 text-wood-400" />
-              Nhà máy: Km8 Đại Lộ Thăng Long, Sơn Đồng, Hoài Đức, Hà Nội
-            </span>
+          <div className="flex items-center text-eco-gray-300 text-xs">
+            <MapPinIcon className="w-3.5 h-3.5 mr-1.5 text-amber-400" />
+            <span><strong>Nhà máy {BRAND.shortName}:</strong> {BRAND.factory?.shortAddress || BRAND.factoryAddress}</span>
           </div>
 
-          {/* Hotline & Liên kết phụ */}
           <div className="flex items-center space-x-5">
             <a
-              href="mailto:sale.ecobamboo@gmail.com"
+              href={BRAND.socialLinks.email}
               className="flex items-center text-gray-300 hover:text-white transition-colors"
             >
               <MailIcon className="w-3.5 h-3.5 mr-1.5 text-bamboo-400" />
-              sale.ecobamboo@gmail.com
+              {BRAND.email}
             </a>
             <span className="text-bamboo-700">|</span>
             <a
-              href="tel:0915189389"
+              href={`tel:${BRAND.hotline.replace(/\./g, '')}`}
               className="flex items-center font-bold text-wood-300 hover:text-wood-200 transition-colors"
             >
               <PhoneIcon className="w-3.5 h-3.5 mr-1.5 text-wood-400 animate-pulse" />
-              Hotline: 0915.189.389
+              {`Hotline: ${BRAND.hotlineDisplay}`}
             </a>
             <span className="text-bamboo-700">|</span>
             <a
@@ -152,7 +171,7 @@ export default function Header() {
               className="flex items-center text-bamboo-300 hover:text-white font-medium transition-colors"
             >
               <DownloadIcon className="w-3.5 h-3.5 mr-1" />
-              Tải Catalog 2025 PDF
+              {getCatalogTitle()}
             </a>
             <span className="text-bamboo-700">|</span>
             <a
@@ -165,18 +184,19 @@ export default function Header() {
           </div>
         </div>
       </div>
+      */}
 
-      {/* 2. THANH NAVBAR CHÍNH */}
-      <nav className={`transition-all duration-300 ${isScrolled ? 'shadow-dropdown bg-white/95 backdrop-blur-md py-2.5' : 'py-3.5 border-b border-eco-gray-200'}`}>
+      {/* 2. THANH NAVBAR CHÍNH (YÊU CẦU 4: Thu hẹp độ cao Desktop Navigation) */}
+      <nav className={`transition-all duration-300 ${isScrolled ? 'shadow-dropdown bg-white/95 backdrop-blur-md py-1.5' : 'py-2 border-b border-eco-gray-200'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
 
-            {/* LOGO ECO BAMBOO */}
-            <a href="/" className="flex items-center gap-3 group focus:outline-none">
+            {/* LOGO DOANH NGHIỆP TRUNG TÂM (Đã chỉnh kích thước to rõ hơn) */}
+            <a href="/" className="flex items-center gap-2.5 group focus:outline-none">
               <img
-                src="/images/ecobamboo/logo.png"
-                alt="EcoBamboo"
-                className="h-10 md:h-11 w-auto object-contain transition-transform group-hover:scale-105"
+                src={BRAND.logo.url}
+                alt={BRAND.logo.alt}
+                className="h-11 md:h-13 lg:h-14 w-auto object-contain rounded-lg transition-transform group-hover:scale-105"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                   if (e.currentTarget.nextElementSibling) {
@@ -184,50 +204,58 @@ export default function Header() {
                   }
                 }}
               />
-              <div className="hidden items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-bamboo flex items-center justify-center text-white font-black text-sm">
-                  EB
+              <div className="hidden items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-gradient-bamboo flex items-center justify-center text-white font-black text-xs shadow">
+                  {BRAND.logo.badgeText}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xl md:text-2xl font-extrabold tracking-tight text-bamboo-900">
-                    ECO<span className="text-wood-600">BAMBOO</span>
+                  <span className="text-lg md:text-xl font-extrabold tracking-tight text-eco-gray-900">
+                    {BRAND.brandName}
                   </span>
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-bamboo-700 -mt-1">
-                    Vật Liệu Xanh Nội Thất
+                  <span className="text-[9px] uppercase font-bold tracking-widest text-wood-700 -mt-1">
+                    {BRAND.subSlogan}
                   </span>
                 </div>
               </div>
             </a>
 
-            {/* DESKTOP NAVIGATION LINKS */}
-            <div className="hidden xl:flex items-center space-x-1 lg:space-x-2">
+            {/* DESKTOP NAVIGATION LINKS (YÊU CẦU 4: Tinh gọn khoảng cách và chiều cao) */}
+            <div className="hidden xl:flex items-center space-x-0.5 2xl:space-x-1">
 
               {/* Trang chủ */}
               <a
                 href="/"
-                className="px-3 py-2 text-sm font-semibold text-bamboo-900 hover:text-bamboo-600 rounded-lg hover:bg-bamboo-50/70 transition-colors"
+                className="px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold text-bamboo-900 hover:text-bamboo-600 rounded-lg hover:bg-bamboo-50/70 transition-colors whitespace-nowrap"
               >
                 Trang chủ
+              </a>
+
+              {/* Giới thiệu (Theo yêu cầu TODO item 4) */}
+              <a
+                href="/gioi-thieu"
+                className="px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold text-eco-gray-800 hover:text-bamboo-600 rounded-lg hover:bg-bamboo-50/70 transition-colors whitespace-nowrap"
+              >
+                Giới thiệu
               </a>
 
               {/* SẢN PHẨM CHÍNH - MEGA MENU */}
               <div
                 className="relative"
-                onMouseEnter={() => setActiveDropdown('products')}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onMouseEnter={() => handleDropdownEnter('products')}
+                onMouseLeave={handleDropdownLeave}
               >
                 <button
-                  className={`flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                  className={`flex items-center px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap rounded-lg transition-colors ${
                     activeDropdown === 'products' ? 'text-bamboo-600 bg-bamboo-50' : 'text-eco-gray-800 hover:text-bamboo-600 hover:bg-bamboo-50/70'
                   }`}
                 >
                   Sản phẩm chính
-                  <ChevronDownIcon className={`ml-1 w-4 h-4 transition-transform duration-200 ${activeDropdown === 'products' ? 'rotate-180 text-bamboo-600' : ''}`} />
+                  <ChevronDownIcon className={`ml-1 w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'products' ? 'rotate-180 text-bamboo-600' : ''}`} />
                 </button>
 
-                {/* MEGA MENU CONTAINER */}
+                {/* MEGA MENU CONTAINER - Đã sửa định vị left-0 chống tràn lề trái màn hình */}
                 {activeDropdown === 'products' && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-[860px] bg-white rounded-2xl shadow-dropdown border border-eco-gray-200 p-6 grid grid-cols-12 gap-6 animate-fade-in z-50">
+                  <div className="absolute top-full left-0 mt-1 w-[860px] max-w-[calc(100vw-32px)] bg-white rounded-2xl shadow-dropdown border border-eco-gray-200 p-6 grid grid-cols-12 gap-6 animate-fade-in z-50">
 
                     {/* Cột 1: Tấm ốp than tre & Tấm 17mm */}
                     <div className="col-span-4 space-y-3">
@@ -294,7 +322,7 @@ export default function Header() {
                           Chuẩn E0 Đức & PUR Jowat
                         </div>
                         <p className="text-xs text-eco-gray-600 leading-relaxed mb-3">
-                          Toàn bộ sản phẩm Eco Bamboo sử dụng công nghệ ép nhiệt keo PUR tự động, chống co ngót và cam kết phát thải E0 an toàn tuyệt đối.
+                          Toàn bộ sản phẩm {BRAND.shortName} sử dụng công nghệ ép nhiệt keo PUR tự động, chống co ngót và cam kết phát thải E0 an toàn tuyệt đối.
                         </p>
                       </div>
                       <div className="space-y-1.5 pt-2 border-t border-bamboo-200/50">
@@ -320,16 +348,16 @@ export default function Header() {
               {/* THƯ VIỆN MÃ MÀU */}
               <div
                 className="relative"
-                onMouseEnter={() => setActiveDropdown('colors')}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onMouseEnter={() => handleDropdownEnter('colors')}
+                onMouseLeave={handleDropdownLeave}
               >
                 <button
-                  className={`flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                  className={`flex items-center px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap rounded-lg transition-colors ${
                     activeDropdown === 'colors' ? 'text-bamboo-600 bg-bamboo-50' : 'text-eco-gray-800 hover:text-bamboo-600 hover:bg-bamboo-50/70'
                   }`}
                 >
                   Thư viện mã màu
-                  <ChevronDownIcon className={`ml-1 w-4 h-4 transition-transform duration-200 ${activeDropdown === 'colors' ? 'rotate-180 text-bamboo-600' : ''}`} />
+                  <ChevronDownIcon className={`ml-1 w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'colors' ? 'rotate-180 text-bamboo-600' : ''}`} />
                 </button>
 
                 {activeDropdown === 'colors' && (
@@ -363,58 +391,56 @@ export default function Header() {
                 )}
               </div>
 
-              {/* BÁO GIÁ */}
+              {/* BÁO GIÁ & DỰ TOÁN (ĐÃ GỘP THÀNH 1 VÀ ƯU TIÊN DỰ TOÁN HIỂN THỊ ĐẦU TIÊN) */}
               <div
                 className="relative"
-                onMouseEnter={() => setActiveDropdown('pricing')}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onMouseEnter={() => handleDropdownEnter('pricing')}
+                onMouseLeave={handleDropdownLeave}
               >
                 <button
-                  className={`flex items-center px-3 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                  className={`flex items-center px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap rounded-lg transition-colors ${
                     activeDropdown === 'pricing' ? 'text-bamboo-600 bg-bamboo-50' : 'text-eco-gray-800 hover:text-bamboo-600 hover:bg-bamboo-50/70'
                   }`}
                 >
+                  <CalculatorIcon className="w-3.5 h-3.5 mr-1 text-bamboo-600" />
                   Báo giá & Dự toán
-                  <ChevronDownIcon className={`ml-1 w-4 h-4 transition-transform duration-200 ${activeDropdown === 'pricing' ? 'rotate-180 text-bamboo-600' : ''}`} />
+                  <ChevronDownIcon className={`ml-1 w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'pricing' ? 'rotate-180 text-bamboo-600' : ''}`} />
                 </button>
 
                 {activeDropdown === 'pricing' && (
                   <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-xl shadow-dropdown border border-eco-gray-200 py-2 animate-fade-in z-50">
-                    <a href="/bang-gia" className="block px-4 py-2.5 text-sm text-eco-gray-700 hover:bg-bamboo-50 hover:text-bamboo-800">
-                      <div className="font-semibold text-eco-gray-900">Bảng giá niêm yết 2025</div>
-                      <div className="text-xs text-eco-gray-500">Giá theo m² và theo tấm từ 240.000 đ/m²</div>
-                    </a>
-                    <a href="/tinh-chi-phi" className="block px-4 py-2.5 text-sm text-eco-gray-700 hover:bg-bamboo-50 hover:text-bamboo-800">
+                    <a href="/tu-thiet-ke-vach" className="block px-4 py-2.5 text-sm text-eco-gray-700 hover:bg-amber-50 hover:text-amber-900">
                       <div className="font-semibold text-eco-gray-900 flex items-center">
-                        Công cụ tính chi phí vật tư
+                        <SparklesIcon className="w-4 h-4 mr-1.5 text-amber-500" />
+                        Tự thiết kế vách 3D
+                        <span className="ml-1.5 px-1.5 py-0.5 text-[10px] bg-red-100 text-red-700 rounded font-bold">Mới</span>
+                      </div>
+                      <div className="text-xs text-eco-gray-500 mt-0.5">Canvas mô phỏng chia tỉ lệ vách và nẹp hoàn thiện</div>
+                    </a>
+                    <a href="/tinh-chi-phi" className="block px-4 py-2.5 text-sm text-eco-gray-700 hover:bg-bamboo-50 hover:text-bamboo-800 border-t border-eco-gray-100">
+                      <div className="font-semibold text-eco-gray-900 flex items-center">
+                        <CalculatorIcon className="w-4 h-4 mr-1.5 text-bamboo-600" />
+                        Dự toán & Tính chi phí vật tư
                         <span className="ml-1.5 px-1.5 py-0.5 text-[10px] bg-amber-500 text-white rounded font-bold">HOT</span>
                       </div>
-                      <div className="text-xs text-eco-gray-500">Nhập kích thước vách tính ngay số tấm & nẹp</div>
+                      <div className="text-xs text-eco-gray-500 mt-0.5">Nhập kích thước vách tính ngay số tấm & nẹp hoàn thiện</div>
+                    </a>
+                    <a href="/bang-gia" className="block px-4 py-2.5 text-sm text-eco-gray-700 hover:bg-bamboo-50 hover:text-bamboo-800 border-t border-eco-gray-100">
+                      <div className="font-semibold text-eco-gray-900">{`Bảng giá niêm yết ${getCurrentYear()}`}</div>
+                      <div className="text-xs text-eco-gray-500 mt-0.5">Giá theo m² và theo tấm từ 240.000 đ/m²</div>
                     </a>
                     <a href="/nha-phan-phoi" className="block px-4 py-2.5 text-sm text-eco-gray-700 hover:bg-bamboo-50 hover:text-bamboo-800 border-t border-eco-gray-100">
-                      <div className="font-semibold text-eco-gray-900">Chính sách chiết khấu đại lý</div>
-                      <div className="text-xs text-eco-gray-500">Dành cho đại lý & tổ đội thầu thợ</div>
+                      <div className="font-semibold text-eco-gray-900">Chính sách chiết khấu đại lý & NPP</div>
+                      <div className="text-xs text-eco-gray-500 mt-0.5">Dành cho đại lý & tổ đội thầu thợ toàn quốc</div>
                     </a>
                   </div>
                 )}
               </div>
 
-              {/* DỰ TOÁN - CÔNG CỤ TÍNH VẬT TƯ */}
-              <a
-                href="/tinh-chi-phi"
-                className="relative px-3 py-2 text-sm font-semibold text-bamboo-800 hover:text-bamboo-600 rounded-lg hover:bg-bamboo-50/70 flex items-center transition-colors"
-              >
-                <CalculatorIcon className="w-4 h-4 mr-1 text-bamboo-600" />
-                Dự toán
-                <span className="ml-1.5 px-1.5 py-0.5 text-[10px] font-bold bg-amber-500 text-white rounded-full">
-                  HOT
-                </span>
-              </a>
-
               {/* CÔNG TRÌNH */}
               <a
                 href="/cong-trinh"
-                className="px-3 py-2 text-sm font-semibold text-eco-gray-800 hover:text-bamboo-600 rounded-lg hover:bg-bamboo-50/70 transition-colors"
+                className="px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap text-eco-gray-800 hover:text-bamboo-600 rounded-lg hover:bg-bamboo-50/70 transition-colors"
               >
                 Công trình
               </a>
@@ -422,7 +448,7 @@ export default function Header() {
               {/* NHÀ PHÂN PHỐI */}
               <a
                 href="/nha-phan-phoi"
-                className="px-3 py-2 text-sm font-semibold text-eco-gray-800 hover:text-bamboo-600 rounded-lg hover:bg-bamboo-50/70 transition-colors"
+                className="px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap text-eco-gray-800 hover:text-bamboo-600 rounded-lg hover:bg-bamboo-50/70 transition-colors"
               >
                 Nhà phân phối
               </a>
@@ -430,7 +456,7 @@ export default function Header() {
               {/* TIN TỨC */}
               <a
                 href="/tin-tuc"
-                className="px-3 py-2 text-sm font-semibold text-eco-gray-800 hover:text-bamboo-600 rounded-lg hover:bg-bamboo-50/70 transition-colors"
+                className="px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap text-eco-gray-800 hover:text-bamboo-600 rounded-lg hover:bg-bamboo-50/70 transition-colors"
               >
                 Tin tức
               </a>
@@ -438,7 +464,7 @@ export default function Header() {
               {/* LIÊN HỆ */}
               <a
                 href="/lien-he"
-                className="px-3 py-2 text-sm font-semibold text-eco-gray-800 hover:text-bamboo-600 rounded-lg hover:bg-bamboo-50/70 transition-colors"
+                className="px-2 2xl:px-2.5 py-1.5 text-xs 2xl:text-[13px] font-semibold whitespace-nowrap text-eco-gray-800 hover:text-bamboo-600 rounded-lg hover:bg-bamboo-50/70 transition-colors"
               >
                 Liên hệ
               </a>
@@ -448,7 +474,7 @@ export default function Header() {
             <div className="hidden lg:flex items-center space-x-3">
               {/* Nút Hotline gọi nhanh */}
               <a
-                href="tel:0915189389"
+                href={`tel:${BRAND.hotline.replace('.', '')}`}
                 className="flex items-center px-3.5 py-2 rounded-xl bg-bamboo-50 hover:bg-bamboo-100 text-bamboo-800 border border-bamboo-200 text-sm font-bold transition-all shadow-sm group"
               >
                 <span className="w-8 h-8 rounded-lg bg-bamboo-600 text-white flex items-center justify-center mr-2 shadow-sm group-hover:scale-105 transition-transform">
@@ -456,7 +482,7 @@ export default function Header() {
                 </span>
                 <div className="text-left leading-tight">
                   <div className="text-[10px] font-normal text-bamboo-600 uppercase">Tư vấn trực tiếp</div>
-                  <div className="text-sm font-extrabold text-bamboo-900 tracking-tight">0915.189.389</div>
+                  <div className="text-sm font-extrabold text-bamboo-900 tracking-tight">{BRAND.hotlineDisplay}</div>
                 </div>
               </a>
 
@@ -473,7 +499,7 @@ export default function Header() {
             {/* MOBILE HAMBURGER BUTTON */}
             <div className="flex items-center lg:hidden space-x-2">
               <a
-                href="tel:0915189389"
+                href={`tel:${BRAND.hotline.replace('.', '')}`}
                 className="p-2 text-bamboo-700 bg-bamboo-50 rounded-lg hover:bg-bamboo-100"
                 aria-label="Gọi hotline"
               >
@@ -564,36 +590,29 @@ export default function Header() {
                 )}
               </div>
 
-              {/* Accordion Báo giá */}
+              {/* Accordion Báo giá & Dự toán (Gộp làm 1, ưu tiên Dự toán trước) */}
               <div>
                 <button
                   onClick={() => toggleMobileSubmenu('pricing')}
                   className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-base font-semibold text-eco-gray-800 hover:bg-bamboo-50 hover:text-bamboo-700"
                 >
-                  <span>Báo giá & Đại lý</span>
+                  <span className="flex items-center">
+                    <CalculatorIcon className="w-4 h-4 mr-2 text-bamboo-600" />
+                    Báo giá & Dự toán
+                  </span>
                   <ChevronDownIcon className={`w-4 h-4 transition-transform ${mobileSubmenu.pricing ? 'rotate-180' : ''}`} />
                 </button>
                 {mobileSubmenu.pricing && (
                   <div className="pl-4 pr-2 py-1 space-y-1 text-sm bg-eco-gray-50 rounded-lg mt-1">
+                    <a href="/tinh-chi-phi" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-bamboo-800 font-bold hover:text-bamboo-950 flex items-center justify-between">
+                      <span>Dự toán & Tính chi phí vật tư</span>
+                      <span className="px-1.5 py-0.2 text-[9px] font-bold bg-amber-500 text-white rounded-full">HOT</span>
+                    </a>
                     <a href="/bang-gia" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-eco-gray-600 hover:text-bamboo-700">Bảng giá niêm yết vật tư</a>
-                    <a href="/tinh-chi-phi" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-eco-gray-600 hover:text-bamboo-700">Tính chi phí dự toán</a>
-                    <a href="/nha-phan-phoi" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-eco-gray-600 hover:text-bamboo-700 font-medium">Chính sách nhà phân phối</a>
+                    <a href="/nha-phan-phoi" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 text-eco-gray-600 hover:text-bamboo-700 font-medium">Chính sách nhà phân phối & đại lý</a>
                   </div>
                 )}
               </div>
-
-              {/* Dự toán */}
-              <a
-                href="/tinh-chi-phi"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between px-3 py-2.5 rounded-lg text-base font-semibold text-bamboo-800 hover:bg-bamboo-50"
-              >
-                <span className="flex items-center">
-                  <CalculatorIcon className="w-4 h-4 mr-2 text-bamboo-600" />
-                  Công cụ tính chi phí
-                </span>
-                <span className="px-1.5 py-0.5 text-[10px] font-bold bg-amber-500 text-white rounded-full">HOT</span>
-              </a>
 
               {/* Các liên kết khác */}
               <a
@@ -633,7 +652,7 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3 py-2.5 rounded-lg text-base font-semibold text-eco-gray-800 hover:bg-bamboo-50 hover:text-bamboo-700"
               >
-                Giới thiệu Eco Bamboo
+                {`Giới thiệu ${BRAND.shortName}`}
               </a>
 
               <a
@@ -656,15 +675,15 @@ export default function Header() {
             {/* Mobile Footer CTAs */}
             <div className="p-4 border-t border-eco-gray-200 bg-eco-gray-50 space-y-3">
               <a
-                href="tel:0915189389"
+                href={`tel:${BRAND.hotline.replace('.', '')}`}
                 className="w-full flex items-center justify-center py-2.5 px-4 rounded-xl bg-bamboo-700 text-white font-bold text-sm shadow-md"
               >
                 <PhoneIcon className="w-4 h-4 mr-2" />
-                Gọi ngay: 0915.189.389
+                Gọi ngay: {BRAND.hotlineDisplay}
               </a>
 
               <a
-                href="https://zalo.me/0915189389"
+                href={BRAND.socialLinks.zalo}
                 target="_blank"
                 rel="noreferrer"
                 className="w-full flex items-center justify-center py-2.5 px-4 rounded-xl bg-blue-600 text-white font-bold text-sm shadow-md"

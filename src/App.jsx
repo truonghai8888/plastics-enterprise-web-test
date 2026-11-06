@@ -10,6 +10,7 @@ import LeadForms from './pages/LeadForms';
 import ProjectsGallery from './pages/ProjectsGallery';
 import ConstructionGuide from './pages/ConstructionGuide';
 import ArticleLayout from './pages/ArticleLayout';
+import NewsPage from './pages/NewsPage';
 import FAQPage from './pages/FAQPage';
 import CertificatesPage from './pages/CertificatesPage';
 import AboutPage from './pages/AboutPage';
@@ -18,8 +19,15 @@ import WarrantyPolicyPage from './pages/WarrantyPolicyPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
 import { PRODUCTS } from './data/products';
+import BRAND, { getCurrentYear } from './config/brandConfig';
 
 // 38 URLs từ file ecobamboo.md
+export const normalizePath = (p) => {
+  if (!p) return '/';
+  const clean = p.split('?')[0].split('#')[0];
+  return clean.length > 1 && clean.endsWith('/') ? clean.slice(0, -1) : clean;
+};
+
 export const ECOBAMBOO_URLS = [
   { url: '/', label: '1. Trang chủ (#main)', page: 'home' },
   { url: '/nha-phan-phoi', label: '2. Nhà phân phối', page: 'distributor' },
@@ -30,17 +38,17 @@ export const ECOBAMBOO_URLS = [
   { url: '/san-pham-chinh/nep', label: '8. Nẹp nhôm hoàn thiện', page: 'category', categoryId: 'nep' },
   { url: '/thu-vien-ma-mau', label: '9. Thư viện mã màu (160+)', page: 'colors' },
   { url: '/thu-vien-ma-mau/phoi-mau/', label: '10. Phối màu 3D (Visualizer)', page: 'visualizer' },
-  { url: '/bang-gia', label: '11. Bảng giá vật tư 2025', page: 'pricing' },
+  { url: '/bang-gia', label: `11. Bảng giá vật tư ${getCurrentYear()}`, page: 'pricing' },
   { url: '/tinh-chi-phi', label: '12. Tính chi phí vật tư', page: 'calculator' },
   { url: '/tu-thiet-ke-vach', label: '13. Tự thiết kế chia mảng vách', page: 'wall-designer' },
   { url: '/cong-trinh', label: '14. Công trình thực tế', page: 'projects' },
   { url: '/tai-catalogue', label: '15. Tải catalogue PDF', page: 'leads', leadPurpose: 'catalogue' },
   { url: '/huong-dan-thi-cong', label: '16. Hướng dẫn thi công & uốn 90°', page: 'guide' },
-  { url: '/tin-tuc', label: '17. Tin tức & cẩm nang', page: 'article' },
+  { url: '/tin-tuc', label: '17. Tin tức & cẩm nang', page: 'news' },
   { url: '/hoi-dap', label: '18. Hỏi đáp thường gặp (FAQ)', page: 'faq' },
-  { url: '/gioi-thieu', label: '19. Giới thiệu công ty & nhà máy', page: 'about' },
+  { url: '/gioi-thieu', label: `19. Giới thiệu ${BRAND.brandName} & nhà máy`, page: 'about' },
   { url: '/chung-chi-chung-nhan', label: '20. Chứng chỉ E0, B1, PUR', page: 'certificates' },
-  { url: '/chinh-sach-bao-hanh', label: '21. Chính sách bảo hành 10 năm', page: 'warranty' },
+  { url: '/chinh-sach-bao-hanh', label: `21. Chính sách bảo hành ${BRAND.warrantyYears} năm`, page: 'warranty' },
   { url: '/lien-he', label: '22. Liên hệ nhà máy', page: 'leads', leadPurpose: 'contact' },
   { url: '/nhan-mau', label: '23. Nhận mẫu thử (Sample Box)', page: 'leads', leadPurpose: 'sample' },
   { url: '/lien-he?nc=dai-ly', label: '24. Đăng ký đại lý', page: 'leads', leadPurpose: 'dealer' },
@@ -62,10 +70,15 @@ export const ECOBAMBOO_URLS = [
 
 export default function App() {
   const [currentRoute, setCurrentRoute] = useState(() => {
-    // Check initial pathname
-    const path = window.location.pathname;
-    const matched = ECOBAMBOO_URLS.find(u => u.url === path);
+    // Check initial pathname & strip trailing slash if any
+    const rawPath = window.location.pathname;
+    const cleanPath = normalizePath(rawPath);
+    const matched = ECOBAMBOO_URLS.find(u => normalizePath(u.url) === cleanPath);
     if (matched) return matched;
+    // URL không tồn tại / không hoạt động -> Tự động chuyển hướng về trang chủ
+    if (cleanPath !== '/' && typeof window !== 'undefined' && window.history) {
+      window.history.replaceState({}, '', '/');
+    }
     return ECOBAMBOO_URLS[0];
   });
 
@@ -79,9 +92,14 @@ export default function App() {
   // Listen to popstate and global internal link clicks
   useEffect(() => {
     const handlePopState = () => {
-      const path = window.location.pathname;
-      const matched = ECOBAMBOO_URLS.find(u => u.url === path) || ECOBAMBOO_URLS[0];
-      navigateTo(matched, false);
+      const rawPath = window.location.pathname;
+      const cleanPath = normalizePath(rawPath);
+      const matched = ECOBAMBOO_URLS.find(u => normalizePath(u.url) === cleanPath);
+      // Nếu URL popstate không hoạt động -> chuyển về trang chủ
+      if (!matched && cleanPath !== '/' && window.history) {
+        window.history.replaceState({}, '', '/');
+      }
+      navigateTo(matched || ECOBAMBOO_URLS[0], false);
     };
 
     const handleGlobalClick = (e) => {
@@ -102,12 +120,16 @@ export default function App() {
         return;
       }
 
-      // Check against 38 URLs
-      const cleanPath = href.split('#')[0];
-      const matched = ECOBAMBOO_URLS.find(u => u.url === cleanPath || u.url === href);
+      // Check against URLs
+      const cleanPath = normalizePath(href);
+      const matched = ECOBAMBOO_URLS.find(u => normalizePath(u.url) === cleanPath);
       if (matched) {
         e.preventDefault();
         navigateTo(matched);
+      } else {
+        // YÊU CẦU 3: Bất kỳ URL nào không hoạt động -> Tự động trả về trang chủ!
+        e.preventDefault();
+        navigateTo(ECOBAMBOO_URLS[0]);
       }
     };
 
@@ -194,6 +216,7 @@ export default function App() {
       {currentRoute.page === 'wall-designer' && <CostCalculator />}
       {currentRoute.page === 'projects' && <ProjectsGallery />}
       {currentRoute.page === 'guide' && <ConstructionGuide />}
+      {currentRoute.page === 'news' && <NewsPage />}
       {currentRoute.page === 'article' && <ArticleLayout />}
       {currentRoute.page === 'faq' && <FAQPage />}
       {currentRoute.page === 'about' && <AboutPage />}
@@ -203,6 +226,10 @@ export default function App() {
       {currentRoute.page === 'terms' && <TermsPage />}
       {currentRoute.page === 'leads' && (
         <LeadForms key={currentRoute.leadPurpose} />
+      )}
+      {/* Fallback cho bất kỳ URL không hoạt động hoặc không tồn tại -> trở về trang chủ */}
+      {!['home', 'distributor', 'category', 'detail', 'colors', 'visualizer', 'pricing', 'calculator', 'wall-designer', 'projects', 'guide', 'news', 'article', 'faq', 'about', 'certificates', 'warranty', 'privacy', 'terms', 'leads'].includes(currentRoute.page) && (
+        <HomePage />
       )}
     </div>
   );

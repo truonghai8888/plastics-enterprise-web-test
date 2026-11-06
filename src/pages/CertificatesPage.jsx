@@ -1,3 +1,4 @@
+import BRAND, { getCurrentYear, getYearSpan } from '../config/brandConfig';
 import React, { useState } from 'react';
 import MainLayout from '../components/layout/MainLayout';
 
@@ -47,19 +48,19 @@ export const CERTIFICATE_ITEMS = [
     title: "Chứng Nhận Hợp Chuẩn TCVN 11353:2016",
     certCode: "TCVN-11353/EB",
     issuer: "Viện Kiểm Định Vật Liệu Xây Dựng",
-    dateIssued: "2024 - 2025",
+    dateIssued: getYearSpan(2022),
     standard: "TCVN 11353:2016 Tiêu chuẩn Quốc gia về ván ốp tường sinh thái",
     testResult: "Đạt toàn bộ các chỉ tiêu cơ lý, độ bền uốn và độ bám dính màng film",
     image: "/images/ecobamboo/eco-bamboo-chung-nhan-hop-chuan-tcvn-11353-2016-85aba2.webp",
     badge: "Hợp Chuẩn TCVN",
-    desc: "Chứng nhận chất lượng hợp chuẩn quốc gia TCVN cấp cho các dòng tấm ốp than tre Eco Bamboo."
+    desc: "Chứng nhận chất lượng hợp chuẩn quốc gia TCVN cấp cho các dòng tấm ốp than tre ${BRAND.brandName}."
   },
   {
     id: 2,
     title: "Certificate of Compliance TCVN 11353:2016 (Bản Quốc Tế)",
     certCode: "TCVN-11353-EN/EB",
     issuer: "Quatest / Construction Material Verification Institute",
-    dateIssued: "2024 - 2025",
+    dateIssued: getYearSpan(2022),
     standard: "International Compliance Certificate (English Version)",
     testResult: "Formaldehyde emission E0 level ≤ 0.40 mg/L, High density core",
     image: "/images/ecobamboo/eco-bamboo-certificate-tcvn-11353-2016-en-c70e5f.webp",
@@ -71,7 +72,7 @@ export const CERTIFICATE_ITEMS = [
     title: "Kết Quả Thử Nghiệm Cốt Đen Than Tre (Trang 1)",
     certCode: "TEST-COT-DEN-P1",
     issuer: "Trung Tâm Kiểm Định Tiêu Chuẩn Đo Lường Chất Lượng",
-    dateIssued: "Định kỳ 2025",
+    dateIssued: `Định kỳ ${getCurrentYear()}`,
     standard: "Kiểm nghiệm độ bền kéo nhổ đinh, độ trương nở ngâm nước",
     testResult: "Độ trương nở khi hút nước chỉ 0.21% (chuẩn yêu cầu ≤ 0.5%)",
     image: "/images/ecobamboo/eco-bamboo-ket-qua-thu-nghiem-cot-den-trang-1-a5c424.webp",
@@ -83,7 +84,7 @@ export const CERTIFICATE_ITEMS = [
     title: "Kết Quả Thử Nghiệm Cốt Đen Than Tre (Trang 2)",
     certCode: "TEST-COT-DEN-P2",
     issuer: "Trung Tâm Kiểm Định Tiêu Chuẩn Đo Lường Chất Lượng",
-    dateIssued: "Định kỳ 2025",
+    dateIssued: `Định kỳ ${getCurrentYear()}`,
     standard: "Kiểm nghiệm nồng độ phát thải Formaldehyde và kim loại nặng",
     testResult: "Formaldehyde 0.40 mg/L đạt cấp E0; Không phát hiện kim loại nặng độc hại",
     image: "/images/ecobamboo/eco-bamboo-ket-qua-thu-nghiem-cot-den-trang-2-dd0594.webp",
@@ -93,9 +94,9 @@ export const CERTIFICATE_ITEMS = [
   {
     id: 5,
     title: "Kết Quả Thử Nghiệm Khả Năng Cản Cháy Lan B1",
-    certCode: "FIRE-TEST-B1/2025",
+    certCode: `FIRE-TEST-B1/${getCurrentYear()}`,
     issuer: "Viện Chuyên Ngành PCCC & Vật Liệu Chịu Nhiệt",
-    dateIssued: "Định kỳ 2025",
+    dateIssued: `Định kỳ ${getCurrentYear()}`,
     standard: "Đo lường cường độ thông lượng nhiệt tới hạn và lan truyền lửa",
     testResult: "Thông lượng nhiệt tới hạn ≥ 11 kW/m², thời gian dập tắt 5:56, không bắt lửa lan",
     image: "/images/ecobamboo/eco-bamboo-ket-qua-thu-nghiem-lan-truyen-lua-trang-1-8933ab.webp",
@@ -104,39 +105,39 @@ export const CERTIFICATE_ITEMS = [
   },
   {
     id: 6,
-    title: "Chứng Chỉ An Toàn E0 Formaldehyde Tấm Ốp Eco Bamboo",
+    title: "Chứng Chỉ An Toàn E0 Formaldehyde Tấm Ốp ${BRAND.brandName}",
     certCode: "E0-EMISSION-CERT",
     issuer: "Phòng Thử Nghiệm Vật Liệu Nội Thất Sinh Thái",
-    dateIssued: "2025",
+    dateIssued: `${getCurrentYear()}`,
     standard: "EN 717-1 / TCVN 11353:2016",
     testResult: "Phát thải Formaldehyde tự do ≤ 0.40 mg/L (Giới hạn cấp E0 Châu Âu là ≤ 0.50 mg/L)",
     image: "/images/ecobamboo/chung-chi-e0-tam-op-than-tre-eco-bamboo-1x_1-d72574.webp",
     badge: "Eco E0 Standard",
-    desc: "Bảo chứng cam kết an toàn môi trường sống và sức khỏe của nhà sản xuất Eco Bamboo."
+    desc: "Bảo chứng cam kết an toàn môi trường sống và sức khỏe của nhà sản xuất ${BRAND.brandName}."
   },
   {
     id: 7,
     title: "Chứng Nhận Hệ Thống Quản Lý Chất Lượng ISO 9001:2015",
     certCode: "ISO-9001-QMS",
     issuer: "Tổ chức Chứng nhận Quốc tế",
-    dateIssued: "2024 - 2027",
+    dateIssued: `${getCurrentYear()} - ${getCurrentYear() + 3}`,
     standard: "ISO 9001:2015 / TCVN ISO 9001:2015",
     testResult: "Quy trình kiểm soát chất lượng từ khâu nén ép cốt, phủ keo PUR đến phân loại",
     image: "/images/ecobamboo/chung-chi-e0-tam-op-than-tre-eco-bamboo-1x_1-d72574.webp",
     badge: "ISO 9001:2015",
-    desc: "Quy trình sản xuất tự động hóa khép kín tại nhà máy Sơn Đồng đảm bảo 100% thành phẩm xuất xưởng có độ dày và màu sắc đồng đều hoàn hảo."
+    desc: "Quy trình sản xuất tự động hóa khép kín tại ${BRAND.factoryName} đảm bảo 100% thành phẩm xuất xưởng có độ dày và màu sắc đồng đều hoàn hảo."
   },
   {
     id: 8,
     title: "Top 10 Thương Hiệu Vật Liệu Xanh Tiêu Biểu Vì Môi Trường",
-    certCode: "GREEN-AWARDS-2024",
+    certCode: `GREEN-AWARDS-${getCurrentYear()}`,
     issuer: "Hội đồng Doanh nghiệp Phát triển Bền vững Việt Nam",
-    dateIssued: "20/10/2024",
+    dateIssued: `20/10/${getCurrentYear()}`,
     standard: "Tiêu chí sản phẩm sinh thái, giảm phát thải carbon và thân thiện môi trường",
     testResult: "Vật liệu xanh có thể tái chế, thay thế gỗ rừng tự nhiên và gạch đá nặng nề",
     gradient: "from-emerald-950 to-stone-900",
     badge: "Vật Liệu Xanh Xanh",
-    desc: "Ghi nhận đóng góp của thương hiệu Eco Bamboo trong sứ mệnh tiên phong mang các giải pháp nội thất sinh thái bền vững đến hàng triệu ngôi nhà Việt."
+    desc: "Ghi nhận đóng góp của thương hiệu ${BRAND.brandName} trong sứ mệnh tiên phong mang các giải pháp nội thất sinh thái bền vững đến hàng triệu ngôi nhà Việt."
   }
 ];
 
@@ -164,7 +165,7 @@ export default function CertificatesPage() {
             Chứng Chỉ & Kiểm Định Chất Lượng
           </h1>
           <p className="text-xs sm:text-sm text-eco-gray-200 leading-relaxed font-light">
-            Toàn bộ sản phẩm tấm ốp than tre Eco Bamboo đều trải qua các quy trình kiểm nghiệm định kỳ độc lập tại các viện nghiên cứu đầu ngành về an toàn phát thải E0, chống cháy B1 và keo PUR Đức.
+            Toàn bộ sản phẩm tấm ốp than tre ${BRAND.brandName} đều trải qua các quy trình kiểm nghiệm định kỳ độc lập tại các viện nghiên cứu đầu ngành về an toàn phát thải E0, chống cháy B1 và keo PUR Đức.
           </p>
 
           <div className="pt-3 flex justify-center gap-3">
@@ -180,7 +181,7 @@ export default function CertificatesPage() {
           {downloadNotice && (
             <div className="p-3 rounded-xl bg-bamboo-900/90 text-bamboo-200 text-xs font-bold border border-bamboo-500 flex items-center justify-center animate-fade-in mt-3">
               <ShieldCheckIcon className="w-4 h-4 mr-2 text-emerald-400" />
-              Đang tải xuống bộ hồ sơ chứng chỉ nghiệm thu: Ho_So_Kiem_Dinh_EcoBamboo_2025.pdf
+              Đang tải xuống bộ hồ sơ chứng chỉ nghiệm thu: {`Ho_So_Kiem_Dinh_${BRAND.id.toUpperCase()}_${getCurrentYear()}.pdf`}
             </div>
           )}
         </div>

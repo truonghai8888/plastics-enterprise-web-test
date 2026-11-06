@@ -1,3 +1,4 @@
+import BRAND, { getCurrentYear, getCatalogTitle } from '../config/brandConfig';
 import React, { useState } from 'react';
 import MainLayout from '../components/layout/MainLayout';
 
@@ -73,23 +74,23 @@ export const FORM_PURPOSES = {
     title: 'Đăng Ký Làm Đại Lý / Nhà Phân Phối',
     desc: 'Nhận chính sách chiết khấu trực tiếp từ nhà máy lên tới 25%, bảo hộ khu vực độc quyền và hỗ trợ bảng hiệu showroom 100%.',
     buttonText: 'Gửi Đăng Ký Đại Lý Ngay',
-    successMsg: 'Cảm ơn quý đối tác! Giám đốc kinh doanh khu vực Eco Bamboo sẽ liên hệ gửi hợp đồng mẫu và chính sách chiết khấu trong 15 phút.'
+    successMsg: 'Cảm ơn quý đối tác! Giám đốc kinh doanh khu vực {BRAND.shortName} sẽ liên hệ gửi hợp đồng mẫu và chính sách chiết khấu trong 15 phút.'
   },
   sample: {
     id: 'sample',
     badge: 'Xâu Mẫu Thực Tế',
     title: 'Đăng Ký Nhận Mẫu Vật Liệu Tận Nơi (Sample Box)',
-    desc: 'Eco Bamboo gửi miễn phí bộ mẫu cắt thực tế kích thước 15x20cm gồm các dòng vân gỗ, vân đá cẩm thạch và lam sóng để kiểm nghiệm chất lượng.',
+    desc: '{BRAND.shortName} gửi miễn phí bộ mẫu cắt thực tế kích thước 15x20cm gồm các dòng vân gỗ, vân đá cẩm thạch và lam sóng để kiểm nghiệm chất lượng.',
     buttonText: 'Gửi Yêu Cầu Nhận Mẫu Miễn Phí',
     successMsg: 'Đã tiếp nhận yêu cầu gửi mẫu! Nhân viên điều phối kho sẽ đóng gói Sample Box và gửi chuyển phát nhanh đến địa chỉ của bạn trong 24h.'
   },
   catalogue: {
     id: 'catalogue',
-    badge: 'Tài Liệu 2025',
+    badge: `Tài Liệu ${getCurrentYear()}`,
     title: 'Tải Trọn Bộ Catalogue & Bảng Giá PDF (60 Trang)',
     desc: 'Xem trọn bộ 160+ mã màu thớ vân độ phân giải cao, kèm bảng báo giá niêm yết và hướng dẫn thi công chi tiết.',
     buttonText: 'Tải Xuống Bản Đầy Đủ (PDF)',
-    successMsg: 'Đang tải xuống bộ tài liệu Catalogue_EcoBamboo_2025.pdf và Báo giá niêm yết.'
+    successMsg: 'Đang tải xuống bộ tài liệu Catalogue_`${BRAND.brandName}_${getCurrentYear()}.pdf` và Báo giá niêm yết.'
   },
   contact: {
     id: 'contact',
@@ -97,7 +98,7 @@ export const FORM_PURPOSES = {
     title: 'Liên Hệ Nhà Máy & Tư Vấn Kỹ Thuật Công Trình',
     desc: 'Giải đáp thắc mắc về kỹ thuật soi rãnh V, phương án uốn vòm cong hoặc bóc tách khối lượng vật tư theo bản vẽ CAD/3D.',
     buttonText: 'Gửi Yêu Cầu Tư Vấn Ngay',
-    successMsg: 'Cảm ơn bạn! Kỹ sư vật liệu Eco Bamboo sẽ gọi lại giải đáp chi tiết cho bạn ngay.'
+    successMsg: 'Cảm ơn bạn! Kỹ sư vật liệu {BRAND.shortName} sẽ gọi lại giải đáp chi tiết cho bạn ngay.'
   }
 };
 
@@ -151,7 +152,7 @@ export function LeadCaptureForm({
       {/* Header */}
       <div className="space-y-1.5 mb-6">
         <span className="inline-flex items-center text-[10px] font-extrabold uppercase text-bamboo-700 bg-bamboo-50 px-3 py-1 rounded-full border border-bamboo-200">
-          <ShieldCheckIcon className="w-3.5 h-3.5 mr-1 text-emerald-600" />
+          <ShieldCheckIcon className="w-3.5 h-3.5 mr-1 text-amber-600" />
           {config.badge}
         </span>
         <h3 className="text-xl sm:text-2xl font-black text-eco-gray-900 leading-tight">
@@ -277,8 +278,8 @@ export function LeadCaptureForm({
         </button>
 
         {isSuccess && (
-          <div className="p-3.5 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200 flex items-start animate-fade-in">
-            <CheckCircleIcon className="w-4 h-4 mr-2 text-emerald-600 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200 flex items-start animate-fade-in">
+            <CheckCircleIcon className="w-4 h-4 mr-2 text-amber-600 shrink-0 mt-0.5" />
             <span>{config.successMsg}</span>
           </div>
         )}
@@ -298,14 +299,21 @@ export default function LeadForms() {
       {/* 1. HEADER BANNER */}
       <div className="bg-gradient-to-b from-bamboo-950 via-bamboo-900 to-bamboo-950 text-white py-14 border-b border-bamboo-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-3xl space-y-3">
-          <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-600/30">
+          <span
+            className="text-xs font-bold uppercase tracking-widest px-3.5 py-1 rounded-full border shadow-sm"
+            style={{
+              backgroundColor: `${BRAND.colors.primary}20`,
+              borderColor: `${BRAND.colors.primary}50`,
+              color: BRAND.colors.primary
+            }}
+          >
             Hợp Tác & Chăm Sóc Khách Hàng
           </span>
           <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
             Liên Hệ Nhà Máy & Đăng Ký Đại Lý
           </h1>
           <p className="text-xs sm:text-sm text-eco-gray-200 leading-relaxed font-light">
-            Nhà máy sản xuất tấm ốp than tre Eco Bamboo luôn sẵn sàng đồng hành cùng các đại lý, kiến trúc sư và thợ thi công trên toàn quốc.
+            Nhà máy sản xuất tấm ốp than tre {BRAND.shortName} luôn sẵn sàng đồng hành cùng các đại lý, kiến trúc sư và thợ thi công trên toàn quốc.
           </p>
         </div>
       </div>
@@ -383,8 +391,8 @@ export default function LeadForms() {
                     <MapPinIcon className="w-4 h-4" />
                   </div>
                   <div>
-                    <strong className="text-eco-gray-900 block font-bold">Nhà Máy Sản Xuất:</strong>
-                    <span>Khu Cầu Nổi, xã Sơn Đồng, huyện Hoài Đức, TP. Hà Nội (Km8 Đại Lộ Thăng Long)</span>
+                    <strong className="text-eco-gray-900 block font-bold">{BRAND.factory?.title || 'Nhà Máy Sản Xuất'}:</strong>
+                    <span>{BRAND.factory?.address || BRAND.factoryAddress}</span>
                   </div>
                 </div>
 
@@ -393,20 +401,18 @@ export default function LeadForms() {
                     <MapPinIcon className="w-4 h-4" />
                   </div>
                   <div>
-                    <strong className="text-eco-gray-900 block font-bold">Văn Phòng Đại Diện Hà Nội:</strong>
-                    <span>Tòa HH1, 90 Nguyễn Tuân, Q. Thanh Xuân, TP. Hà Nội</span>
+                    <strong className="text-eco-gray-900 block font-bold">{BRAND.office?.title || 'Văn Phòng Đại Diện Hà Nội'}:</strong>
+                    <span>{BRAND.office?.address || BRAND.officeAddress}</span>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 mt-0.5">
                     <PhoneCallIcon className="w-4 h-4" />
                   </div>
                   <div>
                     <strong className="text-eco-gray-900 block font-bold">Hotline Bán Hàng & Dự Án:</strong>
-                    <a href="tel:0915189389" className="text-bamboo-800 font-bold hover:underline text-sm">
-                      0915.189.389 (Zalo 24/7)
-                    </a>
+                    <a href={`tel:${BRAND.hotline.replace(".", "")}`} className="text-bamboo-800 font-bold hover:underline text-sm">{BRAND.hotlineDisplay} (Zalo 24/7)</a>
                   </div>
                 </div>
 
@@ -416,9 +422,7 @@ export default function LeadForms() {
                   </div>
                   <div>
                     <strong className="text-eco-gray-900 block font-bold">Email Tiếp Nhận:</strong>
-                    <a href="mailto:sale.ecobamboo@gmail.com" className="hover:underline">
-                      sale.ecobamboo@gmail.com
-                    </a>
+                    <a href={BRAND.socialLinks.email} className="hover:underline">{BRAND.email}</a>
                   </div>
                 </div>
 
@@ -437,20 +441,20 @@ export default function LeadForms() {
             {/* Commitments Card */}
             <div className="bg-gradient-to-br from-bamboo-900 to-bamboo-950 text-white rounded-3xl p-6 space-y-3 border border-bamboo-800">
               <h4 className="text-sm font-bold text-white flex items-center">
-                <ShieldCheckIcon className="w-4 h-4 mr-2 text-emerald-400" />
-                Cam Kết Từ Nhà Sản Xuất Eco Bamboo
+                <ShieldCheckIcon className="w-4 h-4 mr-2 text-amber-400" />
+                Cam Kết Từ Nhà Sản Xuất {BRAND.shortName}
               </h4>
               <ul className="space-y-2 text-xs text-eco-gray-200">
                 <li className="flex items-center">
-                  <CheckCircleIcon className="w-3.5 h-3.5 mr-2 text-emerald-400 shrink-0" />
+                  <CheckCircleIcon className="w-3.5 h-3.5 mr-2 text-amber-400 shrink-0" />
                   <span>Sẵn sàng cung cấp chứng chỉ xuất xưởng CO/CQ đầy đủ</span>
                 </li>
                 <li className="flex items-center">
-                  <CheckCircleIcon className="w-3.5 h-3.5 mr-2 text-emerald-400 shrink-0" />
-                  <span>Bảo hành chính hãng 10 năm độ bền vật liệu</span>
+                  <CheckCircleIcon className="w-3.5 h-3.5 mr-2 text-amber-400 shrink-0" />
+                  <span>Bảo hành chính hãng {BRAND.warrantyYears} năm độ bền vật liệu</span>
                 </li>
                 <li className="flex items-center">
-                  <CheckCircleIcon className="w-3.5 h-3.5 mr-2 text-emerald-400 shrink-0" />
+                  <CheckCircleIcon className="w-3.5 h-3.5 mr-2 text-amber-400 shrink-0" />
                   <span>Cắt tấm theo kích thước bản vẽ không tính phụ phí</span>
                 </li>
               </ul>
@@ -460,7 +464,7 @@ export default function LeadForms() {
             <div className="rounded-3xl overflow-hidden border border-eco-gray-200 shadow-sm bg-white p-3 space-y-2">
               <img
                 src="/images/ecobamboo/gia-bang-mau-tam-op-than-tre-eco-bamboo.webp"
-                alt="Giá bảng mẫu và xâu mẫu vật liệu tấm ốp than tre Eco Bamboo"
+                alt="Giá bảng mẫu và xâu mẫu vật liệu tấm ốp than tre {BRAND.shortName}"
                 className="w-full h-48 object-cover rounded-2xl"
               />
               <p className="text-[11px] text-eco-gray-500 text-center italic">

@@ -65,6 +65,7 @@ const LayersIcon = ({ className = "w-4 h-4" }) => (
 );
 
 import colorItems from '../data/colorItems.json';
+import BRAND from '../config/brandConfig';
 
 // ==========================================
 // DANH MỤC NHÓM MÀU CHUẨN ECOBAMBOO
@@ -113,8 +114,8 @@ export default function ColorLibraryPage({ onOpenVisualizer }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-4">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-bamboo-800/80 border border-bamboo-600/40 text-bamboo-300 text-xs font-bold uppercase tracking-wider">
-              <SparklesIcon className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Thư Viện Mã Màu & Bề Mặt Chuẩn Eco Bamboo</span>
+              <SparklesIcon className="w-3.5 h-3.5 text-amber-400" />
+              <span>Thư Viện Mã Màu & Bề Mặt Chuẩn {BRAND.shortName}</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
@@ -250,7 +251,7 @@ export default function ColorLibraryPage({ onOpenVisualizer }) {
                     <span className="text-[10px] font-semibold text-white/90 drop-shadow">
                       {color.groupName}
                     </span>
-                    <span className="text-[9px] bg-black/40 text-emerald-300 px-1.5 py-0.5 rounded backdrop-blur-sm">
+                    <span className="text-[9px] bg-black/40 text-amber-400 px-1.5 py-0.5 rounded backdrop-blur-sm">
                       {color.finishType.split(' ')[0]}
                     </span>
                   </div>
@@ -334,7 +335,7 @@ export default function ColorLibraryPage({ onOpenVisualizer }) {
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none"></div>
 
                 <div className="text-white text-xs bg-black/60 backdrop-blur-md p-3 rounded-xl max-w-sm space-y-0.5">
-                  <div className="font-bold text-emerald-400">{selectedModalItem.finishType}</div>
+                  <div className="font-bold text-amber-400">{selectedModalItem.finishType}</div>
                   <div className="text-gray-300 text-[11px]">{selectedModalItem.textureDesc}</div>
                 </div>
               </div>
@@ -374,10 +375,10 @@ export default function ColorLibraryPage({ onOpenVisualizer }) {
               </button>
 
               <a
-                href={`tel:0915189389`}
+                href={`tel:${BRAND.hotline.replace(/\./g, '')}`}
                 className="w-full py-3 px-4 rounded-xl bg-wood-50 hover:bg-wood-100 text-wood-800 border-2 border-wood-500 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center text-center"
               >
-                Nhận Mẫu Thử Mã Này
+                Nhận Mẫu Thử Mã Này ({BRAND.hotlineDisplay})
               </a>
             </div>
 

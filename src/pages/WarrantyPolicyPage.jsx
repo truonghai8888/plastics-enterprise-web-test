@@ -1,13 +1,14 @@
 import React from 'react';
 import ArticleLayout from './ArticleLayout';
+import BRAND, { getCurrentYear, getCurrentDateFormatted } from '../config/brandConfig';
 
 export default function WarrantyPolicyPage() {
   return (
     <ArticleLayout
-      title="Chính Sách Bảo Hành 10 Năm Bằng Văn Bản - Eco Bamboo"
+      title={`Chính Sách Bảo Hành ${BRAND.warrantyYears} Năm Bằng Văn Bản - ${BRAND.brandName}`}
       category="Chính Sách & Hỗ Trợ"
-      author="Phòng Chăm Sóc Khách Hàng Eco Bamboo"
-      publishDate="01/01/2025"
+      author={`Phòng Chăm Sóc Khách Hàng ${BRAND.brandName}`}
+      publishDate={getCurrentDateFormatted()}
       readTime="4 phút đọc"
       breadcrumb={[
         { name: "Trang chủ", link: "/" },
@@ -16,13 +17,13 @@ export default function WarrantyPolicyPage() {
       ]}
     >
       <div className="space-y-4">
-        <p className="text-base text-eco-gray-800 leading-relaxed font-medium bg-bamboo-50 p-4 rounded-xl border-l-4 border-bamboo-600">
-          Công ty Cổ phần Công nghiệp Eco Bamboo cam kết chính sách bảo hành chính hãng lên đến <strong>10 năm</strong> bằng văn bản (tính từ ngày giao nhận hàng hóa ghi trên phiếu xuất kho) cho toàn bộ các dòng sản phẩm tấm ốp sợi than tre, tấm nội thất và lam sóng.
+        <p className="text-base text-eco-gray-800 leading-relaxed font-medium bg-amber-50 p-4 rounded-xl border-l-4 border-amber-600">
+          {BRAND.legalName} cam kết chính sách bảo hành chính hãng lên đến <strong>{BRAND.warrantyYears} năm</strong> bằng văn bản (tính từ ngày giao nhận hàng hóa ghi trên phiếu xuất kho) cho toàn bộ các dòng sản phẩm tấm ốp than tre, lam sóng và phụ kiện.
         </p>
 
         <h2 className="text-xl font-black text-eco-gray-900 pt-3">1. Phạm Vi Áp Dụng</h2>
         <p>
-          Áp dụng thống nhất cho tất cả các khách hàng, nhà thầu thi công, kiến trúc sư và đại lý phân phối mua sản phẩm chính hãng mang thương hiệu Eco Bamboo trên toàn lãnh thổ Việt Nam.
+          Áp dụng thống nhất cho tất cả các khách hàng, nhà thầu thi công, kiến trúc sư và đại lý phân phối mua sản phẩm chính hãng mang thương hiệu {BRAND.brandName} trên toàn lãnh thổ Việt Nam.
         </p>
 
         <h2 className="text-xl font-black text-eco-gray-900 pt-3">2. Các Trường Hợp Được Bảo Hành Miễn Phí (Đổi 1-1)</h2>
@@ -42,7 +43,7 @@ export default function WarrantyPolicyPage() {
 
         <h2 className="text-xl font-black text-eco-gray-900 pt-3">4. Quy Trình Tiếp Nhận & Xử Lý Bảo Hành</h2>
         <p>
-          Khách hàng chụp ảnh/quay video hiện trạng lỗi và liên hệ hotline hỗ trợ kỹ thuật: <strong>0915.189.389</strong> hoặc gửi email về <em>sale.ecobamboo@gmail.com</em>. Chuyên viên kỹ thuật sẽ kiểm tra và xác nhận phương án đổi trả bù tấm mới trong vòng 24 - 48 giờ làm việc.
+          Khách hàng chụp ảnh/quay video hiện trạng lỗi và liên hệ hotline hỗ trợ kỹ thuật: <strong>{BRAND.hotlineDisplay}</strong> hoặc gửi email về <em>{BRAND.email}</em>. Chuyên viên kỹ thuật sẽ kiểm tra và xác nhận phương án đổi trả bù tấm mới trong vòng 24 - 48 giờ làm việc.
         </p>
       </div>
     </ArticleLayout>

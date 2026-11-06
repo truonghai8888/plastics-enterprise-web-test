@@ -1,12 +1,19 @@
-// Database sản phẩm chính xác đối chiếu 100% với website gốc ecobamboo.vn
-// Kèm theo hình ảnh chụp thật tải trực tiếp từ server ecobamboo.vn
+// Database sản phẩm chính xác, được trừu tượng hóa động theo cấu hình thương hiệu BRAND
+// Hỗ trợ tái sử dụng và chuyển đổi linh hoạt giữa các thương hiệu (AMC, EcoBamboo,...)
+
+import BRAND, {
+  PRODUCT_NAMING,
+  getProductShortDesc,
+  getProductWarranty,
+  formatProductName
+} from '../config/brandConfig';
 
 export const CATEGORY_FILTERS = [
   { id: 'all', name: 'Tất cả sản phẩm', count: 15 },
-  { id: 'tam-op-than-tre', name: 'Tấm Ốp Than Tre 5mm & 8mm', count: 12 },
-  { id: 'tam-than-tre-17mm', name: 'Tấm Nội Thất 17mm', count: 1 },
-  { id: 'lam-song', name: 'Lam Sóng Trang Trí', count: 1 },
-  { id: 'nep', name: 'Nẹp Nhôm Hoàn Thiện', count: 1 },
+  { id: 'tam-op-than-tre', name: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} 5mm & 8mm`, count: 12 },
+  { id: 'tam-than-tre-17mm', name: PRODUCT_NAMING.board17mmPrefix || 'Tấm Nội Thất 17mm', count: 1 },
+  { id: 'lam-song', name: `${PRODUCT_NAMING.flutedPrefix || 'Lam Sóng'} Trang Trí`, count: 1 },
+  { id: 'nep', name: PRODUCT_NAMING.trimPrefix || 'Nẹp Nhôm Hoàn Thiện', count: 1 },
 ];
 
 export const SURFACE_FILTERS = [
@@ -33,30 +40,91 @@ export const TECHNICAL_SPECS_TABLE = [
   { criteria: 'Phát thải Formaldehyde', value: '0.40 mg/L — Đạt chuẩn E0 Châu Âu (≤ 0.5 mg/L)' },
   { criteria: 'Kháng cháy lan', value: 'Cấp B1 — Tự dập tắt khi cách ly nguồn nhiệt' },
   { criteria: 'Độ trương nở khi ngâm nước', value: '0.21% (Tiêu chuẩn yêu cầu ≤ 0.5%)' },
-  { criteria: 'Keo dán ép film', value: 'PUR nóng chảy Jowat nhập khẩu Đức' },
+  { criteria: 'Keo dán ép film', value: PRODUCT_NAMING.glue || 'Keo PUR nóng chảy Jowat nhập khẩu Đức' },
 ];
 
+/**
+ * Hàm khởi tạo sản phẩm chuẩn hóa (Factory helper)
+ * Tự động gắn các thông số bảo hành, mô tả, keo, cốt và tên sản phẩm theo thương hiệu hiện hành
+ */
+export const createProductItem = ({
+  id,
+  code,
+  baseName,
+  subDesc,
+  category,
+  surfaceGroup,
+  categoryName,
+  pricePerM2,
+  priceFormatted,
+  thickness = '5mm / 8mm',
+  thicknessOptions = ['5mm', '8mm', '17mm'],
+  dimensions = '1220 x 2440 / 2800 / 3200 mm',
+  finish = 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
+  badge,
+  colorHex,
+  image,
+  swatchImage,
+  fullBoardImage,
+  sceneImage,
+  lamSongImage,
+  gallery,
+  specs,
+  customName,
+  customShortDesc,
+}) => {
+  const name = customName || (subDesc ? `${baseName} ${code} (${subDesc})` : `${baseName}`);
+  return {
+    id,
+    code,
+    url: `${id}.html`,
+    canonicalUrl: `/san-pham/${category}/${surfaceGroup}/${id}.html`,
+    name,
+    category,
+    surfaceGroup,
+    categoryName: categoryName || `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} ${surfaceGroup}`,
+    pricePerM2,
+    priceFormatted,
+    thickness,
+    thicknessOptions,
+    dimensions,
+    finish,
+    core: PRODUCT_NAMING.coreMaterial || 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
+    glue: PRODUCT_NAMING.glue || 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
+    standard: PRODUCT_NAMING.standard || 'Đạt chuẩn phát thải Formaldehyde E0 Châu Âu, Cản cháy lan B1',
+    warranty: getProductWarranty(),
+    inStock: true,
+    badge,
+    colorHex,
+    image,
+    swatchImage,
+    fullBoardImage,
+    sceneImage,
+    lamSongImage,
+    gallery,
+    shortDesc: customShortDesc || getProductShortDesc(name),
+    specs: specs || [
+      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
+      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
+      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
+      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
+      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
+      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
+    ]
+  };
+};
+
 export const PRODUCTS = [
-  {
+  createProductItem({
     id: 'eb66006',
     code: 'EB66006',
-    url: 'eb66006.html',
-    canonicalUrl: '/san-pham/tam-op-than-tre/van-go/eb66006.html',
-    name: 'Walnut EB66006 (Gỗ Óc Chó Sang Trọng)',
+    baseName: 'Walnut',
+    subDesc: 'Gỗ Óc Chó Sang Trọng',
     category: 'tam-op-than-tre',
     surfaceGroup: 'van-go',
-    categoryName: 'Tấm Ốp Than Tre Vân Gỗ',
+    categoryName: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} Vân Gỗ`,
     pricePerM2: 305000,
     priceFormatted: '305.000 đ/m²',
-    thickness: '5mm / 8mm',
-    thicknessOptions: ['5mm', '8mm', '17mm'],
-    dimensions: '1220 x 2440 / 2800 / 3200 mm',
-    finish: 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
-    core: 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
-    glue: 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
-    standard: 'Đạt chuẩn phát thải Formaldehyde E0 Đức, Cản cháy lan B1',
-    warranty: 'Bảo hành kết cấu 10 năm chính hãng',
-    inStock: true,
     badge: 'Bán chạy nhất',
     colorHex: '#7a5230',
     image: '/images/ecobamboo/EB66006-w800.webp',
@@ -70,37 +138,18 @@ export const PRODUCTS = [
       '/images/ecobamboo/EB66006-tam-w400.webp',
       '/images/ecobamboo/1EB66006-1-scaled-9050b8.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
-    ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
-    specs: [
-      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
-      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
-      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
-      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
-      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
-      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'eb68038',
     code: 'EB68038',
-    url: 'eb68038.html',
-    canonicalUrl: '/san-pham/tam-op-than-tre/don-sac/eb68038.html',
-    name: 'White EB68038 (Trắng Tinh Khiết Siêu Mờ)',
+    baseName: 'White',
+    subDesc: 'Trắng Tinh Khiết Siêu Mờ',
     category: 'tam-op-than-tre',
     surfaceGroup: 'don-sac',
-    categoryName: 'Tấm Ốp Than Tre Đơn Sắc',
+    categoryName: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} Đơn Sắc`,
     pricePerM2: 240000,
     priceFormatted: '240.000 đ/m²',
-    thickness: '5mm / 8mm',
-    thicknessOptions: ['5mm', '8mm', '17mm'],
-    dimensions: '1220 x 2440 / 2800 / 3200 mm',
-    finish: 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
-    core: 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
-    glue: 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
-    standard: 'Đạt chuẩn phát thải Formaldehyde E0 Đức, Cản cháy lan B1',
-    warranty: 'Bảo hành kết cấu 10 năm chính hãng',
-    inStock: true,
     badge: 'Giá tốt nhất',
     colorHex: '#f4f4f4',
     image: '/images/ecobamboo/EB68038-w800.webp',
@@ -114,37 +163,18 @@ export const PRODUCTS = [
       '/images/ecobamboo/EB68038-w400.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
-    ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
-    specs: [
-      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
-      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
-      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
-      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
-      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
-      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'eb68032g',
     code: 'EB68032G',
-    url: 'eb68032g.html',
-    canonicalUrl: '/san-pham/tam-op-than-tre/don-sac/eb68032g.html',
-    name: 'Glossy Light Grey EB68032G (Xám Nhạt Bóng Gương)',
+    baseName: 'Glossy Light Grey',
+    subDesc: 'Xám Nhạt Bóng Gương',
     category: 'tam-op-than-tre',
     surfaceGroup: 'don-sac',
-    categoryName: 'Tấm Ốp Than Tre Đơn Sắc Bóng Gương',
+    categoryName: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} Đơn Sắc Bóng Gương`,
     pricePerM2: 350000,
     priceFormatted: '350.000 đ/m²',
-    thickness: '5mm / 8mm',
-    thicknessOptions: ['5mm', '8mm', '17mm'],
-    dimensions: '1220 x 2440 / 2800 / 3200 mm',
-    finish: 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
-    core: 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
-    glue: 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
-    standard: 'Đạt chuẩn phát thải Formaldehyde E0 Đức, Cản cháy lan B1',
-    warranty: 'Bảo hành kết cấu 10 năm chính hãng',
-    inStock: true,
     badge: 'Bóng gương PETG',
     colorHex: '#d6d7d9',
     image: '/images/ecobamboo/EB68032G-w800.webp',
@@ -158,37 +188,18 @@ export const PRODUCTS = [
       '/images/ecobamboo/EB68032G-tam-w400.webp',
       '/images/ecobamboo/EB68032G-w400.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
-    ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
-    specs: [
-      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
-      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
-      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
-      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
-      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
-      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'eb68031g',
     code: 'EB68031G',
-    url: 'eb68031g.html',
-    canonicalUrl: '/san-pham/tam-op-than-tre/don-sac/eb68031g.html',
-    name: 'Glossy White EB68031G (Trắng Bóng Gương)',
+    baseName: 'Glossy White',
+    subDesc: 'Trắng Bóng Gương',
     category: 'tam-op-than-tre',
     surfaceGroup: 'don-sac',
-    categoryName: 'Tấm Ốp Than Tre Đơn Sắc Bóng Gương',
+    categoryName: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} Đơn Sắc Bóng Gương`,
     pricePerM2: 350000,
     priceFormatted: '350.000 đ/m²',
-    thickness: '5mm / 8mm',
-    thicknessOptions: ['5mm', '8mm', '17mm'],
-    dimensions: '1220 x 2440 / 2800 / 3200 mm',
-    finish: 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
-    core: 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
-    glue: 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
-    standard: 'Đạt chuẩn phát thải Formaldehyde E0 Đức, Cản cháy lan B1',
-    warranty: 'Bảo hành kết cấu 10 năm chính hãng',
-    inStock: true,
     badge: 'Bóng gương PETG',
     colorHex: '#ffffff',
     image: '/images/ecobamboo/EB68031G-w800.webp',
@@ -202,37 +213,18 @@ export const PRODUCTS = [
       '/images/ecobamboo/EB68031G-tam-w400.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
-    ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
-    specs: [
-      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
-      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
-      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
-      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
-      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
-      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'eb89028',
     code: 'EB89028',
-    url: 'eb89028.html',
-    canonicalUrl: '/san-pham/tam-op-than-tre/van-da/eb89028.html',
-    name: 'Luxe EB89028 (Vân Đá Luxe Tự Nhiên)',
+    baseName: 'Luxe',
+    subDesc: 'Vân Đá Luxe Tự Nhiên',
     category: 'tam-op-than-tre',
     surfaceGroup: 'van-da',
-    categoryName: 'Tấm Ốp Than Tre Vân Đá',
+    categoryName: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} Vân Đá`,
     pricePerM2: 310000,
     priceFormatted: '310.000 đ/m²',
-    thickness: '5mm / 8mm',
-    thicknessOptions: ['5mm', '8mm', '17mm'],
-    dimensions: '1220 x 2440 / 2800 / 3200 mm',
-    finish: 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
-    core: 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
-    glue: 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
-    standard: 'Đạt chuẩn phát thải Formaldehyde E0 Đức, Cản cháy lan B1',
-    warranty: 'Bảo hành kết cấu 10 năm chính hãng',
-    inStock: true,
     badge: 'Vân đá cẩm thạch',
     colorHex: '#8d877e',
     image: '/images/ecobamboo/EB89028-w800.webp',
@@ -246,37 +238,18 @@ export const PRODUCTS = [
       '/images/ecobamboo/EB89028-tam-w400.webp',
       '/images/ecobamboo/EB89028-w400.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
-    ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
-    specs: [
-      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
-      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
-      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
-      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
-      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
-      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'eb68033g',
     code: 'EB68033G',
-    url: 'eb68033g.html',
-    canonicalUrl: '/san-pham/tam-op-than-tre/don-sac/eb68033g.html',
-    name: 'Glossy Dark Grey EB68033G (Xám Đậm Bóng Gương)',
+    baseName: 'Glossy Dark Grey',
+    subDesc: 'Xám Đậm Bóng Gương',
     category: 'tam-op-than-tre',
     surfaceGroup: 'don-sac',
-    categoryName: 'Tấm Ốp Than Tre Đơn Sắc Bóng Gương',
+    categoryName: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} Đơn Sắc Bóng Gương`,
     pricePerM2: 350000,
     priceFormatted: '350.000 đ/m²',
-    thickness: '5mm / 8mm',
-    thicknessOptions: ['5mm', '8mm', '17mm'],
-    dimensions: '1220 x 2440 / 2800 / 3200 mm',
-    finish: 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
-    core: 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
-    glue: 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
-    standard: 'Đạt chuẩn phát thải Formaldehyde E0 Đức, Cản cháy lan B1',
-    warranty: 'Bảo hành kết cấu 10 năm chính hãng',
-    inStock: true,
     badge: 'Bóng gương PETG',
     colorHex: '#4f5358',
     image: '/images/ecobamboo/EB68033G-w800.webp',
@@ -290,37 +263,18 @@ export const PRODUCTS = [
       '/images/ecobamboo/EB68033G-tam-w400.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
-    ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
-    specs: [
-      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
-      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
-      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
-      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
-      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
-      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'eb68017',
     code: 'EB68017',
-    url: 'eb68017.html',
-    canonicalUrl: '/san-pham/tam-op-than-tre/don-sac/eb68017.html',
-    name: 'Light-grey Skin EB68017 (Màu Be Xám Siêu Mịn)',
+    baseName: 'Light-grey Skin',
+    subDesc: 'Màu Be Xám Siêu Mịn',
     category: 'tam-op-than-tre',
     surfaceGroup: 'don-sac',
-    categoryName: 'Tấm Ốp Than Tre Đơn Sắc Skin',
+    categoryName: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} Đơn Sắc Skin`,
     pricePerM2: 330000,
     priceFormatted: '330.000 đ/m²',
-    thickness: '5mm / 8mm',
-    thicknessOptions: ['5mm', '8mm', '17mm'],
-    dimensions: '1220 x 2440 / 2800 / 3200 mm',
-    finish: 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
-    core: 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
-    glue: 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
-    standard: 'Đạt chuẩn phát thải Formaldehyde E0 Đức, Cản cháy lan B1',
-    warranty: 'Bảo hành kết cấu 10 năm chính hãng',
-    inStock: true,
     badge: 'Bề mặt Skin mờ',
     colorHex: '#c9c2b9',
     image: '/images/ecobamboo/EB68017-w800.webp',
@@ -334,37 +288,18 @@ export const PRODUCTS = [
       '/images/ecobamboo/EB68017-tam-w400.webp',
       '/images/ecobamboo/2EB68017-scaled-c91008.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
-    ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
-    specs: [
-      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
-      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
-      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
-      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
-      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
-      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'eb68037',
     code: 'EB68037',
-    url: 'eb68037.html',
-    canonicalUrl: '/san-pham/tam-op-than-tre/don-sac/eb68037.html',
-    name: 'Light Grey EB68037 (Xám Ghi Nhạt Mờ)',
+    baseName: 'Light Grey',
+    subDesc: 'Xám Ghi Nhạt Mờ',
     category: 'tam-op-than-tre',
     surfaceGroup: 'don-sac',
-    categoryName: 'Tấm Ốp Than Tre Đơn Sắc Mờ',
+    categoryName: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} Đơn Sắc Mờ`,
     pricePerM2: 330000,
     priceFormatted: '330.000 đ/m²',
-    thickness: '5mm / 8mm',
-    thicknessOptions: ['5mm', '8mm', '17mm'],
-    dimensions: '1220 x 2440 / 2800 / 3200 mm',
-    finish: 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
-    core: 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
-    glue: 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
-    standard: 'Đạt chuẩn phát thải Formaldehyde E0 Đức, Cản cháy lan B1',
-    warranty: 'Bảo hành kết cấu 10 năm chính hãng',
-    inStock: true,
     badge: 'Màu hiện đại',
     colorHex: '#b8bac0',
     image: '/images/ecobamboo/EB68037-w800.webp',
@@ -378,37 +313,18 @@ export const PRODUCTS = [
       '/images/ecobamboo/EB68037-tam-w400.webp',
       '/images/ecobamboo/EB68037-1-scaled-a9d0d8.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
-    ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
-    specs: [
-      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
-      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
-      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
-      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
-      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
-      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'eb68040',
     code: 'EB68040G',
-    url: 'eb68040g.html',
-    canonicalUrl: '/san-pham/tam-op-than-tre/don-sac/eb68040.html',
-    name: 'Glossy Latte EB68040G (Latte Ánh Vàng Kem)',
+    baseName: 'Glossy Latte',
+    subDesc: 'Latte Ánh Vàng Kem',
     category: 'tam-op-than-tre',
     surfaceGroup: 'don-sac',
-    categoryName: 'Tấm Ốp Than Tre Đơn Sắc Bóng Gương',
+    categoryName: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} Đơn Sắc Bóng Gương`,
     pricePerM2: 350000,
     priceFormatted: '350.000 đ/m²',
-    thickness: '5mm / 8mm',
-    thicknessOptions: ['5mm', '8mm', '17mm'],
-    dimensions: '1220 x 2440 / 2800 / 3200 mm',
-    finish: 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
-    core: 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
-    glue: 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
-    standard: 'Đạt chuẩn phát thải Formaldehyde E0 Đức, Cản cháy lan B1',
-    warranty: 'Bảo hành kết cấu 10 năm chính hãng',
-    inStock: true,
     badge: 'Bóng gương PETG',
     colorHex: '#cfbca6',
     image: '/images/ecobamboo/EB68040G-w800.webp',
@@ -422,37 +338,18 @@ export const PRODUCTS = [
       '/images/ecobamboo/EB68040G-tam-w400.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
-    ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
-    specs: [
-      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
-      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
-      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
-      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
-      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
-      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'eb79019',
     code: 'EB79019',
-    url: 'eb79019.html',
-    canonicalUrl: '/san-pham/tam-op-than-tre/van-vai/eb79019.html',
-    name: 'Beige Cream EB79019 (Vân Vải Lanh Kem Be)',
+    baseName: 'Beige Cream',
+    subDesc: 'Vân Vải Lanh Kem Be',
     category: 'tam-op-than-tre',
     surfaceGroup: 'van-vai',
-    categoryName: 'Tấm Ốp Than Tre Vân Vải',
+    categoryName: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} Vân Vải`,
     pricePerM2: 310000,
     priceFormatted: '310.000 đ/m²',
-    thickness: '5mm / 8mm',
-    thicknessOptions: ['5mm', '8mm', '17mm'],
-    dimensions: '1220 x 2440 / 2800 / 3200 mm',
-    finish: 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
-    core: 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
-    glue: 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
-    standard: 'Đạt chuẩn phát thải Formaldehyde E0 Đức, Cản cháy lan B1',
-    warranty: 'Bảo hành kết cấu 10 năm chính hãng',
-    inStock: true,
     badge: 'Vân vải lanh mộc',
     colorHex: '#ded5c7',
     image: '/images/ecobamboo/EB79019-w800.webp',
@@ -466,37 +363,18 @@ export const PRODUCTS = [
       '/images/ecobamboo/EB79019-tam-w400.webp',
       '/images/ecobamboo/1EB79019-scaled-79b7dc.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
-    ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
-    specs: [
-      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
-      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
-      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
-      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
-      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
-      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'eb79021',
     code: 'EB79021',
-    url: 'eb79021.html',
-    canonicalUrl: '/san-pham/tam-op-than-tre/van-vai/eb79021.html',
-    name: 'Rimini EB79021 (Vân Vải Xám Rimini Ý)',
+    baseName: 'Rimini',
+    subDesc: 'Vân Vải Xám Rimini Ý',
     category: 'tam-op-than-tre',
     surfaceGroup: 'van-vai',
-    categoryName: 'Tấm Ốp Than Tre Vân Vải',
+    categoryName: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} Vân Vải`,
     pricePerM2: 310000,
     priceFormatted: '310.000 đ/m²',
-    thickness: '5mm / 8mm',
-    thicknessOptions: ['5mm', '8mm', '17mm'],
-    dimensions: '1220 x 2440 / 2800 / 3200 mm',
-    finish: 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
-    core: 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
-    glue: 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
-    standard: 'Đạt chuẩn phát thải Formaldehyde E0 Đức, Cản cháy lan B1',
-    warranty: 'Bảo hành kết cấu 10 năm chính hãng',
-    inStock: true,
     badge: 'Vân vải Ý sang trọng',
     colorHex: '#b0aba2',
     image: '/images/ecobamboo/EB79021-w800.webp',
@@ -510,37 +388,18 @@ export const PRODUCTS = [
       '/images/ecobamboo/EB79021-tam-w400.webp',
       '/images/ecobamboo/4EB79021-5-scaled-50627f.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
-    ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
-    specs: [
-      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
-      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
-      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
-      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
-      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
-      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'eb89019g',
     code: 'EB89019G',
-    url: 'eb89019g.html',
-    canonicalUrl: '/san-pham/tam-op-than-tre/van-da/eb89019g.html',
-    name: 'Calacatta PET-G EB89019G (Đá Trắng Hy Lạp Calacatta)',
+    baseName: 'Calacatta PET-G',
+    subDesc: 'Đá Trắng Hy Lạp Calacatta',
     category: 'tam-op-than-tre',
     surfaceGroup: 'van-da',
-    categoryName: 'Tấm Ốp Than Tre Vân Đá PETG Cao Cấp',
+    categoryName: `${PRODUCT_NAMING.panelPrefix || 'Tấm Ốp Than Tre'} Vân Đá PETG Cao Cấp`,
     pricePerM2: 550000,
     priceFormatted: '550.000 đ/m²',
-    thickness: '5mm / 8mm',
-    thicknessOptions: ['5mm', '8mm', '17mm'],
-    dimensions: '1220 x 2440 / 2800 / 3200 mm',
-    finish: 'Phủ film PVC/PETG cao cấp chống trầy xước, lau chùi dầu mỡ dễ dàng',
-    core: 'Bột than tre hoạt tính tỷ trọng cao (0.70 - 0.90 g/cm³)',
-    glue: 'Keo PUR nóng chảy Jowat nhập khẩu CHLB Đức',
-    standard: 'Đạt chuẩn phát thải Formaldehyde E0 Đức, Cản cháy lan B1',
-    warranty: 'Bảo hành kết cấu 10 năm chính hãng',
-    inStock: true,
     badge: 'Dòng PET-G Cao Cấp',
     colorHex: '#eae8e4',
     image: '/images/ecobamboo/EB89019G-w800.webp',
@@ -554,37 +413,21 @@ export const PRODUCTS = [
       '/images/ecobamboo/EB89019G-tam-w400.webp',
       '/images/ecobamboo/Untitled-1-11-3-scaled-4bf19b.webp',
       '/images/ecobamboo/anh-cau-tao-tam-copy-d7de2f.webp'
-    ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
-    specs: [
-      { label: 'Quy cách khổ', value: '1220 × 2440 / 2800 / 3200 mm' },
-      { label: 'Độ dày', value: '5mm (uốn cong) / 8mm (chuẩn vách)' },
-      { label: 'Mật độ nén', value: '0.70 g/cm³ (Bản chống va đập 0.90 g/cm³)' },
-      { label: 'Tỷ lệ nhựa PVC', value: '≥ 45–50% cốt tấm' },
-      { label: 'Phát thải Formaldehyde', value: '0.40 mg/L — Cấp E0 an toàn' },
-      { label: 'Công nghệ ép', value: 'Dây chuyền PUR tự động hóa' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'tam-noi-that-17mm',
     code: 'EB17MM',
-    url: '/tam-than-tre-17mm',
-    canonicalUrl: '/tam-than-tre-17mm',
-    name: 'Tấm Nội Thất Than Tre 17mm Đóng Cánh Tủ',
+    customName: `${PRODUCT_NAMING.board17mmPrefix || 'Tấm Nội Thất Than Tre 17mm'} Đóng Cánh Tủ`,
     category: 'tam-than-tre-17mm',
     surfaceGroup: 'don-sac',
-    categoryName: 'Tấm Than Tre 17mm',
+    categoryName: PRODUCT_NAMING.board17mmPrefix || 'Tấm Nội Thất 17mm',
     pricePerM2: 650000,
     priceFormatted: '650.000 đ/tấm',
     thickness: '17mm',
     thicknessOptions: ['17mm'],
     dimensions: '1220 x 2440 mm',
     finish: 'Phủ film 1 hoặc 2 mặt, bọc cạnh không lộ cốt',
-    core: 'Bột than tre hoạt tính nén tỷ trọng cao',
-    glue: 'Keo PUR nóng chảy Jowat Đức',
-    standard: 'Tiêu chuẩn E0 Đức, Chống cháy lan B1',
-    warranty: '10 năm chính hãng',
-    inStock: true,
     badge: 'Chuyên Đóng Cánh Tủ',
     colorHex: '#212429',
     image: '/images/ecobamboo/tam-than-tre-17mm.jpg',
@@ -597,34 +440,26 @@ export const PRODUCTS = [
       '/images/ecobamboo/so-sanh-tam-than-tre-17mm-go-cong-nghiep-4daaf2.webp',
       '/images/ecobamboo/tu-lavabo-tam-than-tre-17mm-a2fefa.webp'
     ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
     specs: [
       { label: 'Quy cách', value: '1220 x 2440 mm' },
       { label: 'Độ dày / Biên dạng', value: '17mm' },
       { label: 'Bề mặt hoàn thiện', value: 'Phủ film 1 hoặc 2 mặt, bọc cạnh không lộ cốt' },
       { label: 'Tiêu chuẩn an toàn', value: 'E0 Châu Âu' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'lam-song-than-tre',
     code: 'EBL-ALL',
-    url: '/san-pham-chinh/lam-song',
-    canonicalUrl: '/san-pham-chinh/lam-song',
-    name: 'Lam Sóng Trang Trí Than Tre (Lam Vuông & Bán Nguyệt)',
+    customName: `${PRODUCT_NAMING.flutedPrefix || 'Lam Sóng Trang Trí'} Than Tre (Lam Vuông & Bán Nguyệt)`,
     category: 'lam-song',
     surfaceGroup: 'van-go',
-    categoryName: 'Lam Sóng Trang Trí Than Tre',
+    categoryName: `${PRODUCT_NAMING.flutedPrefix || 'Lam Sóng'} Trang Trí Than Tre`,
     pricePerM2: 185000,
     priceFormatted: '185.000 đ/thanh',
     thickness: '15mm - 20mm',
     thicknessOptions: ['15mm - 20mm'],
     dimensions: 'Rộng 150-200mm x Dài 2800 / 3000mm',
     finish: 'Đồng bộ 100% mã màu film với tấm ốp phẳng',
-    core: 'Bột than tre hoạt tính nén tỷ trọng cao',
-    glue: 'Keo PUR nóng chảy Jowat Đức',
-    standard: 'Tiêu chuẩn E0 Đức, Chống cháy lan B1',
-    warranty: '10 năm chính hãng',
-    inStock: true,
     badge: 'Điểm Nhấn Vách 3D',
     colorHex: '#7b5434',
     image: '/images/ecobamboo/Lam-song.webp',
@@ -637,34 +472,26 @@ export const PRODUCTS = [
       '/images/ecobamboo/Lam-vuong-co-to-mau-go-oc-cho-EBL88004-scaled-0c772b.webp',
       '/images/ecobamboo/anh-nep-EcoBamboo-scaled.webp'
     ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
     specs: [
       { label: 'Quy cách', value: 'Rộng 150-200mm x Dài 2800 / 3000mm' },
       { label: 'Độ dày / Biên dạng', value: '15mm - 20mm' },
       { label: 'Bề mặt hoàn thiện', value: 'Đồng bộ 100% mã màu film với tấm ốp phẳng' },
       { label: 'Tiêu chuẩn an toàn', value: 'E0 Châu Âu' }
     ]
-  },
-  {
+  }),
+  createProductItem({
     id: 'nep-nhom-dong-bo',
     code: 'EBN-ALL',
-    url: '/san-pham-chinh/nep',
-    canonicalUrl: '/san-pham-chinh/nep',
-    name: 'Hệ Nẹp Nhôm Hoàn Thiện & Hắt Sáng LED (30+ Mã)',
+    customName: `${PRODUCT_NAMING.trimPrefix || 'Hệ Nẹp Nhôm Hoàn Thiện'} & Hắt Sáng LED (30+ Mã)`,
     category: 'nep',
     surfaceGroup: 'don-sac',
-    categoryName: 'Phụ Kiện Nẹp Nhôm Đồng Bộ',
+    categoryName: `Phụ Kiện ${PRODUCT_NAMING.trimPrefix || 'Nẹp Nhôm'} Đồng Bộ`,
     pricePerM2: 65000,
     priceFormatted: '65.000 đ/thanh',
     thickness: 'Dùng cho tấm 5mm & 8mm',
     thicknessOptions: ['Dùng cho tấm 5mm & 8mm'],
     dimensions: 'Dài 2800mm / 3000mm',
     finish: 'Vàng gương, Vàng mờ, Đen bóng, Đen mờ, Inox, Bạc',
-    core: 'Bột than tre hoạt tính nén tỷ trọng cao',
-    glue: 'Keo PUR nóng chảy Jowat Đức',
-    standard: 'Tiêu chuẩn E0 Đức, Chống cháy lan B1',
-    warranty: '10 năm chính hãng',
-    inStock: true,
     badge: 'Mạ Anode Cao Cấp',
     colorHex: '#c8a86b',
     image: '/images/ecobamboo/anh-nep-EcoBamboo-scaled.webp',
@@ -677,12 +504,25 @@ export const PRODUCTS = [
       '/images/ecobamboo/anh-nep-EcoBamboo-scaled.webp',
       '/images/ecobamboo/vach-tivi-khe-doc.jpg'
     ],
-    shortDesc: 'Tấm ốp than tre Eco Bamboo cốt than tre hoạt tính tỷ trọng cao, chuẩn an toàn E0, keo PUR Jowat Đức, bảo hành 10 năm.',
     specs: [
       { label: 'Quy cách', value: 'Dài 2800mm / 3000mm' },
       { label: 'Độ dày / Biên dạng', value: 'Dùng cho tấm 5mm & 8mm' },
       { label: 'Bề mặt hoàn thiện', value: 'Vàng gương, Vàng mờ, Đen bóng, Đen mờ, Inox, Bạc' },
       { label: 'Tiêu chuẩn an toàn', value: 'E0 Châu Âu' }
     ]
-  },
+  }),
 ];
+
+/**
+ * Các hàm helper tra cứu sản phẩm
+ */
+export const getProductByCode = (code) => {
+  if (!code) return null;
+  const clean = code.toLowerCase().trim();
+  return PRODUCTS.find(p => p.code.toLowerCase() === clean || p.id.toLowerCase() === clean);
+};
+
+export const getProductsByCategory = (categoryId) => {
+  if (!categoryId || categoryId === 'all') return PRODUCTS;
+  return PRODUCTS.filter(p => p.category === categoryId);
+};

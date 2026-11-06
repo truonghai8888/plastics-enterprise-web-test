@@ -1,0 +1,354 @@
+[
+  {
+    "url": "https://nhuaamc.vn",
+    "slug": "home",
+    "title": "Nhà máy nhựa AMC chất lượng hàng đầu Việt Nam.",
+    "description": "Nhà máy nhựa AMC chúng tôi không chỉ đơn thuần sản xuất nhựa, mà còn góp phần xây dựng một cuộc sống tiện nghi và hiện đại hơn.",
+    "file": "scraped_data/nhuaamc/html/home.html",
+    "size_bytes": 134860
+  },
+  {
+    "url": "https://nhuaamc.vn/5-ky-thuat-quan-trong-khi-thi-cong-san-nhua-chiu-luc-lam-gac-lung-gac-xep",
+    "slug": "5-ky-thuat-quan-trong-khi-thi-cong-san-nhua-chiu-luc-lam-gac-lung-gac-xep",
+    "title": "5 Kỹ Thuật Quan Trọng Khi Thi Công Sàn Chịu Lực",
+    "description": "Xây dựng gác xép hay gác lửng bằng sàn nhựa chịu lực hiện đang là giải pháp gia tăng diện tích sử dụng được rất nhiều gia đình ưa chuộng. Tuy nhiên, một công trình bền vững, không lo võng hay rung lắc không chỉ phụ thuộc vào chất lượng vật liệu mà còn nằm ở kỹ thuật lắp đặt.",
+    "file": "scraped_data/nhuaamc/html/5-ky-thuat-quan-trong-khi-thi-cong-san-nhua-chiu-luc-lam-gac-lung-gac-xep.html",
+    "size_bytes": 120666
+  },
+  {
+    "url": "https://nhuaamc.vn/bi-quyet-chon-lam-song-nhua-trang-tri-theo-tung-khong-gian-chuan-tham-my",
+    "slug": "bi-quyet-chon-lam-song-nhua-trang-tri-theo-tung-khong-gian-chuan-tham-my",
+    "title": "Nhà máy nhựa AMCCách lựa chọn lam sóng cho từng không gian sống",
+    "description": "Nhờ thiết kế gợn sóng độc đáo tạo hiệu ứng thị giác có chiều sâu, lam sóng nhựa đang trở thành xu hướng vật liệu trang trí tường, trần và nội thất được đông đảo chủ đầu tư yêu thích.",
+    "file": "scraped_data/nhuaamc/html/bi-quyet-chon-lam-song-nhua-trang-tri-theo-tung-khong-gian-chuan-tham-my.html",
+    "size_bytes": 122312
+  },
+  {
+    "url": "https://nhuaamc.vn/chinh-sach-bao-mat",
+    "slug": "chinh-sach-bao-mat",
+    "title": "Chính sách bảo mật - Nhà máy nhựa AMC",
+    "description": "Chính sách bảo mật của doanh nghiệp nhằm đảm bảo quyền lợi của doanh nghiệp và trách nhiệm giữ thông tin của doanh nghiệp với khách hàng,...",
+    "file": "scraped_data/nhuaamc/html/chinh-sach-bao-mat.html",
+    "size_bytes": 102937
+  },
+  {
+    "url": "https://nhuaamc.vn/chinh-sach-dai-ly",
+    "slug": "chinh-sach-dai-ly",
+    "title": "Chính sách đại lý - Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/chinh-sach-dai-ly.html",
+    "size_bytes": 106423
+  },
+  {
+    "url": "https://nhuaamc.vn/comments/feed",
+    "slug": "comments_feed",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/comments_feed.html",
+    "size_bytes": 764
+  },
+  {
+    "url": "https://nhuaamc.vn/feed",
+    "slug": "feed",
+    "title": "Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/feed.html",
+    "size_bytes": 102862
+  },
+  {
+    "url": "https://nhuaamc.vn/gioi-thieu",
+    "slug": "gioi-thieu",
+    "title": "Giới thiệu - Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/gioi-thieu.html",
+    "size_bytes": 106715
+  },
+  {
+    "url": "https://nhuaamc.vn/lien-he",
+    "slug": "lien-he",
+    "title": "Liên hệ - Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/lien-he.html",
+    "size_bytes": 106592
+  },
+  {
+    "url": "https://nhuaamc.vn/my-account/lost-password",
+    "slug": "my-account_lost-password",
+    "title": "My account - Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/my-account_lost-password.html",
+    "size_bytes": 97512
+  },
+  {
+    "url": "https://nhuaamc.vn/product-category/keo",
+    "slug": "product-category_keo",
+    "title": "- Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/product-category_keo.html",
+    "size_bytes": 95922
+  },
+  {
+    "url": "https://nhuaamc.vn/product-category/lam-ri",
+    "slug": "product-category_lam-ri",
+    "title": "- Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/product-category_lam-ri.html",
+    "size_bytes": 95942
+  },
+  {
+    "url": "https://nhuaamc.vn/product-category/lam-song",
+    "slug": "product-category_lam-song",
+    "title": "- Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/product-category_lam-song.html",
+    "size_bytes": 99572
+  },
+  {
+    "url": "https://nhuaamc.vn/product-category/nep",
+    "slug": "product-category_nep",
+    "title": "- Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/product-category_nep.html",
+    "size_bytes": 112597
+  },
+  {
+    "url": "https://nhuaamc.vn/product-category/phao-chi",
+    "slug": "product-category_phao-chi",
+    "title": "- Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/product-category_phao-chi.html",
+    "size_bytes": 111491
+  },
+  {
+    "url": "https://nhuaamc.vn/product-category/san-nhua-ngoai-troi",
+    "slug": "product-category_san-nhua-ngoai-troi",
+    "title": "- Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/product-category_san-nhua-ngoai-troi.html",
+    "size_bytes": 102822
+  },
+  {
+    "url": "https://nhuaamc.vn/product-category/san-nhua-spc",
+    "slug": "product-category_san-nhua-spc",
+    "title": "- Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/product-category_san-nhua-spc.html",
+    "size_bytes": 113297
+  },
+  {
+    "url": "https://nhuaamc.vn/product-category/tam-op-super",
+    "slug": "product-category_tam-op-super",
+    "title": "- Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/product-category_tam-op-super.html",
+    "size_bytes": 138110
+  },
+  {
+    "url": "https://nhuaamc.vn/product-category/tam-than-tre",
+    "slug": "product-category_tam-than-tre",
+    "title": "- Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/product-category_tam-than-tre.html",
+    "size_bytes": 135518
+  },
+  {
+    "url": "https://nhuaamc.vn/sai-lam-khi-thi-cong-san-go-nhua-ngoai-troi-khien-san-nhanh-hong",
+    "slug": "sai-lam-khi-thi-cong-san-go-nhua-ngoai-troi-khien-san-nhanh-hong",
+    "title": "Sai lầm khi thi công sàn nhựa ngoài trời",
+    "description": "Sàn gỗ nhựa ngoài trời hiện là giải pháp vật liệu hàng đầu cho các hạng mục trang trí ngoại thất như sân vườn, ban công, lối đi hay khu vực quanh hồ bơi. Tuy sở hữu vẻ đẹp tự nhiên cùng khả năng chịu lực, kháng nước vượt trội, chất lượng thực tế của công trình lại phụ thuộc rất lớn vào khâu lắp đặt.",
+    "file": "scraped_data/nhuaamc/html/sai-lam-khi-thi-cong-san-go-nhua-ngoai-troi-khien-san-nhanh-hong.html",
+    "size_bytes": 121109
+  },
+  {
+    "url": "https://nhuaamc.vn/san-nhua-chiu-luc-co-dung-duoc-ngoai-troi-khong",
+    "slug": "san-nhua-chiu-luc-co-dung-duoc-ngoai-troi-khong",
+    "title": "Sàn chịu lực có dùng được ngoài trời không?",
+    "description": "Với ưu điểm chịu tải cực cao, thiết kế bản rộng sang trọng và chi phí đầu tư hợp lý, sàn nhựa chịu lực đang là lựa chọn ưu tiên của nhiều gia đình khi muốn tối ưu diện tích. Tuy nhiên, rất nhiều khách hàng băn khoăn: Liệu vật liệu này chỉ làm được gác xép trong nhà hay có thể thi công ngoài trời chịu nắng mưa?",
+    "file": "scraped_data/nhuaamc/html/san-nhua-chiu-luc-co-dung-duoc-ngoai-troi-khong.html",
+    "size_bytes": 122159
+  },
+  {
+    "url": "https://nhuaamc.vn/san-nhua-gia-go-cho-spa-giai-phap-vat-tu-tham-my-ben-bi-toi-uu-chi-phi",
+    "slug": "san-nhua-gia-go-cho-spa-giai-phap-vat-tu-tham-my-ben-bi-toi-uu-chi-phi",
+    "title": "Sàn nhựa giả gỗ cho Spa - giải pháp vật tư bền đẹp, tối ưu chi phí",
+    "description": "Trong thiết kế spa hiện đại, vật liệu hoàn thiện đóng vai trò quyết định trong việc định hình cảm xúc và nâng cao trải nghiệm thư giãn của khách hàng. Không gian spa đòi hỏi sự ấm áp, sạch sẽ, an toàn tuyệt đối và duy trì vẻ đẹp ổn định theo thời gian.",
+    "file": "scraped_data/nhuaamc/html/san-nhua-gia-go-cho-spa-giai-phap-vat-tu-tham-my-ben-bi-toi-uu-chi-phi.html",
+    "size_bytes": 123516
+  },
+  {
+    "url": "https://nhuaamc.vn/san-pham",
+    "slug": "san-pham",
+    "title": "Sản phẩm",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/san-pham.html",
+    "size_bytes": 104185
+  },
+  {
+    "url": "https://nhuaamc.vn/tin-tuc-su-kien",
+    "slug": "tin-tuc-su-kien",
+    "title": "Tin tức &amp; sự kiện - Nhà máy nhựa AMC",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/tin-tuc-su-kien.html",
+    "size_bytes": 117076
+  },
+  {
+    "url": "https://nhuaamc.vn/trang-chu/feed",
+    "slug": "trang-chu_feed",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/trang-chu_feed.html",
+    "size_bytes": 762
+  },
+  {
+    "url": "https://nhuaamc.vn/tuong-nha-cu-am-moc-nen-cai-tao-bang-vat-lieu-gi-re-va-dep",
+    "slug": "tuong-nha-cu-am-moc-nen-cai-tao-bang-vat-lieu-gi-re-va-dep",
+    "title": "Tường nhà bị ẩm mốc nên cải tạo bằng gì cho đẹp và tối ưu chi phí",
+    "description": "Tường nhà bị bong tróc, ẩm mốc hay rêu phong là hiện tượng phổ biến khiến nhiều gia chủ đau đầu. Thay vì tốn kém ngân sách cho việc đập phá, trát lại hay sơn sửa phức tạp, giải pháp cải tạo tường cũ bằng tấm ốp nhựa nano, tấm ốp lam sóng  đang trở thành xu hướng hàng đầu.",
+    "file": "scraped_data/nhuaamc/html/tuong-nha-cu-am-moc-nen-cai-tao-bang-vat-lieu-gi-re-va-dep.html",
+    "size_bytes": 119724
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=6.1.6",
+    "slug": "wp-content_plugins_contact-form-7_includes_css_styles.css",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-content_plugins_contact-form-7_includes_css_styles.css.html",
+    "size_bytes": 2979
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-content/plugins/woocommerce/assets/client/blocks/wc-blocks.css?ver=wc-10.9.4",
+    "slug": "wp-content_plugins_woocommerce_assets_client_blocks_wc-blocks.css",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-content_plugins_woocommerce_assets_client_blocks_wc-blocks.css.html",
+    "size_bytes": 14002
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-content/themes/flatsome/assets/css/extensions/flatsome-swatches-frontend.css?ver=3.19.2",
+    "slug": "wp-content_themes_flatsome_assets_css_extensions_flatsome-swatches-frontend.css",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-content_themes_flatsome_assets_css_extensions_flatsome-swatches-frontend.css.html",
+    "size_bytes": 4205
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-content/themes/flatsome/assets/css/flatsome-shop.css?ver=3.19.2",
+    "slug": "wp-content_themes_flatsome_assets_css_flatsome-shop.css",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-content_themes_flatsome_assets_css_flatsome-shop.css.html",
+    "size_bytes": 30491
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-content/themes/flatsome/assets/css/flatsome.css?ver=3.19.2",
+    "slug": "wp-content_themes_flatsome_assets_css_flatsome.css",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-content_themes_flatsome_assets_css_flatsome.css.html",
+    "size_bytes": 151861
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-content/themes/flatsome/assets/js/chunk.popups.js?ver=3.19.2",
+    "slug": "wp-content_themes_flatsome_assets_js_chunk.popups.js",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-content_themes_flatsome_assets_js_chunk.popups.js.html",
+    "size_bytes": 20040
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-content/themes/flatsome/assets/js/chunk.slider.js?ver=3.19.2",
+    "slug": "wp-content_themes_flatsome_assets_js_chunk.slider.js",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-content_themes_flatsome_assets_js_chunk.slider.js.html",
+    "size_bytes": 49912
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-content/themes/flatsome/assets/js/chunk.tooltips.js?ver=3.19.2",
+    "slug": "wp-content_themes_flatsome_assets_js_chunk.tooltips.js",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-content_themes_flatsome_assets_js_chunk.tooltips.js.html",
+    "size_bytes": 39858
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-content/themes/flatsome/assets/js/flatsome.js?ver=51d1c732cb1803d92751",
+    "slug": "wp-content_themes_flatsome_assets_js_flatsome.js",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-content_themes_flatsome_assets_js_flatsome.js.html",
+    "size_bytes": 52858
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-content/themes/flatsome/assets/js/woocommerce.js?ver=60a299668ea84c875077",
+    "slug": "wp-content_themes_flatsome_assets_js_woocommerce.js",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-content_themes_flatsome_assets_js_woocommerce.js.html",
+    "size_bytes": 23078
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-content/themes/nam-khang/style.css?ver=3.0",
+    "slug": "wp-content_themes_nam-khang_style.css",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-content_themes_nam-khang_style.css.html",
+    "size_bytes": 298
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-content/uploads/2024/12/1114-11.mp4",
+    "slug": "wp-content_uploads_2024_12_1114-11.mp4",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-content_uploads_2024_12_1114-11.mp4.html",
+    "size_bytes": 20682447
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-includes/js/mediaelement/mediaelementplayer-legacy.min.css?ver=4.2.17",
+    "slug": "wp-includes_js_mediaelement_mediaelementplayer-legacy.min.css",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-includes_js_mediaelement_mediaelementplayer-legacy.min.css.html",
+    "size_bytes": 11256
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-includes/js/mediaelement/wp-mediaelement.min.css?ver=7.1.4",
+    "slug": "wp-includes_js_mediaelement_wp-mediaelement.min.css",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-includes_js_mediaelement_wp-mediaelement.min.css.html",
+    "size_bytes": 4186
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-json",
+    "slug": "wp-json",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-json.html",
+    "size_bytes": 1661497
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fnhuaamc.vn%2F",
+    "slug": "wp-json_oembed_1.0_embed",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-json_oembed_1.0_embed.html",
+    "size_bytes": 2647
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fnhuaamc.vn%2F&",
+    "slug": "wp-json_oembed_1.0_embed",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-json_oembed_1.0_embed.html",
+    "size_bytes": 2647
+  },
+  {
+    "url": "https://nhuaamc.vn/wp-json/wp/v2/pages/2",
+    "slug": "wp-json_wp_v2_pages_2",
+    "title": "",
+    "description": "",
+    "file": "scraped_data/nhuaamc/html/wp-json_wp_v2_pages_2.html",
+    "size_bytes": 53531
+  }
+]

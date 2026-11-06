@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import MainLayout from '../components/layout/MainLayout';
 import { PRODUCTS } from '../data/products';
+import BRAND, { getCurrentYear } from '../config/brandConfig';
 
 // Icons
 const ArrowRightIcon = ({ className = "w-4 h-4" }) => (
@@ -47,15 +48,15 @@ export default function HomePage() {
     },
     {
       q: "Có dùng được cho khu vực bếp hoặc ẩm ướt không?",
-      a: "Ốp tường khu bếp là được, miễn không phải vị trí sát ngọn lửa bếp nấu (nơi nhiệt độ cao trực tiếp và nhiều dầu mỡ bắn). Với hệ cánh tủ bếp và kệ lavabo, Eco Bamboo khuyên dùng tấm nội thất 17mm chuyên dụng."
+      a: `Ốp tường khu bếp là được, miễn không phải vị trí sát ngọn lửa bếp nấu (nơi nhiệt độ cao trực tiếp và nhiều dầu mỡ bắn). Với hệ cánh tủ bếp và kệ lavabo, ${BRAND.shortName} khuyên dùng tấm nội thất 17mm chuyên dụng.`
     },
     {
       q: "Thời gian giao hàng từ nhà máy là bao lâu?",
-      a: "Eco Bamboo luôn sẵn kho số lượng lớn tại Sơn Đồng, Hoài Đức. Khu vực Hà Nội và miền Bắc thường nhận hàng sau 1–2 ngày. Các tỉnh xa phụ thuộc tuyến vận chuyển, nhân viên kinh doanh sẽ báo lịch cụ thể khi chốt đơn."
+      a: `${BRAND.shortName} luôn sẵn kho số lượng lớn tại ${BRAND.warehouseAddress}. Khu vực Hà Nội và miền Bắc thường nhận hàng sau 1–2 ngày. Các tỉnh xa phụ thuộc tuyến vận chuyển, nhân viên kinh doanh sẽ báo lịch cụ thể khi chốt đơn.`
     },
     {
       q: "Thợ thi công và nhà thầu có được nhận xâu mẫu thử không?",
-      a: "Có. Thợ thi công, nhà thầu và kiến trúc sư đăng ký được tặng xâu mẫu (sample box) miễn phí và áp dụng chính sách giá riêng theo sản lượng. Liên hệ Hotline: 0915.189.389."
+      a: "Có. Thợ thi công, nhà thầu và kiến trúc sư đăng ký được tặng xâu mẫu (sample box) miễn phí và áp dụng chính sách giá riêng theo sản lượng. Liên hệ Hotline: {BRAND.hotlineDisplay}."
     }
   ];
 
@@ -112,7 +113,7 @@ export default function HomePage() {
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-eco-gray-200 bg-white">
                 <img
                   src="/images/ecobamboo/2EB68017-scaled.webp"
-                  alt="Vật liệu ốp tường than tre Eco Bamboo hoàn thiện"
+                  alt={`Vật liệu ốp tường than tre ${BRAND.shortName} hoàn thiện`}
                   className="w-full h-auto object-cover max-h-[460px] hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute bottom-3 left-3 right-3 bg-black/60 backdrop-blur-md rounded-xl p-3 text-white text-xs flex justify-between items-center">
@@ -268,7 +269,7 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="mt-3 md:mt-0 text-xs sm:text-sm text-eco-gray-500 max-w-md">
-              Tấm ốp, tấm nội thất, lam sóng và nẹp nhôm của Eco Bamboo dùng chung hệ mã film — nên mặt tường, tủ và chi tiết trang trí ăn màu liền mạch với nhau.
+              Tấm ốp, tấm nội thất, lam sóng và nẹp nhôm của {BRAND.shortName} dùng chung hệ mã film — nên mặt tường, tủ và chi tiết trang trí ăn màu liền mạch với nhau.
             </p>
           </div>
 
@@ -422,7 +423,7 @@ export default function HomePage() {
                       </span>
                     </div>
                     <div className="absolute top-2 right-2 z-10">
-                      <span className="px-2 py-0.5 rounded bg-emerald-700/90 text-white text-[10px] font-bold backdrop-blur-sm">
+                      <span className="px-2 py-0.5 rounded bg-amber-600/95 text-white text-[10px] font-bold backdrop-blur-sm">
                         Được chọn nhiều
                       </span>
                     </div>
@@ -475,7 +476,7 @@ export default function HomePage() {
                   Chất lượng nằm ở lớp phủ và cốt tấm
                 </h2>
                 <p className="mt-3 text-sm text-eco-gray-600 leading-relaxed">
-                  Độ bền màu và độ bền cơ học được quyết định ở hai khâu: chọn film đủ dày và chọn cốt theo mật độ nén. Eco Bamboo kiểm soát cả hai, cùng với bước phủ mặt tại nhà máy ở Hà Nội.
+                  Độ bền màu và độ bền cơ học được quyết định ở hai khâu: chọn film đủ dày và chọn cốt theo mật độ nén. {BRAND.shortName} kiểm soát cả hai, cùng với bước phủ mặt tại {BRAND.factory?.title || BRAND.factoryName}.
                 </p>
               </div>
 
@@ -515,12 +516,12 @@ export default function HomePage() {
               <div className="rounded-3xl overflow-hidden shadow-2xl border border-eco-gray-200 bg-white">
                 <img
                   src="/images/ecobamboo/day-chuyen-phu-film-pur-nha-may-eco-bamboo.webp"
-                  alt="Dây chuyền phủ film keo PUR tại nhà máy Eco Bamboo"
+                  alt={`Dây chuyền phủ film keo PUR tại ${BRAND.factoryName}`}
                   className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
                 />
                 <div className="p-4 bg-bamboo-950 text-white text-xs flex justify-between items-center">
-                  <span>Dây chuyền ép keo nhiệt PUR tự động tại nhà máy Cầu Nổi, Hoài Đức</span>
-                  <span className="px-2 py-0.5 rounded bg-emerald-600 text-[10px] font-bold">Keo Jowat Đức</span>
+                  <span>Dây chuyền ép keo nhiệt PUR tự động tại {BRAND.factory?.title || BRAND.factoryName} ({BRAND.factory?.shortAddress || BRAND.factoryAddress})</span>
+                  <span className="px-2 py-0.5 rounded bg-amber-500 text-bamboo-950 text-[10px] font-bold">Keo Jowat Đức</span>
                 </div>
               </div>
             </div>
@@ -648,7 +649,7 @@ export default function HomePage() {
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-xs font-bold uppercase tracking-wider text-bamboo-700">Cam kết minh bạch</span>
             <h2 className="text-2xl sm:text-3xl font-black text-eco-gray-900 tracking-tight mt-1">
-              Nguyên tắc làm việc của Eco Bamboo
+              Nguyên tắc làm việc của {BRAND.shortName}
             </h2>
           </div>
 
@@ -665,7 +666,7 @@ export default function HomePage() {
               <div className="w-10 h-10 rounded-xl bg-wood-100 text-wood-800 font-extrabold flex items-center justify-center">2</div>
               <h3 className="text-lg font-bold text-eco-gray-900">Minh bạch về quy trình</h3>
               <p className="text-xs text-eco-gray-600 leading-relaxed">
-                Eco Bamboo tuyển chọn film và tấm cốt theo tiêu chuẩn riêng, thực hiện khâu phủ mặt tại nhà máy ở Hà Nội. Chúng tôi nêu đúng và đủ phạm vi công việc của mình.
+                {BRAND.shortName} tuyển chọn film và tấm cốt theo tiêu chuẩn riêng, thực hiện khâu phủ mặt tại {BRAND.factoryName}. Chúng tôi nêu đúng và đủ phạm vi công việc của mình.
               </p>
             </div>
 
@@ -673,7 +674,7 @@ export default function HomePage() {
               <div className="w-10 h-10 rounded-xl bg-bamboo-100 text-bamboo-800 font-extrabold flex items-center justify-center">3</div>
               <h3 className="text-lg font-bold text-eco-gray-900">Tập trung vào vật liệu</h3>
               <p className="text-xs text-eco-gray-600 leading-relaxed">
-                Eco Bamboo không nhận thi công trực tiếp. Chúng tôi cung cấp vật liệu và giới thiệu đội thi công quen việc theo từng khu vực để chủ đầu tư chủ động về nhân công và tiến độ.
+                {BRAND.shortName} không nhận thi công trực tiếp. Chúng tôi cung cấp vật liệu và giới thiệu đội thi công quen việc theo từng khu vực để chủ đầu tư chủ động về nhân công và tiến độ.
               </p>
             </div>
           </div>
@@ -739,11 +740,11 @@ export default function HomePage() {
 
           <div className="flex flex-wrap items-center gap-3">
             <a
-              href="tel:0915189389"
+              href={`tel:${BRAND.hotline.replace(".", "")}`}
               className="px-6 py-3.5 rounded-xl bg-wood-500 hover:bg-wood-600 text-white font-bold text-sm shadow-md transition-all flex items-center"
             >
               <PhoneCallIcon className="mr-2 w-4 h-4" />
-              Hotline: 0915.189.389
+              Hotline: {BRAND.hotlineDisplay}
             </a>
 
             <a

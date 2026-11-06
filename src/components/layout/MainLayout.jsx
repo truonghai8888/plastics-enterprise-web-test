@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import BRAND from '../../config/brandConfig';
 
 // ==========================================
 // FLOATING ICONS
@@ -102,11 +103,11 @@ export default function MainLayout({
 
             {/* Nút Chat Zalo */}
             <a
-              href="https://zalo.me/0915189389"
+              href={BRAND.socialLinks.zalo}
               target="_blank"
               rel="noreferrer"
               className="group flex items-center bg-white text-blue-600 p-2.5 rounded-full shadow-lg border border-blue-100 hover:shadow-xl transition-all duration-300"
-              title="Tư vấn Zalo"
+              title={`Chat Zalo tư vấn ${BRAND.shortName}`}
             >
               <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out text-xs font-bold px-0 group-hover:px-2.5 text-blue-700">
                 Chat Zalo tư vấn
@@ -118,17 +119,17 @@ export default function MainLayout({
 
             {/* Nút Gọi Hotline khẩn cấp / Tư vấn trực tiếp */}
             <a
-              href="tel:0915189389"
+              href={`tel:${BRAND.hotline.replace(/\./g, '')}`}
               className="relative group flex items-center bg-gradient-bamboo text-white p-2.5 rounded-full shadow-hover hover:scale-105 transition-all duration-300"
-              title="Gọi Hotline tư vấn"
+              title={`Gọi Hotline ${BRAND.shortName}`}
             >
               {/* Pulse ripple ring */}
-              <span className="absolute -inset-1 rounded-full bg-bamboo-500 opacity-60 animate-ping pointer-events-none"></span>
+              <span className="absolute -inset-1 rounded-full bg-amber-500 opacity-60 animate-ping pointer-events-none"></span>
 
               <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out text-xs font-bold px-0 group-hover:px-2.5 text-white">
-                Hotline: 0915.189.389
+                Hotline: {BRAND.hotlineDisplay}
               </span>
-              <div className="w-10 h-10 rounded-full bg-white text-bamboo-700 flex items-center justify-center shadow-sm">
+              <div className="w-10 h-10 rounded-full bg-white text-wood-700 flex items-center justify-center shadow-sm">
                 <PhoneIcon className="w-5 h-5 animate-pulse" />
               </div>
             </a>

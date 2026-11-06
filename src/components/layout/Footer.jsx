@@ -1,3 +1,4 @@
+import BRAND, { getCurrentYear } from '../../config/brandConfig';
 import React, { useState } from 'react';
 
 // ==========================================
@@ -130,9 +131,9 @@ export default function Footer() {
           <div className="lg:col-span-4 space-y-5">
             <div className="flex items-center space-x-3">
               <img
-                src="/images/ecobamboo/logo.png"
-                alt="EcoBamboo"
-                className="h-10 w-auto object-contain brightness-0 invert opacity-90"
+                src={BRAND.logo.url}
+                alt={BRAND.logo.alt}
+                className="h-12 w-auto object-contain rounded-lg shadow-md bg-white p-1"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                   if (e.currentTarget.nextElementSibling) {
@@ -142,52 +143,96 @@ export default function Footer() {
               />
               <div className="hidden items-center space-x-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-bamboo flex items-center justify-center text-white font-bold text-lg shadow-md">
-                  EB
+                  {BRAND.logo.badgeText}
                 </div>
                 <div>
                   <div className="text-xl font-black text-white tracking-tight">
-                    ECO<span className="text-wood-400">BAMBOO</span>
+                    {BRAND.brandName}
                   </div>
-                  <div className="text-[10px] uppercase font-bold text-bamboo-400 tracking-wider">
-                    Vật Liệu Xanh Nội Thất
+                  <div className="text-[10px] uppercase font-bold text-wood-400 tracking-wider">
+                    {BRAND.subSlogan}
                   </div>
                 </div>
               </div>
             </div>
 
-            <p className="text-sm text-eco-gray-300 leading-relaxed">
-              <strong className="text-white">Công ty Cổ phần Công nghiệp Eco Bamboo</strong> là nhà sản xuất và phân phối hàng đầu về tấm ốp than tre đa năng, lam sóng và phụ kiện trang trí nội thất xanh chuẩn quốc tế tại Việt Nam.
-            </p>
+            <p className="text-sm text-eco-gray-300 leading-relaxed"><strong className="text-white">{BRAND.legalName}</strong> ({BRAND.factoryName}) là nhà sản xuất và phân phối hàng đầu về tấm ốp than tre đa năng, lam sóng, tấm ốp super và phụ kiện gỗ nhựa nội ngoại thất chuẩn quốc tế tại Việt Nam.</p>
 
             <div className="space-y-3 text-sm text-eco-gray-300">
               <div className="flex items-start space-x-3">
-                <MapPinIcon className="w-4 h-4 text-bamboo-400 shrink-0 mt-1" />
+                <MapPinIcon className="w-4 h-4 text-amber-400 shrink-0 mt-1" />
                 <span>
-                  <strong className="text-white">Nhà máy sản xuất:</strong> Khu Cầu Nổi, xã Sơn Đồng, huyện Hoài Đức, TP. Hà Nội (Km8 Đại Lộ Thăng Long)
+                  {BRAND.factory?.mapUrl ? (
+                    <a
+                      href={BRAND.factory.mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group/map hover:text-white transition-colors"
+                      title="Mở chỉ đường trên Google Maps"
+                    >
+                      <strong className="text-white group-hover/map:text-amber-400 underline decoration-amber-400/60 underline-offset-2 transition-colors">
+                        Nhà máy sản xuất:
+                      </strong>{' '}
+                      <span className="text-eco-gray-300 group-hover/map:underline decoration-eco-gray-400">
+                        {BRAND.factoryAddress}
+                      </span>
+                    </a>
+                  ) : (
+                    <>
+                      <strong className="text-white">Nhà máy sản xuất:</strong> {BRAND.factoryAddress}
+                    </>
+                  )}
                 </span>
               </div>
               <div className="flex items-start space-x-3">
                 <MapPinIcon className="w-4 h-4 text-wood-400 shrink-0 mt-1" />
                 <span>
-                  <strong className="text-white">Văn phòng đại diện:</strong> Tòa HH1, 90 Nguyễn Tuân, Q. Thanh Xuân, TP. Hà Nội
+                  {BRAND.office?.mapUrl ? (
+                    <a
+                      href={BRAND.office.mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group/map hover:text-white transition-colors"
+                      title="Mở chỉ đường trên Google Maps"
+                    >
+                      <strong className="text-white group-hover/map:text-amber-400 underline decoration-amber-400/60 underline-offset-2 transition-colors">
+                        Văn phòng đại diện:
+                      </strong>{' '}
+                      <span className="text-eco-gray-300 group-hover/map:underline decoration-eco-gray-400">
+                        {BRAND.officeAddress}
+                      </span>
+                    </a>
+                  ) : (
+                    <>
+                      <strong className="text-white">Văn phòng đại diện:</strong> {BRAND.officeAddress}
+                    </>
+                  )}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <PhoneIcon className="w-4 h-4 text-bamboo-400 shrink-0" />
                 <span>
-                  <strong className="text-white">Hotline / Zalo:</strong> <a href="tel:0915189389" className="text-wood-400 font-bold hover:underline">0915.189.389</a>
+                  <strong className="text-white">Hotline / Zalo:</strong> <a href={`tel:${BRAND.hotline.replace(".", "")}`} className="text-wood-400 font-bold hover:underline">{BRAND.hotlineDisplay}</a>
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <MailIcon className="w-4 h-4 text-bamboo-400 shrink-0" />
                 <span>
-                  <strong className="text-white">Email:</strong> <a href="mailto:sale.ecobamboo@gmail.com" className="hover:underline">sale.ecobamboo@gmail.com</a>
+                  <strong className="text-white">Email:</strong> <a href={BRAND.socialLinks.email} className="hover:underline">{BRAND.email}</a>
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <GlobeIcon className="w-4 h-4 text-bamboo-400 shrink-0" />
                 <span>
-                  <strong className="text-white">Website:</strong> ecobamboo.vn
+                  <strong className="text-white">Website:</strong>{' '}
+                  <a
+                    href={BRAND.websiteUrl || `https://${BRAND.domain}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-eco-gray-300 hover:text-white hover:underline transition-colors"
+                  >
+                    {BRAND.domain}
+                  </a>
                 </span>
               </div>
             </div>
@@ -258,7 +303,7 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm">
               <li>
                 <a href="/gioi-thieu" className="hover:text-bamboo-400 transition-colors">
-                  Giới thiệu Eco Bamboo
+                  Giới thiệu {BRAND.brandName}
                 </a>
               </li>
               <li>
@@ -268,7 +313,7 @@ export default function Footer() {
               </li>
               <li>
                 <a href="/chinh-sach-bao-hanh" className="hover:text-bamboo-400 transition-colors">
-                  Bảo hành 10 năm
+                  Bảo hành {BRAND.warrantyYears} năm
                 </a>
               </li>
               <li>
@@ -341,22 +386,22 @@ export default function Footer() {
               {isSubscribed && (
                 <div className="text-xs text-bamboo-400 flex items-center bg-bamboo-900/80 p-2 rounded-lg border border-bamboo-700 animate-fade-in">
                   <CheckCircleIcon className="w-3.5 h-3.5 mr-1.5 shrink-0" />
-                  Đăng ký thành công! Chuyên viên Eco Bamboo sẽ liên hệ gửi báo giá sớm nhất.
+                  Đăng ký thành công! Chuyên viên {BRAND.shortName} sẽ liên hệ gửi báo giá sớm nhất.
                 </div>
               )}
             </form>
 
             {/* Mạng xã hội */}
             <div className="pt-2">
-              <div className="text-xs font-semibold text-white mb-2.5">Kết nối với Eco Bamboo:</div>
+              <div className="text-xs font-semibold text-white mb-2.5">Kết nối với {BRAND.shortName}:</div>
               <div className="flex items-center space-x-2.5">
                 {/* Facebook */}
                 <a
-                  href="https://facebook.com/ecobamboo.vn"
+                  href={BRAND.socialLinks.facebook}
                   target="_blank"
                   rel="noreferrer"
                   className="w-9 h-9 rounded-lg bg-bamboo-900 hover:bg-blue-600 text-white flex items-center justify-center transition-colors"
-                  aria-label="Facebook Eco Bamboo"
+                  aria-label={`Facebook ${BRAND.brandName}`}
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -365,7 +410,7 @@ export default function Footer() {
 
                 {/* Zalo */}
                 <a
-                  href="https://zalo.me/0915189389"
+                  href={BRAND.socialLinks.zalo}
                   target="_blank"
                   rel="noreferrer"
                   className="w-9 h-9 rounded-lg bg-bamboo-900 hover:bg-blue-500 text-white flex items-center justify-center font-bold text-xs transition-colors"
@@ -376,7 +421,7 @@ export default function Footer() {
 
                 {/* YouTube */}
                 <a
-                  href="https://youtube.com/@ecobamboovn"
+                  href={BRAND.socialLinks?.youtube || "https://www.youtube.com/@Nh%E1%BB%B1aAMC"}
                   target="_blank"
                   rel="noreferrer"
                   className="w-9 h-9 rounded-lg bg-bamboo-900 hover:bg-red-600 text-white flex items-center justify-center transition-colors"
@@ -389,7 +434,7 @@ export default function Footer() {
 
                 {/* TikTok */}
                 <a
-                  href="https://tiktok.com/@ecobamboo"
+                  href={BRAND.socialLinks?.tiktok || "https://www.tiktok.com/@amcplastic_?_r=1&_t=ZS-9BANDAJZ5tN"}
                   target="_blank"
                   rel="noreferrer"
                   className="w-9 h-9 rounded-lg bg-bamboo-900 hover:bg-neutral-800 text-white flex items-center justify-center transition-colors"
@@ -410,7 +455,7 @@ export default function Footer() {
       <div className="border-t border-bamboo-900 bg-bamboo-950/90 py-5 text-xs text-eco-gray-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div>
-            © {new Date().getFullYear()} <strong className="text-white">Eco Bamboo Industry JSC</strong>. Tất cả quyền được bảo lưu.
+            © {getCurrentYear()} <strong className="text-white">{BRAND.legalName}</strong>. Tất cả quyền được bảo lưu.
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-bamboo-400 font-semibold">Đã đăng ký thông báo với Bộ Công Thương</span>

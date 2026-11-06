@@ -1,13 +1,14 @@
 import React from 'react';
 import ArticleLayout from './ArticleLayout';
+import BRAND, { getCurrentYear, getCurrentDateFormatted } from '../config/brandConfig';
 
 export default function PrivacyPolicyPage() {
   return (
     <ArticleLayout
-      title="Chính Sách Bảo Mật Thông Tin Khách Hàng - Eco Bamboo"
+      title={`Chính Sách Bảo Mật Thông Tin Khách Hàng - ${BRAND.brandName}`}
       category="Văn Bản Pháp Lý"
-      author="Ban Giám Đốc Eco Bamboo"
-      publishDate="01/01/2025"
+      author={`Ban Giám Đốc ${BRAND.brandName}`}
+      publishDate={getCurrentDateFormatted()}
       readTime="3 phút đọc"
       breadcrumb={[
         { name: "Trang chủ", link: "/" },
@@ -15,8 +16,8 @@ export default function PrivacyPolicyPage() {
       ]}
     >
       <div className="space-y-4">
-        <p className="text-base text-eco-gray-800 leading-relaxed font-medium bg-eco-gray-50 p-4 rounded-xl border-l-4 border-bamboo-600">
-          Công ty Cổ phần Công nghiệp Eco Bamboo cam kết bảo mật tuyệt đối các thông tin cá nhân và dữ liệu liên hệ của khách hàng, đối tác theo đúng quy định pháp luật Việt Nam.
+        <p className="text-base text-eco-gray-800 leading-relaxed font-medium bg-eco-gray-50 p-4 rounded-xl border-l-4 border-amber-600">
+          {BRAND.legalName} cam kết bảo mật tuyệt đối các thông tin cá nhân và dữ liệu liên hệ của khách hàng, đối tác theo đúng quy định pháp luật Việt Nam.
         </p>
 
         <h2 className="text-xl font-black text-eco-gray-900 pt-3">1. Mục Đích Thu Thập Thông Tin</h2>
@@ -26,12 +27,12 @@ export default function PrivacyPolicyPage() {
 
         <h2 className="text-xl font-black text-eco-gray-900 pt-3">2. Cơ Chế Sử Dụng Cookie & Bộ Nhớ Trình Duyệt</h2>
         <p>
-          Hệ thống website <em>ecobamboo.vn</em> sử dụng cookie và Local Storage trên thiết bị người dùng nhằm mục đích lưu trữ tạm thời các cấu hình tiện ích như: thông số kích thước vách tường đã nhập trong công cụ tính chi phí, mã màu yêu thích trong Room Visualizer. Dữ liệu này được lưu trữ cục bộ trên máy của bạn và <strong>không truyền tải về máy chủ trung tâm</strong> để theo dõi trái phép.
+          Hệ thống website <em>{BRAND.domain}</em> sử dụng cookie và Local Storage trên thiết bị người dùng nhằm mục đích lưu trữ tạm thời các cấu hình tiện ích như: thông số kích thước vách tường đã nhập trong công cụ tính chi phí, mã màu yêu thích trong Room Visualizer. Dữ liệu này được lưu trữ cục bộ trên máy của bạn và <strong>không truyền tải về máy chủ trung tâm</strong> để theo dõi trái phép.
         </p>
 
         <h2 className="text-xl font-black text-eco-gray-900 pt-3">3. Quyền Chỉnh Sửa & Xóa Bỏ Dữ Liệu</h2>
         <p>
-          Khách hàng có quyền yêu cầu Eco Bamboo cập nhật hoặc xóa bỏ hoàn toàn dữ liệu liên hệ của mình khỏi hệ thống chăm sóc khách hàng bất cứ lúc nào bằng cách gọi hotline <strong>0915.189.389</strong> hoặc gửi yêu cầu qua email <em>sale.ecobamboo@gmail.com</em>.
+          Khách hàng có quyền yêu cầu {BRAND.shortName} cập nhật hoặc xóa bỏ hoàn toàn dữ liệu liên hệ của mình khỏi hệ thống chăm sóc khách hàng bất cứ lúc nào bằng cách gọi hotline <strong>{BRAND.hotlineDisplay}</strong> hoặc gửi yêu cầu qua email <em>{BRAND.email}</em>.
         </p>
       </div>
     </ArticleLayout>

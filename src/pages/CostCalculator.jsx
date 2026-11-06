@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import MainLayout from '../components/layout/MainLayout';
+import BRAND from '../config/brandConfig';
 
 // ==========================================
 // ICON HELPER COMPONENTS (Lucide Style SVG)
@@ -203,15 +204,15 @@ export default function CostCalculator() {
   }, [wallWidth, partitionMode]);
 
   const handleExportPDF = () => {
-    setToastMessage('Đang kết xuất file PDF: Du_Toan_Vat_Tu_EcoBamboo.pdf');
+    setToastMessage(`Đang kết xuất file PDF: Du_Toan_Vat_Tu_${BRAND.brandName}.pdf`);
     setTimeout(() => setToastMessage(''), 4000);
   };
 
   const handleSendZalo = () => {
     const text = encodeURIComponent(
-      `Chào Eco Bamboo, tôi cần báo giá vách ${wallWidth}m x ${wallHeight}m (${calculation.totalArea}m2). Dự toán tạm tính: ${formatVND(calculation.grandTotal)}`
+      `Chào ${BRAND.brandName}, tôi cần báo giá vách ${wallWidth}m x ${wallHeight}m (${calculation.totalArea}m2). Dự toán tạm tính: ${formatVND(calculation.grandTotal)}`
     );
-    window.open(`https://zalo.me/0915189389?text=${text}`, '_blank');
+    window.open(`${BRAND.socialLinks.zalo}?text=${text}`, '_blank');
   };
 
   return (
@@ -239,7 +240,7 @@ export default function CostCalculator() {
       {/* TOAST MESSAGE */}
       {toastMessage && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-eco-gray-900 text-white px-5 py-2.5 rounded-2xl shadow-2xl border border-bamboo-500 text-xs font-semibold flex items-center space-x-2 animate-fade-in">
-          <CheckCircleIcon className="w-4 h-4 text-emerald-400" />
+          <CheckCircleIcon className="w-4 h-4 text-amber-400" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -468,7 +469,7 @@ export default function CostCalculator() {
                     onChange={(e) => setIncludeGlue(e.target.checked)}
                     className="rounded text-bamboo-600 focus:ring-bamboo-500 w-4 h-4"
                   />
-                  <span>Keo dán chuyên dụng Eco Bamboo</span>
+                  <span>Keo dán chuyên dụng {BRAND.shortName}</span>
                 </label>
                 <span className="text-[11px] text-eco-gray-500 font-semibold">
                   {calculation.glueBottlesNeeded} tuýp ({formatVND(calculation.glueTotalCost)})
@@ -674,7 +675,7 @@ export default function CostCalculator() {
                   <div className="flex items-center justify-between p-3 rounded-xl bg-eco-gray-50 border border-eco-gray-200">
                     <div>
                       <div className="font-bold text-eco-gray-900">
-                        Keo dán chuyên dụng Eco Bamboo (Chai 300ml)
+                        Keo dán chuyên dụng {BRAND.shortName} (Chai 300ml)
                       </div>
                       <div className="text-[11px] text-eco-gray-500">
                         Cần dùng: <strong className="text-bamboo-800">{calculation.glueBottlesNeeded} tuýp</strong> (1 tuýp / 3.5m²)

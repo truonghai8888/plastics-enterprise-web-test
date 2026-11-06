@@ -142,7 +142,7 @@ export default function CategoryPage({ onSelectProduct, initialCategory = 'all' 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-black text-eco-gray-900 tracking-tight">
-                {CATEGORY_FILTERS.find(c => c.id === selectedCategory)?.name || 'Danh Mục Sản Phẩm Chính Eco Bamboo'}
+                {CATEGORY_FILTERS.find(c => c.id === selectedCategory)?.name || `Danh Mục Sản Phẩm Chính ${BRAND.brandName}`}
               </h1>
               <p className="mt-1 text-xs sm:text-sm text-eco-gray-500 max-w-2xl leading-relaxed">
                 Các mã màu chính hãng từ dòng vân gỗ EB66006, đơn sắc White EB68038, Glossy Grey EB68032G đến vân đá Calacatta EB89019G chuẩn E0 Châu Âu.
@@ -258,7 +258,7 @@ export default function CategoryPage({ onSelectProduct, initialCategory = 'all' 
               {/* Cam kết nhà máy */}
               <div className="p-4 rounded-xl bg-bamboo-50/70 border border-bamboo-200/80 text-xs space-y-1.5 text-eco-gray-700">
                 <div className="font-bold text-bamboo-900 flex items-center">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+                  <span className="w-2 h-2 rounded-full bg-amber-500 mr-2 animate-pulse"></span>
                   Bảo Hành Chính Hãng 10 Năm
                 </div>
                 <p className="text-[11px] text-eco-gray-600 leading-relaxed">
@@ -480,8 +480,8 @@ export default function CategoryPage({ onSelectProduct, initialCategory = 'all' 
               </button>
 
               {sampleSuccess && (
-                <div className="p-3 rounded-xl bg-emerald-50 text-emerald-800 text-xs font-bold">
-                  Eco Bamboo đã tiếp nhận! Nhân viên điều phối kho sẽ gửi chuyển phát nhanh trong 24h.
+                <div className="p-3 rounded-xl bg-amber-50 text-amber-800 text-xs font-bold">
+                  {BRAND.shortName} đã tiếp nhận! Nhân viên điều phối kho sẽ gửi chuyển phát nhanh trong 24h.
                 </div>
               )}
             </form>

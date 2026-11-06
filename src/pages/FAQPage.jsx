@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import MainLayout from '../components/layout/MainLayout';
+import BRAND from '../config/brandConfig';
 
 // ==========================================
 // ICON HELPER COMPONENTS (Lucide Style SVG)
@@ -44,7 +45,7 @@ export const FAQ_ITEMS = [
   {
     id: 1,
     topic: 'chat-luong',
-    question: 'Tấm ốp than tre Eco Bamboo có thực sự chống nước 100% và không ẩm mốc?',
+    question: `Tấm ốp than tre ${BRAND.shortName} có thực sự chống nước 100% và không ẩm mốc?`,
     answer: 'Hoàn toàn chính xác. Cốt tấm được tạo thành từ bột than tre hoạt tính nén ép ở mật độ cao (≥ 0.85 g/cm³) cùng keo nhiệt PUR Jowat nhập khẩu trực tiếp từ Đức. Cấu trúc đặc kín này hoàn toàn không hút ẩm, độ trương nở ngâm ngập nước sau 24 giờ ≤ 0.2%, triệt tiêu hoàn toàn nỗi lo nấm mốc và mùi hôi nồm ẩm tại miền Bắc.'
   },
   {
@@ -63,31 +64,31 @@ export const FAQ_ITEMS = [
     id: 4,
     topic: 'thi-cong',
     question: 'Tường bị ẩm mốc nặng hoặc nồm rỉ nước có ốp tấm than tre trực tiếp được không?',
-    answer: 'Nếu tường ẩm nhẹ hoặc tường mới xây đã trát phẳng, bạn có thể dán trực tiếp bằng keo chuyên dụng Eco Bamboo kèm băng dính xốp định vị. Trường hợp tường xuống cấp hoặc thấm nước từ nhà vệ sinh, Eco Bamboo khuyến cáo nên dựng hệ khung xương sắt hộp 20x20mm hoặc khung xương gỗ nhựa trước khi bắn tấm để đảm bảo độ bền vĩnh cửu.'
+    answer: `Nếu tường ẩm nhẹ hoặc tường mới xây đã trát phẳng, bạn có thể dán trực tiếp bằng keo chuyên dụng ${BRAND.shortName} kèm băng dính xốp định vị. Trường hợp tường xuống cấp hoặc thấm nước từ nhà vệ sinh, ${BRAND.shortName} khuyến cáo nên dựng hệ khung xương sắt hộp 20x20mm hoặc khung xương gỗ nhựa trước khi bắn tấm để đảm bảo độ bền vĩnh cửu.`
   },
   {
     id: 5,
     topic: 'gia-van-chuyen',
     question: 'Đơn giá tấm ốp than tre bao nhiêu tiền 1m² và nhà máy có cắt theo kích thước không?',
-    answer: 'Đơn giá vật tư dao động từ 290.000 – 690.000 đ/m² tùy theo độ dày (5mm, 8mm, 17mm) và bề mặt vân (vân gỗ, vân đá UV, tráng gương hoặc PETG siêu mờ). Nhà máy Eco Bamboo có dây chuyền xẻ tấm tự động, nhận cắt theo kích thước chiều cao trần bản vẽ (2.8m, 3.0m, 3.2m) để gia chủ không phải chắp nối tấm.'
+    answer: `Đơn giá vật tư dao động từ 290.000 – 690.000 đ/m² tùy theo độ dày (5mm, 8mm, 17mm) và bề mặt vân (vân gỗ, vân đá UV, tráng gương hoặc PETG siêu mờ). Nhà máy ${BRAND.shortName} có dây chuyền xẻ tấm tự động, nhận cắt theo kích thước chiều cao trần bản vẽ (2.8m, 3.0m, 3.2m) để gia chủ không phải chắp nối tấm.`
   },
   {
     id: 6,
     topic: 'gia-van-chuyen',
     question: 'Thời gian giao hàng bao lâu và có hỗ trợ vận chuyển đi tỉnh không?',
-    answer: 'Khu vực nội thành Hà Nội và các tỉnh lân cận (Hưng Yên, Bắc Ninh, Vĩnh Phúc) giao hàng ngay trong ngày từ kho Sơn Đồng. Đối với các tỉnh thành trên toàn quốc, hàng được bọc màng xốp PE bảo vệ 4 góc và gửi chành xe tải hoặc xe container trong vòng 24 - 48 giờ.'
+    answer: `Các đơn hàng giao ngay trong ngày từ ${BRAND.warehouse?.title || 'Tổng kho Nhà Máy'} (${BRAND.warehouse?.shortAddress || 'Ninh Bình'}). Đối với các tỉnh thành trên toàn quốc, hàng được bọc màng xốp PE bảo vệ 4 góc và gửi chành xe tải hoặc xe container trong vòng 24 - 48 giờ.`
   },
   {
     id: 7,
     topic: 'dai-ly',
-    question: 'Chính sách bảo hành sản phẩm của Eco Bamboo như thế nào?',
-    answer: 'Eco Bamboo cam kết bảo hành chính hãng 10 năm về độ bền cốt vật liệu, không cong vênh, không bong tách lớp màng film trong điều kiện sử dụng nội thất bình thường. Khách hàng được đổi trả 1-1 ngay lập tức nếu phát hiện lỗi từ quy trình sản xuất của nhà máy.'
+    question: `Chính sách bảo hành sản phẩm của ${BRAND.brandName} như thế nào?`,
+    answer: `${BRAND.brandName} cam kết bảo hành chính hãng ${BRAND.warrantyYears} năm về độ bền cốt vật liệu, không cong vênh, không bong tách lớp màng film trong điều kiện sử dụng nội thất bình thường. Khách hàng được đổi trả 1-1 ngay lập tức nếu phát hiện lỗi từ quy trình sản xuất của nhà máy.`
   },
   {
     id: 8,
     topic: 'dai-ly',
     question: 'Làm thế nào để nhận bộ xâu mẫu (Sample Box) và đăng ký làm đại lý phân phối?',
-    answer: 'Bạn chỉ cần điền thông tin tại trang Biểu Mẫu hoặc liên hệ trực tiếp hotline 0915.189.389. Nhà máy sẽ gửi miễn phí tận nơi bộ Sample Box 160 mã màu kèm bảng báo giá chiết khấu dành riêng cho đại lý (lên tới 25%) và bảo hộ độc quyền khu vực.'
+    answer: `Bạn chỉ cần điền thông tin tại trang Biểu Mẫu hoặc liên hệ trực tiếp hotline ${BRAND.hotlineDisplay}. Nhà máy sẽ gửi miễn phí tận nơi bộ Sample Box 160 mã màu kèm bảng báo giá chiết khấu dành riêng cho đại lý (lên tới 25%) và bảo hộ độc quyền khu vực.`
   }
 ];
 
@@ -131,7 +132,7 @@ export default function FAQPage() {
             Giải Đáp Thắc Mắc Về Tấm Ốp Than Tre
           </h1>
           <p className="text-xs sm:text-sm text-eco-gray-200 leading-relaxed font-light">
-            Tổng hợp câu trả lời chi tiết từ đội ngũ kỹ sư và chuyên gia vật liệu Eco Bamboo về độ bền, tiêu chuẩn an toàn E0, kỹ thuật uốn cong và chính sách chiết khấu.
+            Tổng hợp câu trả lời chi tiết từ đội ngũ kỹ sư và chuyên gia vật liệu {BRAND.brandName} về độ bền, tiêu chuẩn an toàn E0, kỹ thuật uốn cong và chính sách chiết khấu.
           </p>
         </div>
       </div>
@@ -229,15 +230,15 @@ export default function FAQPage() {
             Bạn Vẫn Còn Câu Hỏi Chưa Được Giải Đáp?
           </h3>
           <p className="text-xs sm:text-sm text-bamboo-100 max-w-xl mx-auto font-light leading-relaxed">
-            Đừng ngần ngại liên hệ trực tiếp với chuyên gia kỹ thuật Eco Bamboo để được tư vấn bóc tách khối lượng và khảo sát công trình miễn phí.
+            Đừng ngần ngại liên hệ trực tiếp với chuyên gia kỹ thuật {BRAND.shortName} để được tư vấn bóc tách khối lượng và khảo sát công trình miễn phí.
           </p>
           <div className="pt-2 flex flex-wrap justify-center gap-4">
             <a
-              href="tel:0915189389"
+              href={`tel:${BRAND.hotline.replace(/\./g, '')}`}
               className="px-6 py-3 rounded-xl bg-white text-bamboo-900 font-extrabold text-xs uppercase tracking-wider shadow hover:scale-105 transition-all flex items-center"
             >
               <PhoneCallIcon className="w-4 h-4 mr-2 text-wood-600" />
-              Gọi Hotline: 0915.189.389
+              Gọi Hotline: {BRAND.hotlineDisplay}
             </a>
             <a
               href="/lien-he"
