@@ -26957,6 +26957,9 @@ function moHopNho(id,ten,ids){
   co.forEach(el=>doi(el,than));
   HOP_MUON.set(id,co);
   h.hidden=false; $(id+"Nen").hidden=false; }
+window.moHopNho = moHopNho;
+window.hopNho = hopNho;
+window.traHop = traHop;
 /* ⚠ D15: mở hộp xong thì DỰNG NGAY ảnh xem trước. Để khách phải bấm thêm một nút
    "xem trước" là đặt đúng cái họ cần nhìn sau một cú bấm nữa — mà lý do có D15 là vì
    họ đang phải bấm Lưu ảnh mới biết ảnh ra sao. */

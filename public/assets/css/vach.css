@@ -529,36 +529,47 @@ html.dt-on .gu button{ flex:1 1 40% }
    Khai lại tường minh cho HAI lớp này thay vì đặt `[hidden]{…!important}` toàn
    tệp — `!important` toàn cục là thứ lần sau có người phải đi gỡ. */
 .bg-nen[hidden],.bg-hop[hidden],.v3-nen[hidden],.v3-hop[hidden],.modal-hidden{ display:none !important; visibility:hidden !important; pointer-events:none !important; }
-.bg-nen{ position:fixed; inset:0; z-index:70; background:#0007 }
-.bg-hop{ position:fixed; z-index:71; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:min(680px,calc(100vw - 24px)); max-height:min(86svh,900px);
-  display:flex; flex-direction:column; background:var(--the);
-  border:1px solid var(--vien); border-radius:14px; overflow:hidden }
-.bg-hop-dau{ display:flex; align-items:center; justify-content:space-between; gap:10px;
-  padding:12px 14px; border-bottom:1px solid var(--vien); font-size:15px }
-.bg-x{ min-width:44px; min-height:44px; border:0; background:none; color:var(--muc);
-  font-size:18px; line-height:1 }
-.bg-hop-than{ overflow:auto; padding:12px 14px 16px }
-.bg-bang{ width:100%; border-collapse:collapse; font-size:13.5px; margin-bottom:10px }
-.bg-bang th,.bg-bang td{ padding:7px 8px; border-bottom:1px solid var(--vien); text-align:left }
-.bg-bang th:nth-child(2),.bg-bang td:nth-child(2),
-.bg-bang th:nth-child(3),.bg-bang td:nth-child(3),
-.bg-bang th:nth-child(4),.bg-bang td:nth-child(4){ text-align:right; white-space:nowrap;
-  font-variant-numeric:tabular-nums }
-.bg-bang tfoot th{ border-bottom:0; font-size:15px }
-.bg-rieng,.bg-tho,.bg-nhan{ font-size:13px; color:var(--muc2); margin:6px 0 }
-.bg-nhan{ padding:8px 10px; background:var(--nen2); border-radius:8px; color:var(--muc) }
-/* Khối "cần lưu ý khi thi công" (bước 4): chỗ nối tấm và mảng vân không liền.
-   Viền cảnh báo bên trái thay vì chữ đỏ: nó là điều phải biết, không phải lỗi. */
-.bg-noi{ font-size:13px; color:var(--muc); margin:8px 0 0; padding:8px 10px;
-  background:var(--nen2); border-left:3px solid var(--nhan); border-radius:0 8px 8px 0;
-  line-height:1.5 }
-.q-cta{ background:var(--nhan); color:#fff; border:0; font-weight:600 }
-@media (max-width:520px){
-  .bg-hop{ left:0; right:0; top:auto; bottom:0; transform:none; width:100%;
-    max-height:92svh; border-radius:14px 14px 0 0 }
-  .bg-bang{ font-size:12.5px }
-  .bg-bang th,.bg-bang td{ padding:6px 5px }
+.bg-nen{ position:fixed; inset:0; z-index:9998; background:rgba(15,23,42,.65); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px) }
+.bg-hop{ position:fixed; z-index:9999; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:min(720px,calc(100vw - 28px)); max-height:min(88vh,880px);
+  display:flex; flex-direction:column; background:#ffffff; color:#0f172a;
+  border:1px solid #e2e8f0; border-radius:20px; box-shadow:0 25px 50px -12px rgba(15,23,42,.25), 0 0 0 1px rgba(0,0,0,.05); overflow:hidden }
+.bg-hop-dau{ display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:16px 20px; border-bottom:1.5px solid #e2e8f0; background:#f8fafc; font-size:16px; font-weight:800; color:#0f172a }
+.bg-x{ width:32px; height:32px; min-width:32px; min-height:32px; display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid #e2e8f0; background:#ffffff; color:#64748b; border-radius:8px;
+  font-size:15px; font-weight:700; cursor:pointer; transition:all .15s ease; padding:0; line-height:1; margin-left:auto }
+.bg-x:hover{ background:#fee2e2; border-color:#fca5a5; color:#dc2626 }
+.bg-hop-than{ flex:1 1 auto; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; padding:20px; scrollbar-width:thin }
+.table-scroll{ width:100%; overflow-x:auto; border-radius:12px; border:1.5px solid #e2e8f0; margin-bottom:16px; background:#ffffff; box-shadow:0 1px 3px rgba(0,0,0,.04); -webkit-overflow-scrolling:touch }
+.bg-bang{ width:100%; border-collapse:collapse; border-spacing:0; font-size:13px; margin:0; background:#ffffff }
+.bg-bang thead{ background:#f1f5f9; border-bottom:1.5px solid #cbd5e1 }
+.bg-bang th{ padding:10px 14px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#475569; white-space:nowrap; border-bottom:1.5px solid #cbd5e1 }
+.bg-bang th:first-child{ text-align:left }
+.bg-bang th:nth-child(2),.bg-bang th:nth-child(3),.bg-bang th:nth-child(4){ text-align:right }
+.bg-bang tbody tr{ transition:background-color .15s ease }
+.bg-bang tbody tr:nth-child(even){ background-color:#f8fafc }
+.bg-bang tbody tr:hover{ background-color:#fef9ee }
+.bg-bang td{ padding:10px 14px; border-bottom:1px solid #f1f5f9; color:#1e293b; font-size:12.5px; line-height:1.4 }
+.bg-bang td:first-child{ font-weight:600; color:#0f172a; text-align:left }
+.bg-bang td:nth-child(2){ text-align:right; color:#334155; font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap }
+.bg-bang td:nth-child(3){ text-align:right; color:#64748b; font-variant-numeric:tabular-nums; white-space:nowrap }
+.bg-bang td:nth-child(4){ text-align:right; font-weight:700; color:#b88b1b; font-size:13.5px; font-variant-numeric:tabular-nums; white-space:nowrap }
+.bg-bang tfoot{ background:#fef9ee; border-top:2px solid #deaa26 }
+.bg-bang tfoot th{ padding:12px 14px; font-size:13.5px; font-weight:800; color:#92400e; border-bottom:none }
+.bg-bang tfoot th[colspan]{ text-align:left }
+.bg-bang tfoot th:last-child{ text-align:right; color:#b88b1b; font-size:16px; font-weight:900; font-variant-numeric:tabular-nums; white-space:nowrap }
+.bg-rieng{ background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:10px 14px; color:#1e40af; font-size:12.5px; line-height:1.45; margin:8px 0 }
+.bg-tho{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 14px; color:#475569; font-size:12.5px; line-height:1.45; margin:8px 0 }
+.bg-noi{ background:#fffbeb; border:1px solid #fde68a; border-left:4px solid #f59e0b; border-radius:0 10px 10px 0; padding:10px 14px; color:#92400e; font-size:12.5px; line-height:1.5; margin:10px 0 }
+.bg-nhan{ background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:10px 14px; color:#166534; font-size:12px; line-height:1.45; margin:8px 0 }
+.bg-thamkhao{ font-size:11.5px; color:#64748b; font-style:italic; margin:12px 0 0; padding-top:10px; border-top:1px dashed #cbd5e1; line-height:1.5 }
+.q-cta{ background:linear-gradient(135deg,#deaa26 0%,#b88b1b 100%); color:#fff; border:0; font-weight:700; border-radius:10px; box-shadow:0 4px 12px rgba(222,170,38,.35); cursor:pointer; transition:all .15s ease }
+.q-cta:hover{ filter:brightness(1.06); transform:translateY(-1px); box-shadow:0 6px 16px rgba(222,170,38,.45) }
+@media (max-width:640px){
+  .bg-hop{ left:0; right:0; top:auto; bottom:0; transform:none; width:100%; max-height:90svh; border-radius:20px 20px 0 0 }
+  .bg-hop-than{ padding:14px 12px 28px }
+  .bg-bang th,.bg-bang td{ padding:8px 6px; font-size:11.5px }
 }
 
 /* ⚠⚠ HAI NÚT CHỮ CHỈ DÀNH CHO DESKTOP. Lệnh Bổ sung 5 đặt lối vào ở HAI chỗ khác
@@ -1133,23 +1144,27 @@ html.dt-on .vt-chenh{ bottom:auto; top:84px; font-size:11.5px; padding:4px 9px }
 .v3-dau .q-nho:hover{ border-color:var(--nhan); color:var(--nhan) }
 .v3-dau #qLuu{ margin-left:auto }
 .v3-nen[hidden],.v3-hop[hidden]{ display:none !important; visibility:hidden !important; pointer-events:none !important; }
-.v3-nen{ position:fixed; inset:0; background:rgba(15,20,16,.5); z-index:60 }
-.v3-hop{ position:fixed; z-index:61; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:min(680px,calc(100vw - 32px)); max-height:min(80vh,760px); display:flex;
-  flex-direction:column; background:var(--the); border:1px solid var(--vien);
-  border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,.22); overflow:hidden }
-.v3-hop-dau{ display:flex; align-items:center; gap:10px; padding:14px 16px;
-  border-bottom:1px solid var(--vien) }
-.v3-hop-dau b{ font-size:1.02rem }
-.v3-hop-x{ margin-left:auto; width:34px; height:34px; border-radius:9px;
-  border:1px solid var(--vien); background:var(--the); cursor:pointer; font-size:1rem }
-.v3-hop-than{ padding:16px; overflow:auto }
+.v3-nen{ position:fixed; inset:0; background:rgba(15,23,42,.65); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); z-index:9998 }
+.v3-hop{ position:fixed; z-index:9999; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:min(720px,calc(100vw - 28px)); max-height:min(88vh,880px); display:flex;
+  flex-direction:column; background:#ffffff; color:#0f172a; border:1px solid #e2e8f0;
+  border-radius:20px; box-shadow:0 25px 50px -12px rgba(15,23,42,.25), 0 0 0 1px rgba(0,0,0,.05); overflow:hidden }
+.v3-hop-dau{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 20px;
+  border-bottom:1.5px solid #e2e8f0; background:#f8fafc }
+.v3-hop-dau b{ font-size:16px; font-weight:800; color:#0f172a }
+.v3-hop-x{ margin-left:auto; width:32px; height:32px; min-width:32px; min-height:32px; border-radius:8px;
+  border:1px solid #e2e8f0; background:#ffffff; color:#64748b; cursor:pointer; font-size:15px; font-weight:700;
+  display:inline-flex; align-items:center; justify-content:center; transition:all .15s ease }
+.v3-hop-x:hover{ background:#fee2e2; border-color:#fca5a5; color:#dc2626 }
+.v3-hop-than{ padding:20px; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; scrollbar-width:thin }
 /* Khối được dời vào hộp bỏ lề ngoài của chính nó — lề đó là lề của trang cũ. */
 .v3-hop-than>*{ margin-top:0 }
 .v3-hop-than>*+*{ margin-top:14px }
 @media (max-width:640px){
-  .v3-hop{ width:100vw; max-height:88vh; left:0; top:auto; bottom:0; transform:none;
-    border-radius:16px 16px 0 0 } }
+  .v3-hop{ width:100%; max-height:90svh; left:0; right:0; top:auto; bottom:0; transform:none;
+    border-radius:20px 20px 0 0; padding:0 }
+  .v3-hop-than{ padding:14px 12px 28px }
+}
 
 /* Nhãn mét trên đoạn LED (Bổ sung 16 ⑤) — nẹp đậm, ngoài nhạt, đúng như vạch trên 3D. */
 .v3-moc em{ position:absolute; transform:translate(-50%,-50%); font-style:normal;

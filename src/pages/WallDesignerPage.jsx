@@ -74,97 +74,125 @@ export default function WallDesignerPage() {
         });
       }
 
-      const qLuu = document.getElementById('qLuu');
-      if (qLuu && !qLuu._bound) {
-        qLuu._bound = true;
-        qLuu.addEventListener('click', () => {
-          setTimeout(() => showModalCleanly('v3Luu', 'v3LuuNen'), 30);
-        });
-      }
-
-      const qXuat = document.getElementById('qXuat');
-      if (qXuat && !qXuat._bound) {
-        qXuat._bound = true;
-        qXuat.addEventListener('click', () => {
-          setTimeout(() => {
-            showModalCleanly('v3Xuat', 'v3XuatNen');
-            if (window.VACH_GUI && typeof window.VACH_GUI.veXemTruoc === 'function') {
-              window.VACH_GUI.veXemTruoc();
-            }
-          }, 30);
-        });
-      }
-
-      const qBaoGia = document.getElementById('qBaoGia');
-      if (qBaoGia && !qBaoGia._bound) {
-        qBaoGia._bound = true;
-        qBaoGia.addEventListener('click', () => {
-          if (window.VACH_GUI && typeof window.VACH_GUI.moHop === 'function') {
-            window.VACH_GUI.moHop();
-          }
-          setTimeout(() => showModalCleanly('bgHop', 'bgNen'), 30);
-        });
-      }
+      // 3. Gắn sự kiện click mở modal tức thì không có độ trễ cho Topbar
+      ['qLuu', 'qXuat', 'qBaoGia'].forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn && !btn._instantBound) {
+          btn._instantBound = true;
+          btn.addEventListener('click', () => {
+            openModalInstant(btnId);
+          });
+        }
+      });
     };
 
-    // 4. Quản lý Modal toàn cầu - đóng/mở dứt điểm 100% (TODO: Gửi thợ, Xuất hồ sơ, Báo giá)
+    // 4. Quản lý Modal hiệu năng cao - mở/đóng tức thì (< 1ms), triệt tiêu hoàn toàn độ trễ
     const closeAnyModal = () => {
-      // Gọi các hàm đóng chính thức của thư viện vach
+      // Gọi API đóng chính thức để thư viện vach hoàn trả DOM node nếu có (traKhoiDo, traHop)
       try {
         if (window.VACH_GUI && typeof window.VACH_GUI.dongHop === 'function') {
           window.VACH_GUI.dongHop();
         }
-      } catch (err) {}
-
-      // Kích hoạt click vào tất cả các nút đóng chính thức nếu có trong DOM
-      ['bgDong', 'v3LuuX', 'v3XuatX', 'tsDong', 'v3Nen', 'bgNen', 'v3LuuNen', 'v3XuatNen'].forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) {
-          try { btn.click(); } catch (e) {}
+      } catch (_) {}
+      try {
+        if (typeof window.traHop === 'function') {
+          window.traHop('v3Luu');
+          window.traHop('v3Xuat');
         }
-      });
+      } catch (_) {}
 
-      // Ẩn triệt để tất cả các modal, dialog và backdrop cả bằng attribute hidden, class và inline style
-      const modalElements = document.querySelectorAll(
-        '.v3-hop, .bg-hop, .v3-nen, .bg-nen, .v3-tuy-hop, .v3-hop-sang, .v3-hop-xem, #v3Luu, #v3LuuNen, #v3Xuat, #v3XuatNen, #bgHop, #bgNen, #tsHop'
-      );
-      modalElements.forEach(el => {
+      // Ẩn tất cả các modal, dialog và backdrop ngay lập tức trong 0ms
+      const modalIds = ['bgHop', 'bgNen', 'v3Luu', 'v3LuuNen', 'v3Xuat', 'v3XuatNen', 'tsHop', 'hopXem'];
+      for (let i = 0; i < modalIds.length; i++) {
+        const el = document.getElementById(modalIds[i]);
+        if (el) {
+          el.hidden = true;
+          el.setAttribute('hidden', '');
+          el.classList.add('modal-hidden');
+          el.style.removeProperty('display');
+          el.style.removeProperty('visibility');
+          el.style.removeProperty('opacity');
+          el.style.removeProperty('pointer-events');
+        }
+      }
+
+      // Quét thêm lớp phủ modal phụ nếu có
+      const extra = document.querySelectorAll('.v3-hop:not([hidden]), .bg-hop:not([hidden]), .v3-nen:not([hidden]), .bg-nen:not([hidden])');
+      extra.forEach(el => {
         el.hidden = true;
         el.setAttribute('hidden', '');
         el.classList.add('modal-hidden');
-        el.style.setProperty('display', 'none', 'important');
-        el.style.setProperty('visibility', 'hidden', 'important');
-        el.style.setProperty('opacity', '0', 'important');
-        el.style.setProperty('pointer-events', 'none', 'important');
       });
     };
 
-    const showModalCleanly = (hopId, nenId) => {
-      const h = document.getElementById(hopId);
-      const n = nenId ? document.getElementById(nenId) : null;
-      if (h) {
-        h.hidden = false;
-        h.removeAttribute('hidden');
-        h.classList.remove('modal-hidden');
-        h.style.removeProperty('display');
-        h.style.removeProperty('visibility');
-        h.style.removeProperty('opacity');
-        h.style.removeProperty('pointer-events');
-      }
-      if (n) {
-        n.hidden = false;
-        n.removeAttribute('hidden');
-        n.classList.remove('modal-hidden');
-        n.style.removeProperty('display');
-        n.style.removeProperty('visibility');
-        n.style.removeProperty('opacity');
-        n.style.removeProperty('pointer-events');
+    const openModalInstant = (modalType) => {
+      // Đóng modal khác trước để đảm bảo sạch sẽ
+      closeAnyModal();
+
+      if (modalType === 'qLuu') {
+        if (typeof window.moHopNho === 'function') {
+          window.moHopNho('v3Luu', 'Gửi cho thợ', ['lvKhoi']);
+        }
+        const h = document.getElementById('v3Luu');
+        const n = document.getElementById('v3LuuNen');
+        if (h) {
+          h.hidden = false;
+          h.removeAttribute('hidden');
+          h.classList.remove('modal-hidden');
+        }
+        if (n) {
+          n.hidden = false;
+          n.removeAttribute('hidden');
+          n.classList.remove('modal-hidden');
+        }
+      } else if (modalType === 'qXuat') {
+        if (typeof window.moHopNho === 'function') {
+          window.moHopNho('v3Xuat', 'Xuất hồ sơ', ['guKhoi', 'khungAnh']);
+        }
+        const h = document.getElementById('v3Xuat');
+        const n = document.getElementById('v3XuatNen');
+        if (h) {
+          h.hidden = false;
+          h.removeAttribute('hidden');
+          h.classList.remove('modal-hidden');
+        }
+        if (n) {
+          n.hidden = false;
+          n.removeAttribute('hidden');
+          n.classList.remove('modal-hidden');
+        }
+        if (window.VACH_GUI && typeof window.VACH_GUI.veXemTruoc === 'function') {
+          window.VACH_GUI.veXemTruoc();
+        }
+      } else if (modalType === 'qBaoGia') {
+        if (window.VACH_GUI && typeof window.VACH_GUI.moHop === 'function') {
+          window.VACH_GUI.moHop();
+        }
+        const h = document.getElementById('bgHop');
+        const n = document.getElementById('bgNen');
+        if (h) {
+          h.hidden = false;
+          h.removeAttribute('hidden');
+          h.classList.remove('modal-hidden');
+        }
+        if (n) {
+          n.hidden = false;
+          n.removeAttribute('hidden');
+          n.classList.remove('modal-hidden');
+        }
       }
     };
 
-    // Bắt sự kiện click ở capture phase (true) để luôn xử lý trước bất kỳ stopPropagation nào
+    // Bắt sự kiện click ở capture phase (true) trên document để chặn đứng độ trễ
     const handleGlobalModalClose = (e) => {
-      // Kiểm tra nếu click trúng nút đóng (✕)
+      // 1. Kiểm tra click vào các nút mở modal (Gửi thợ, Xuất hồ sơ, Báo giá)
+      const triggerBtn = e.target.closest('#qLuu, #qXuat, #qBaoGia');
+      if (triggerBtn) {
+        openModalInstant(triggerBtn.id);
+        return;
+      }
+
+      // 2. Kiểm tra nếu click trúng nút đóng (✕)
       const isCloseBtn = e.target.closest(
         '.v3-hop-x, .bg-x, #bgDong, #v3LuuX, #v3XuatX, #tsDong, .ts-x, button[data-dong], button.dong, [aria-label="Đóng"]'
       );
@@ -175,12 +203,10 @@ export default function WallDesignerPage() {
         return;
       }
 
-      // Kiểm tra nếu click trúng lớp nền mờ bên ngoài (Backdrop)
-      const isBackdrop = e.target.classList.contains('v3-nen') || 
-                         e.target.classList.contains('bg-nen') || 
-                         e.target.id === 'v3LuuNen' || 
-                         e.target.id === 'v3XuatNen' || 
-                         e.target.id === 'bgNen';
+      // 3. Kiểm tra nếu click trúng lớp nền mờ bên ngoài (Backdrop)
+      const isBackdrop = e.target.matches('.v3-nen, .bg-nen, #v3LuuNen, #v3XuatNen, #bgNen') ||
+                         e.target.classList.contains('v3-nen') || 
+                         e.target.classList.contains('bg-nen');
       if (isBackdrop) {
         e.preventDefault();
         e.stopPropagation();
@@ -194,37 +220,6 @@ export default function WallDesignerPage() {
         closeAnyModal();
       }
     };
-
-    // Theo dõi DOM để tự động gắn sự kiện đóng khi modal được chèn vào body
-    const modalObserver = new MutationObserver(() => {
-      const closeButtons = document.querySelectorAll(
-        '.v3-hop-x, .bg-x, #bgDong, #v3LuuX, #v3XuatX, #tsDong, .ts-x, button[data-dong], [aria-label="Đóng"]'
-      );
-      closeButtons.forEach(btn => {
-        if (!btn._directBound) {
-          btn._directBound = true;
-          btn.addEventListener('click', (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            closeAnyModal();
-          }, true);
-        }
-      });
-
-      const backdrops = document.querySelectorAll('.v3-nen, .bg-nen, #v3LuuNen, #v3XuatNen, #bgNen');
-      backdrops.forEach(nen => {
-        if (!nen._directBound) {
-          nen._directBound = true;
-          nen.addEventListener('click', (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            closeAnyModal();
-          }, true);
-        }
-      });
-    });
-
-    modalObserver.observe(document.body, { childList: true, subtree: true });
 
     document.addEventListener('click', handleGlobalModalClose, true);
     document.addEventListener('keydown', handleGlobalKeyDown, true);
@@ -317,7 +312,6 @@ export default function WallDesignerPage() {
     document.addEventListener('submit', handleFormSubmit);
 
     return () => {
-      try { modalObserver.disconnect(); } catch (e) {}
       document.removeEventListener('submit', handleFormSubmit);
       document.removeEventListener('click', handleGlobalModalClose, true);
       document.removeEventListener('keydown', handleGlobalKeyDown, true);
@@ -942,6 +936,371 @@ export default function WallDesignerPage() {
                 max-width: none !important;
                 border-left: none !important;
                 border-top: 1.5px solid #e5e7eb !important;
+              }
+            }
+
+            /* ==========================================================================
+               ITEM 2: BẢNG BÁO GIÁ & MODAL DIALOGS - CĂN CHỈNH NỘI DUNG ĐỒNG BỘ CHUẨN WEBSITE
+               ========================================================================== */
+            
+            /* 1. NỀN MỜ BACKDROP CAO CẤP */
+            .bg-nen, .v3-nen, #bgNen, #v3LuuNen, #v3XuatNen {
+              position: fixed !important;
+              inset: 0 !important;
+              z-index: 9998 !important;
+              background: rgba(15, 23, 42, 0.65) !important;
+              backdrop-filter: blur(5px) !important;
+              -webkit-backdrop-filter: blur(5px) !important;
+            }
+
+            /* 2. KHUNG HỘP THOẠI MODAL (BÁO GIÁ, GỬI THỢ, XUẤT HỒ SƠ) */
+            .bg-hop, .v3-hop, #bgHop, #v3Luu, #v3Xuat {
+              position: fixed !important;
+              z-index: 9999 !important;
+              left: 50% !important;
+              top: 50% !important;
+              transform: translate(-50%, -50%) !important;
+              width: min(720px, calc(100vw - 28px)) !important;
+              max-height: min(88vh, 880px) !important;
+              display: flex !important;
+              flex-direction: column !important;
+              background: #ffffff !important;
+              color: #0f172a !important;
+              border: 1px solid #e2e8f0 !important;
+              border-radius: 20px !important;
+              box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+              overflow: hidden !important;
+              font-family: inherit !important;
+            }
+
+            /* 3. THANH TIÊU ĐỀ HEADER CỦA MODAL */
+            .bg-hop-dau, .v3-hop-dau {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: space-between !important;
+              gap: 12px !important;
+              padding: 16px 20px !important;
+              background: #f8fafc !important;
+              border-bottom: 1.5px solid #e2e8f0 !important;
+            }
+            .bg-hop-dau b, .v3-hop-dau b {
+              font-size: 16px !important;
+              font-weight: 800 !important;
+              color: #0f172a !important;
+              letter-spacing: -0.01em !important;
+            }
+
+            /* Nút đóng ✕ */
+            .bg-x, .v3-hop-x, #bgDong, #v3LuuX, #v3XuatX {
+              width: 32px !important;
+              height: 32px !important;
+              min-width: 32px !important;
+              min-height: 32px !important;
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              border: 1px solid #e2e8f0 !important;
+              background: #ffffff !important;
+              color: #64748b !important;
+              border-radius: 8px !important;
+              font-size: 15px !important;
+              font-weight: 700 !important;
+              cursor: pointer !important;
+              transition: all 0.15s ease !important;
+              padding: 0 !important;
+              line-height: 1 !important;
+              margin-left: auto !important;
+            }
+            .bg-x:hover, .v3-hop-x:hover, #bgDong:hover, #v3LuuX:hover, #v3XuatX:hover {
+              background: #fee2e2 !important;
+              border-color: #fca5a5 !important;
+              color: #dc2626 !important;
+            }
+
+            /* 4. PHẦN THÂN CUỘN MODAL */
+            .bg-hop-than, .v3-hop-than {
+              flex: 1 1 auto !important;
+              overflow-y: auto !important;
+              overscroll-behavior: contain !important;
+              -webkit-overflow-scrolling: touch !important;
+              padding: 20px !important;
+              scrollbar-width: thin !important;
+              scrollbar-color: #cbd5e1 transparent !important;
+            }
+
+            /* 5. KHUNG CUỘN BẢNG VÀ BẢNG BÁO GIÁ (.bg-bang) */
+            .table-scroll, #vachStudioMount .table-scroll {
+              width: 100% !important;
+              overflow-x: auto !important;
+              border-radius: 12px !important;
+              border: 1.5px solid #e2e8f0 !important;
+              margin-bottom: 16px !important;
+              background: #ffffff !important;
+              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+              -webkit-overflow-scrolling: touch !important;
+            }
+
+            .bg-bang, table.bg-bang {
+              width: 100% !important;
+              border-collapse: collapse !important;
+              border-spacing: 0 !important;
+              font-size: 13px !important;
+              margin: 0 !important;
+              background: #ffffff !important;
+            }
+
+            .bg-bang thead {
+              background: #f1f5f9 !important;
+              border-bottom: 1.5px solid #cbd5e1 !important;
+            }
+
+            .bg-bang th {
+              padding: 10px 14px !important;
+              font-size: 11px !important;
+              font-weight: 700 !important;
+              text-transform: uppercase !important;
+              letter-spacing: 0.05em !important;
+              color: #475569 !important;
+              white-space: nowrap !important;
+              border-bottom: 1.5px solid #cbd5e1 !important;
+            }
+
+            .bg-bang th:first-child {
+              text-align: left !important;
+            }
+            .bg-bang th:nth-child(2),
+            .bg-bang th:nth-child(3),
+            .bg-bang th:nth-child(4) {
+              text-align: right !important;
+            }
+
+            .bg-bang tbody tr {
+              transition: background-color 0.15s ease !important;
+            }
+            .bg-bang tbody tr:nth-child(even) {
+              background-color: #f8fafc !important;
+            }
+            .bg-bang tbody tr:hover {
+              background-color: #fef9ee !important;
+            }
+
+            .bg-bang td {
+              padding: 10px 14px !important;
+              border-bottom: 1px solid #f1f5f9 !important;
+              color: #1e293b !important;
+              font-size: 12.5px !important;
+              line-height: 1.4 !important;
+            }
+
+            .bg-bang td:first-child {
+              font-weight: 600 !important;
+              color: #0f172a !important;
+              text-align: left !important;
+            }
+            .bg-bang td:nth-child(2) {
+              text-align: right !important;
+              color: #334155 !important;
+              font-weight: 600 !important;
+              font-variant-numeric: tabular-nums !important;
+              white-space: nowrap !important;
+            }
+            .bg-bang td:nth-child(3) {
+              text-align: right !important;
+              color: #64748b !important;
+              font-variant-numeric: tabular-nums !important;
+              white-space: nowrap !important;
+            }
+            .bg-bang td:nth-child(4) {
+              text-align: right !important;
+              font-weight: 700 !important;
+              color: #b88b1b !important;
+              font-size: 13.5px !important;
+              font-variant-numeric: tabular-nums !important;
+              white-space: nowrap !important;
+            }
+
+            /* Chân bảng tổng tạm tính */
+            .bg-bang tfoot {
+              background: #fef9ee !important;
+              border-top: 2px solid #deaa26 !important;
+            }
+            .bg-bang tfoot th {
+              padding: 12px 14px !important;
+              font-size: 13.5px !important;
+              font-weight: 800 !important;
+              color: #92400e !important;
+              border-bottom: none !important;
+            }
+            .bg-bang tfoot th[colspan] {
+              text-align: left !important;
+            }
+            .bg-bang tfoot th:last-child {
+              text-align: right !important;
+              color: #b88b1b !important;
+              font-size: 16px !important;
+              font-weight: 900 !important;
+              font-variant-numeric: tabular-nums !important;
+              white-space: nowrap !important;
+            }
+
+            /* 6. CÁC HỘP THÔNG BÁO / GHI CHÚ CHÍNH SÁCH DỰ TOÁN */
+            .bg-rieng {
+              background: #eff6ff !important;
+              border: 1px solid #bfdbfe !important;
+              border-radius: 10px !important;
+              padding: 10px 14px !important;
+              color: #1e40af !important;
+              font-size: 12.5px !important;
+              line-height: 1.45 !important;
+              margin: 8px 0 !important;
+            }
+            .bg-tho {
+              background: #f8fafc !important;
+              border: 1px solid #e2e8f0 !important;
+              border-radius: 10px !important;
+              padding: 10px 14px !important;
+              color: #475569 !important;
+              font-size: 12.5px !important;
+              line-height: 1.45 !important;
+              margin: 8px 0 !important;
+            }
+            .bg-noi {
+              background: #fffbeb !important;
+              border: 1px solid #fde68a !important;
+              border-left: 4px solid #f59e0b !important;
+              border-radius: 0 10px 10px 0 !important;
+              padding: 10px 14px !important;
+              color: #92400e !important;
+              font-size: 12.5px !important;
+              line-height: 1.5 !important;
+              margin: 10px 0 !important;
+            }
+            .bg-nhan {
+              background: #f0fdf4 !important;
+              border: 1px solid #bbf7d0 !important;
+              border-radius: 10px !important;
+              padding: 10px 14px !important;
+              color: #166534 !important;
+              font-size: 12px !important;
+              line-height: 1.45 !important;
+              margin: 8px 0 !important;
+            }
+            .bg-thamkhao {
+              font-size: 11.5px !important;
+              color: #64748b !important;
+              font-style: italic !important;
+              margin: 12px 0 0 !important;
+              padding-top: 10px !important;
+              border-top: 1px dashed #cbd5e1 !important;
+              line-height: 1.5 !important;
+            }
+
+            /* 7. KHỐI THẺ THỐNG KÊ VẬT TƯ (.do-grid) TRONG MODAL */
+            .bg-hop .do {
+              background: #f8fafc !important;
+              border: 1.5px solid #e2e8f0 !important;
+              border-radius: 14px !important;
+              padding: 14px 16px !important;
+              margin: 14px 0 !important;
+              box-shadow: none !important;
+            }
+            .bg-hop .do h2 {
+              font-size: 14px !important;
+              font-weight: 700 !important;
+              color: #0f172a !important;
+              margin: 0 0 10px 0 !important;
+            }
+            .bg-hop .do-grid {
+              display: grid !important;
+              grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+              gap: 10px !important;
+            }
+            .bg-hop .do-grid > div {
+              background: #ffffff !important;
+              border: 1px solid #e2e8f0 !important;
+              border-radius: 10px !important;
+              padding: 10px 12px !important;
+              text-align: center !important;
+              box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+            }
+            .bg-hop .do-grid b {
+              font-size: 18px !important;
+              font-weight: 800 !important;
+              color: #b88b1b !important;
+              font-family: inherit !important;
+            }
+            .bg-hop .do-grid small {
+              font-size: 11px !important;
+              color: #64748b !important;
+              margin-top: 3px !important;
+            }
+
+            /* 8. FORM THÔNG TIN BÁO GIÁ (#bgKhoi) */
+            #bgKhoi, .bg-form {
+              background: #f8fafc !important;
+              border: 1.5px solid #e2e8f0 !important;
+              border-radius: 14px !important;
+              padding: 16px 18px !important;
+              margin-top: 16px !important;
+            }
+            #bgKhoi input, #bgKhoi select, #bgKhoi textarea,
+            .bg-form input, .bg-form select, .bg-form textarea {
+              width: 100% !important;
+              background: #ffffff !important;
+              border: 1.5px solid #cbd5e1 !important;
+              border-radius: 8px !important;
+              padding: 8px 12px !important;
+              font-size: 13px !important;
+              color: #0f172a !important;
+              box-sizing: border-box !important;
+              transition: all 0.15s ease !important;
+            }
+            #bgKhoi input:focus, #bgKhoi select:focus, #bgKhoi textarea:focus,
+            .bg-form input:focus, .bg-form select:focus, .bg-form textarea:focus {
+              border-color: #deaa26 !important;
+              outline: 3px solid rgba(222, 170, 38, 0.2) !important;
+            }
+            #bgKhoi button[type="submit"], .q-cta {
+              display: inline-flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              width: 100% !important;
+              height: 44px !important;
+              background: linear-gradient(135deg, #deaa26 0%, #b88b1b 100%) !important;
+              color: #ffffff !important;
+              font-size: 14px !important;
+              font-weight: 700 !important;
+              border: none !important;
+              border-radius: 10px !important;
+              cursor: pointer !important;
+              box-shadow: 0 4px 12px rgba(222, 170, 38, 0.35) !important;
+              transition: all 0.15s ease !important;
+              margin-top: 10px !important;
+            }
+            #bgKhoi button[type="submit"]:hover, .q-cta:hover {
+              filter: brightness(1.06) !important;
+              transform: translateY(-1px) !important;
+              box-shadow: 0 6px 16px rgba(222, 170, 38, 0.45) !important;
+            }
+
+            /* Responsive cho Modal trên màn hình di động */
+            @media (max-width: 640px) {
+              .bg-hop, .v3-hop, #bgHop, #v3Luu, #v3Xuat {
+                left: 0 !important;
+                right: 0 !important;
+                top: auto !important;
+                bottom: 0 !important;
+                transform: none !important;
+                width: 100% !important;
+                max-height: 90svh !important;
+                border-radius: 20px 20px 0 0 !important;
+              }
+              .bg-hop-than, .v3-hop-than {
+                padding: 14px 12px 28px !important;
+              }
+              .bg-bang th, .bg-bang td {
+                padding: 8px 6px !important;
+                font-size: 11.5px !important;
               }
             }
 
