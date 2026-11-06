@@ -528,7 +528,7 @@ html.dt-on .gu button{ flex:1 1 40% }
    lệnh ⑧ bảo phải giấu. Đo được: `bgKhoiHien: true` trước khi bấm.
    Khai lại tường minh cho HAI lớp này thay vì đặt `[hidden]{…!important}` toàn
    tệp — `!important` toàn cục là thứ lần sau có người phải đi gỡ. */
-.bg-nen[hidden],.bg-hop[hidden]{ display:none }
+.bg-nen[hidden],.bg-hop[hidden],.v3-nen[hidden],.v3-hop[hidden],.modal-hidden{ display:none !important; visibility:hidden !important; pointer-events:none !important; }
 .bg-nen{ position:fixed; inset:0; z-index:70; background:#0007 }
 .bg-hop{ position:fixed; z-index:71; left:50%; top:50%; transform:translate(-50%,-50%);
   width:min(680px,calc(100vw - 24px)); max-height:min(86svh,900px);
@@ -1132,6 +1132,7 @@ html.dt-on .vt-chenh{ bottom:auto; top:84px; font-size:11.5px; padding:4px 9px }
   cursor:pointer; margin-left:8px; white-space:nowrap }
 .v3-dau .q-nho:hover{ border-color:var(--nhan); color:var(--nhan) }
 .v3-dau #qLuu{ margin-left:auto }
+.v3-nen[hidden],.v3-hop[hidden]{ display:none !important; visibility:hidden !important; pointer-events:none !important; }
 .v3-nen{ position:fixed; inset:0; background:rgba(15,20,16,.5); z-index:60 }
 .v3-hop{ position:fixed; z-index:61; left:50%; top:50%; transform:translate(-50%,-50%);
   width:min(680px,calc(100vw - 32px)); max-height:min(80vh,760px); display:flex;

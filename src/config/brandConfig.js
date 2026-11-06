@@ -13,7 +13,7 @@
  */
 
 // ==========================================
-// 1. CÁC HÀM XỬ LÝ NGÀY THÁNG ĐỘNG (NO HARDCODING)
+// 1. CÁC HÀM XỬ LÝ NGÀY THÁNG ĐỘNG (NO HARDCODING) & PATHS
 // ==========================================
 export const getCurrentYear = () => new Date().getFullYear();
 
@@ -40,6 +40,33 @@ export const getYearSpan = (startYear = 2022) => {
 export const getCatalogTitle = () => `Tải Catalog ${getCurrentYear()} PDF`;
 export const getPriceTableTitle = () => `Bảng Giá Niêm Yết Nhà Máy Tháng ${new Date().getMonth() + 1}/${getCurrentYear()}`;
 export const getTechDocTitle = () => `Tài Liệu Kỹ Thuật ${getCurrentYear()}`;
+
+/**
+ * Tự động phân giải đường dẫn media/asset tương thích đa môi trường
+ * (Localhost, Nginx Container, GitHub Pages User Site & Project Site)
+ */
+export const resolveBrandAssetUrl = (path) => {
+  if (!path || typeof path !== 'string') return path;
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:') || path.startsWith('blob:')) {
+    return path;
+  }
+  let base = '/';
+  if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
+    const parts = window.location.pathname.split('/').filter(Boolean);
+    const known = [
+      'tu-thiet-ke-vach', 'san-pham-chinh', 'thu-vien-ma-mau', 'bang-gia',
+      'tinh-chi-phi', 'cong-trinh', 'tai-catalogue', 'huong-dan-thi-cong',
+      'tin-tuc', 'hoi-dap', 'gioi-thieu', 'chung-chi-chung-nhan',
+      'chinh-sach-bao-hanh', 'lien-he', 'nhan-mau', 'san-pham',
+      'chinh-sach-bao-mat', 'dieu-khoan', 'nha-phan-phoi', 'tam-than-tre-17mm'
+    ];
+    if (parts.length > 0 && !known.includes(parts[0])) {
+      base = '/' + parts[0] + '/';
+    }
+  }
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  return base === '/' ? ('/' + cleanPath) : (base + cleanPath);
+};
 
 // ==========================================
 // 2. CẤU HÌNH CÁC DOANH NGHIỆP TRONG NGÀNH
@@ -111,11 +138,15 @@ export const BRANDS = {
       checkBg: 'bg-amber-50 text-amber-800 border-amber-200',
       buttonPrimary: 'bg-amber-500 hover:bg-amber-600 text-stone-900',
     },
-    logo: {
-      url: '/images/nhuaamc/logo-amc-1024x878.jpg',
-      squareUrl: '/images/nhuaamc/logo-amc2.jpg',
-      badgeText: 'AMC',
-      alt: 'Nhựa AMC - Nhà máy sản xuất gỗ nhựa chất lượng hàng đầu Việt Nam'
+    get logo() {
+      return {
+        url: resolveBrandAssetUrl('/images/nhuaamc/logo-amc-1024x878.jpg'),
+        squareUrl: resolveBrandAssetUrl('/favicon.png'),
+        hdSquareUrl: resolveBrandAssetUrl('/images/nhuaamc/logo-amc2.jpg'),
+        faviconUrl: resolveBrandAssetUrl('/favicon.png'),
+        badgeText: 'AMC',
+        alt: 'Nhựa AMC - Nhà máy sản xuất gỗ nhựa chất lượng hàng đầu Việt Nam'
+      };
     },
     colors: {
       primary: '#deaa26',        // Vàng kim Gold đặc trưng AMC
@@ -249,11 +280,15 @@ export const BRANDS = {
       checkBg: 'bg-amber-50 text-amber-800 border-amber-200',
       buttonPrimary: 'bg-amber-500 hover:bg-amber-600 text-stone-900',
     },
-    logo: {
-      url: '/images/ecobamboo/logo.png',
-      squareUrl: '/images/ecobamboo/logo.png',
-      badgeText: 'EB',
-      alt: 'Eco Bamboo - Tấm ốp than tre sinh thái'
+    get logo() {
+      return {
+        url: resolveBrandAssetUrl('/images/ecobamboo/logo.png'),
+        squareUrl: resolveBrandAssetUrl('/favicon.png'),
+        hdSquareUrl: resolveBrandAssetUrl('/images/ecobamboo/logo.png'),
+        faviconUrl: resolveBrandAssetUrl('/favicon.png'),
+        badgeText: 'EB',
+        alt: 'Eco Bamboo - Tấm ốp than tre sinh thái'
+      };
     },
     colors: {
       primary: '#15803d',

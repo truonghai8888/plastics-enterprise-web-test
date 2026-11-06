@@ -198,6 +198,16 @@ export default function Header() {
                 alt={BRAND.logo.alt}
                 className="h-11 md:h-13 lg:h-14 w-auto object-contain rounded-lg transition-transform group-hover:scale-105"
                 onError={(e) => {
+                  if (!e.currentTarget.dataset.retried) {
+                    e.currentTarget.dataset.retried = '1';
+                    e.currentTarget.src = './images/nhuaamc/logo-amc-1024x878.jpg';
+                    return;
+                  }
+                  if (e.currentTarget.dataset.retried === '1') {
+                    e.currentTarget.dataset.retried = '2';
+                    e.currentTarget.src = './favicon.png';
+                    return;
+                  }
                   e.currentTarget.style.display = 'none';
                   if (e.currentTarget.nextElementSibling) {
                     e.currentTarget.nextElementSibling.style.display = 'flex';

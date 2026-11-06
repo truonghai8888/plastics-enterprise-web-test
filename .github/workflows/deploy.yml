@@ -38,18 +38,17 @@ jobs:
 
       - name: Ensure 404.html and route entrypoints exist in dist
         run: |
-          if [ -f "dist/index.html" ]; then
+          if [ -f "public/404.html" ]; then
+            cp public/404.html dist/404.html
+          elif [ -f "dist/index.html" ] && [ ! -f "dist/404.html" ]; then
             cp dist/index.html dist/404.html
-            mkdir -p dist/tu-thiet-ke-vach
-            cp dist/index.html dist/tu-thiet-ke-vach/index.html
-            mkdir -p dist/san-pham-chinh
-            cp dist/index.html dist/san-pham-chinh/index.html
-            mkdir -p dist/thu-vien-ma-mau
-            cp dist/index.html dist/thu-vien-ma-mau/index.html
-            mkdir -p dist/bang-gia
-            cp dist/index.html dist/bang-gia/index.html
-            mkdir -p dist/gioi-thieu
-            cp dist/index.html dist/gioi-thieu/index.html
+          fi
+
+          if [ -f "dist/index.html" ]; then
+            for r in tu-thiet-ke-vach san-pham-chinh thu-vien-ma-mau bang-gia gioi-thieu; do
+              mkdir -p "dist/$r"
+              sed -e 's|\./assets/|\.\./assets/|g' -e 's|\./favicon|\.\./favicon|g' -e 's|\./apple-touch-icon|\.\./apple-touch-icon|g' dist/index.html > "dist/$r/index.html"
+            done
           fi
 
       - name: Upload artifact

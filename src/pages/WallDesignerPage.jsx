@@ -78,10 +78,7 @@ export default function WallDesignerPage() {
       if (qLuu && !qLuu._bound) {
         qLuu._bound = true;
         qLuu.addEventListener('click', () => {
-          const hop = document.getElementById('v3Luu');
-          const nen = document.getElementById('v3LuuNen');
-          if (hop) hop.hidden = false;
-          if (nen) nen.hidden = false;
+          setTimeout(() => showModalCleanly('v3Luu', 'v3LuuNen'), 30);
         });
       }
 
@@ -89,13 +86,12 @@ export default function WallDesignerPage() {
       if (qXuat && !qXuat._bound) {
         qXuat._bound = true;
         qXuat.addEventListener('click', () => {
-          const hop = document.getElementById('v3Xuat');
-          const nen = document.getElementById('v3XuatNen');
-          if (hop) hop.hidden = false;
-          if (nen) nen.hidden = false;
-          if (window.VACH_GUI && typeof window.VACH_GUI.veXemTruoc === 'function') {
-            window.VACH_GUI.veXemTruoc();
-          }
+          setTimeout(() => {
+            showModalCleanly('v3Xuat', 'v3XuatNen');
+            if (window.VACH_GUI && typeof window.VACH_GUI.veXemTruoc === 'function') {
+              window.VACH_GUI.veXemTruoc();
+            }
+          }, 30);
         });
       }
 
@@ -105,60 +101,133 @@ export default function WallDesignerPage() {
         qBaoGia.addEventListener('click', () => {
           if (window.VACH_GUI && typeof window.VACH_GUI.moHop === 'function') {
             window.VACH_GUI.moHop();
-          } else {
-            const hop = document.getElementById('bgHop') || document.getElementById('v3Hop');
-            const nen = document.getElementById('bgNen') || document.getElementById('v3Nen');
-            if (hop) hop.hidden = false;
-            if (nen) nen.hidden = false;
           }
+          setTimeout(() => showModalCleanly('bgHop', 'bgNen'), 30);
         });
       }
     };
 
-    // 4. Trình đóng Modal toàn cầu - đảm bảo luôn đóng được (TODO.md Item 3)
-    const handleGlobalModalClose = (e) => {
-      const closeTrigger = e.target.closest(
-        '.v3-hop-x, .bg-x, #bgDong, #v3LuuX, #v3XuatX, .bg-nen, .v3-nen, button[data-dong], .ts-x'
-      );
-      if (closeTrigger) {
-        const bgHop = document.getElementById('bgHop');
-        const bgNen = document.getElementById('bgNen');
-        if (bgHop) bgHop.hidden = true;
-        if (bgNen) bgNen.hidden = true;
-
-        const v3Luu = document.getElementById('v3Luu');
-        const v3LuuNen = document.getElementById('v3LuuNen');
-        if (v3Luu) v3Luu.hidden = true;
-        if (v3LuuNen) v3LuuNen.hidden = true;
-
-        const v3Xuat = document.getElementById('v3Xuat');
-        const v3XuatNen = document.getElementById('v3XuatNen');
-        if (v3Xuat) v3Xuat.hidden = true;
-        if (v3XuatNen) v3XuatNen.hidden = true;
-
-        document.querySelectorAll('.v3-hop:not([hidden]), .bg-hop:not([hidden]), .v3-nen:not([hidden]), .bg-nen:not([hidden])').forEach(el => {
-          el.hidden = true;
-        });
-
+    // 4. Quản lý Modal toàn cầu - đóng/mở dứt điểm 100% (TODO: Gửi thợ, Xuất hồ sơ, Báo giá)
+    const closeAnyModal = () => {
+      // Gọi các hàm đóng chính thức của thư viện vach
+      try {
         if (window.VACH_GUI && typeof window.VACH_GUI.dongHop === 'function') {
           window.VACH_GUI.dongHop();
         }
+      } catch (err) {}
+
+      // Kích hoạt click vào tất cả các nút đóng chính thức nếu có trong DOM
+      ['bgDong', 'v3LuuX', 'v3XuatX', 'tsDong', 'v3Nen', 'bgNen', 'v3LuuNen', 'v3XuatNen'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          try { btn.click(); } catch (e) {}
+        }
+      });
+
+      // Ẩn triệt để tất cả các modal, dialog và backdrop cả bằng attribute hidden, class và inline style
+      const modalElements = document.querySelectorAll(
+        '.v3-hop, .bg-hop, .v3-nen, .bg-nen, .v3-tuy-hop, .v3-hop-sang, .v3-hop-xem, #v3Luu, #v3LuuNen, #v3Xuat, #v3XuatNen, #bgHop, #bgNen, #tsHop'
+      );
+      modalElements.forEach(el => {
+        el.hidden = true;
+        el.setAttribute('hidden', '');
+        el.classList.add('modal-hidden');
+        el.style.setProperty('display', 'none', 'important');
+        el.style.setProperty('visibility', 'hidden', 'important');
+        el.style.setProperty('opacity', '0', 'important');
+        el.style.setProperty('pointer-events', 'none', 'important');
+      });
+    };
+
+    const showModalCleanly = (hopId, nenId) => {
+      const h = document.getElementById(hopId);
+      const n = nenId ? document.getElementById(nenId) : null;
+      if (h) {
+        h.hidden = false;
+        h.removeAttribute('hidden');
+        h.classList.remove('modal-hidden');
+        h.style.removeProperty('display');
+        h.style.removeProperty('visibility');
+        h.style.removeProperty('opacity');
+        h.style.removeProperty('pointer-events');
+      }
+      if (n) {
+        n.hidden = false;
+        n.removeAttribute('hidden');
+        n.classList.remove('modal-hidden');
+        n.style.removeProperty('display');
+        n.style.removeProperty('visibility');
+        n.style.removeProperty('opacity');
+        n.style.removeProperty('pointer-events');
+      }
+    };
+
+    // Bắt sự kiện click ở capture phase (true) để luôn xử lý trước bất kỳ stopPropagation nào
+    const handleGlobalModalClose = (e) => {
+      // Kiểm tra nếu click trúng nút đóng (✕)
+      const isCloseBtn = e.target.closest(
+        '.v3-hop-x, .bg-x, #bgDong, #v3LuuX, #v3XuatX, #tsDong, .ts-x, button[data-dong], button.dong, [aria-label="Đóng"]'
+      );
+      if (isCloseBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeAnyModal();
+        return;
+      }
+
+      // Kiểm tra nếu click trúng lớp nền mờ bên ngoài (Backdrop)
+      const isBackdrop = e.target.classList.contains('v3-nen') || 
+                         e.target.classList.contains('bg-nen') || 
+                         e.target.id === 'v3LuuNen' || 
+                         e.target.id === 'v3XuatNen' || 
+                         e.target.id === 'bgNen';
+      if (isBackdrop) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeAnyModal();
+        return;
       }
     };
 
     const handleGlobalKeyDown = (e) => {
       if (e.key === 'Escape') {
-        document.querySelectorAll('.v3-hop:not([hidden]), .bg-hop:not([hidden]), .v3-nen:not([hidden]), .bg-nen:not([hidden])').forEach(el => {
-          el.hidden = true;
-        });
-        if (window.VACH_GUI && typeof window.VACH_GUI.dongHop === 'function') {
-          window.VACH_GUI.dongHop();
-        }
+        closeAnyModal();
       }
     };
 
-    document.addEventListener('click', handleGlobalModalClose);
-    document.addEventListener('keydown', handleGlobalKeyDown);
+    // Theo dõi DOM để tự động gắn sự kiện đóng khi modal được chèn vào body
+    const modalObserver = new MutationObserver(() => {
+      const closeButtons = document.querySelectorAll(
+        '.v3-hop-x, .bg-x, #bgDong, #v3LuuX, #v3XuatX, #tsDong, .ts-x, button[data-dong], [aria-label="Đóng"]'
+      );
+      closeButtons.forEach(btn => {
+        if (!btn._directBound) {
+          btn._directBound = true;
+          btn.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            closeAnyModal();
+          }, true);
+        }
+      });
+
+      const backdrops = document.querySelectorAll('.v3-nen, .bg-nen, #v3LuuNen, #v3XuatNen, #bgNen');
+      backdrops.forEach(nen => {
+        if (!nen._directBound) {
+          nen._directBound = true;
+          nen.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            closeAnyModal();
+          }, true);
+        }
+      });
+    });
+
+    modalObserver.observe(document.body, { childList: true, subtree: true });
+
+    document.addEventListener('click', handleGlobalModalClose, true);
+    document.addEventListener('keydown', handleGlobalKeyDown, true);
 
     // 5. Nạp tuần tự vach-data.js rồi đến vach.js
     const loadScript = (src, id) => {
@@ -248,9 +317,14 @@ export default function WallDesignerPage() {
     document.addEventListener('submit', handleFormSubmit);
 
     return () => {
+      try { modalObserver.disconnect(); } catch (e) {}
       document.removeEventListener('submit', handleFormSubmit);
-      document.removeEventListener('click', handleGlobalModalClose);
-      document.removeEventListener('keydown', handleGlobalKeyDown);
+      document.removeEventListener('click', handleGlobalModalClose, true);
+      document.removeEventListener('keydown', handleGlobalKeyDown, true);
+      ['v3Luu', 'v3LuuNen', 'v3Xuat', 'v3XuatNen', 'bgHop', 'bgNen'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+      });
       const link = document.getElementById('vach-css-link');
       if (link) link.remove();
       document.documentElement.classList.remove('v3-on', 'v3-mau', 'v3-bay-on');
@@ -869,6 +943,21 @@ export default function WallDesignerPage() {
                 border-left: none !important;
                 border-top: 1.5px solid #e5e7eb !important;
               }
+            }
+
+            /* MODAL / DIALOG DISPLAY RULES: ĐẢM BẢO MODAL ĐÓNG ĐƯỢC HOÀN TOÀN KHI hidden HOẶC .modal-hidden */
+            .v3-hop[hidden], .v3-nen[hidden], .bg-hop[hidden], .bg-nen[hidden],
+            #v3Luu[hidden], #v3LuuNen[hidden],
+            #v3Xuat[hidden], #v3XuatNen[hidden],
+            #bgHop[hidden], #bgNen[hidden],
+            [id="v3Luu"][hidden], [id="v3LuuNen"][hidden],
+            [id="v3Xuat"][hidden], [id="v3XuatNen"][hidden],
+            [id="bgHop"][hidden], [id="bgNen"][hidden],
+            .modal-hidden {
+              display: none !important;
+              visibility: hidden !important;
+              opacity: 0 !important;
+              pointer-events: none !important;
             }
 
           `}} />

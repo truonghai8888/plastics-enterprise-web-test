@@ -153,23 +153,13 @@ export default function App() {
 
       // Check against URLs
       const cleanPath = normalizePath(href);
-      const currentClean = normalizePath(window.location.pathname);
-
-      // YÊU CẦU 2 (TODO.md): Điều hướng đến hoặc rời khỏi /tu-thiet-ke-vach cần load trang trực tiếp
-      // để toàn bộ canvas WebGL, 3D Studio engine, assets và ảnh được khởi tạo mới hoàn toàn sạch sẽ
-      if (cleanPath === '/tu-thiet-ke-vach' || (currentClean === '/tu-thiet-ke-vach' && cleanPath !== '/tu-thiet-ke-vach')) {
-        const base = getBasePath();
-        const dest = base === '/' ? href : (base + href.replace(/^\//, ''));
-        window.location.assign(dest);
-        return;
-      }
 
       const matched = PLASTICS_ENTERPRISE_URLS.find(u => normalizePath(u.url) === cleanPath);
       if (matched) {
         e.preventDefault();
         navigateTo(matched);
       } else {
-        // YÊU CẦU 3: Bất kỳ URL nào không hoạt động -> Tự động trả về trang chủ!
+        // YÊU CẦU: Bất kỳ URL nào không hoạt động -> Tự động trả về trang chủ!
         e.preventDefault();
         navigateTo(PLASTICS_ENTERPRISE_URLS[0]);
       }
@@ -184,15 +174,6 @@ export default function App() {
   }, []);
 
   const navigateTo = (targetRoute, pushState = true) => {
-    const cleanTarget = normalizePath(targetRoute.url);
-    const cleanCurrent = normalizePath(window.location.pathname);
-    if (cleanTarget === '/tu-thiet-ke-vach' && cleanCurrent !== '/tu-thiet-ke-vach') {
-      const base = getBasePath();
-      const dest = base === '/' ? targetRoute.url : (base + targetRoute.url.replace(/^\//, ''));
-      window.location.assign(dest);
-      return;
-    }
-
     setCurrentRoute(targetRoute);
 
     if (targetRoute.productCode) {

@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import MainLayout from '../components/layout/MainLayout';
-import BRAND, { getYearSpan } from '../config/brandConfig';
+import BRAND, { getYearSpan, resolveBrandAssetUrl } from '../config/brandConfig';
 import { getBasePath } from '../App';
 
 export default function AboutPage() {
   const base = getBasePath();
-  const videoSrc = base === '/' ? '/videos/amc-factory-intro.mp4' : (base + 'videos/amc-factory-intro.mp4');
-  const posterSrc = base === '/' ? '/images/nhuaamc/473728285_122162385302280460_5265071145712265862_n-1.jpg' : (base + 'images/nhuaamc/473728285_122162385302280460_5265071145712265862_n-1.jpg');
+  const initialVideoSrc = resolveBrandAssetUrl('/videos/amc-factory-intro.mp4');
+  const [currentVideoSrc, setCurrentVideoSrc] = useState(initialVideoSrc);
+  const posterSrc = resolveBrandAssetUrl('/images/nhuaamc/473728285_122162385302280460_5265071145712265862_n-1.jpg');
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.load();
+    }
+  }, [currentVideoSrc]);
   return (
     <MainLayout>
       {/* 1. HEADER BANNER */}
@@ -66,20 +74,40 @@ export default function AboutPage() {
           <div className="lg:col-span-6 space-y-3">
             <div className="rounded-3xl overflow-hidden border border-eco-gray-300 shadow-2xl bg-black relative">
               <video
+                ref={videoRef}
+                src={currentVideoSrc}
                 controls
+                preload="metadata"
+                playsInline
                 className="w-full aspect-video object-cover"
                 poster={posterSrc}
+                onError={() => {
+                  // Dự phòng: Thử đường dẫn tương đối nếu đường dẫn tuyệt đối chưa nạp được
+                  if (!currentVideoSrc.startsWith('./')) {
+                    setCurrentVideoSrc('./videos/amc-factory-intro.mp4');
+                  }
+                }}
               >
-                <source src={videoSrc} type="video/mp4" />
+                <source src={currentVideoSrc} type="video/mp4" />
                 Trình duyệt của bạn không hỗ trợ phát video HTML5.
               </video>
             </div>
-            <div className="p-3 bg-white rounded-2xl border border-eco-gray-200 text-xs text-eco-gray-600 flex items-center justify-between">
+            <div className="p-3 bg-white rounded-2xl border border-eco-gray-200 text-xs text-eco-gray-600 flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center space-x-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
                 <span className="font-bold text-eco-gray-900">Video giới thiệu nhà máy và dây chuyền sản xuất {BRAND.shortName}</span>
               </div>
-              <span className="text-[11px] text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded">{BRAND.factory?.shortAddress || 'CCN Kim Bình'}</span>
+              <div className="flex items-center gap-3">
+                <a
+                  href={currentVideoSrc}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] text-amber-700 hover:text-amber-800 font-semibold underline"
+                >
+                  Mở tab mới
+                </a>
+                <span className="text-[11px] text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded">{BRAND.factory?.shortAddress || 'CCN Kim Bình'}</span>
+              </div>
             </div>
           </div>
         </div>
