@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/vach-studio.html", "destination": "/vach-studio.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

@@ -11,6 +11,68 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+    <!-- SPA GitHub Pages Redirect Handler (Xử lý khi reload hoặc truy cập trực tiếp URL con) -->
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&');
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location));
+    </script>
+
+    <!-- Tự động tương thích đường dẫn hình ảnh/assets khi chạy trên GitHub Pages subpath -->
+    <script type="text/javascript">
+      (function() {
+        if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
+          var parts = window.location.pathname.split('/').filter(Boolean);
+          if (parts.length > 0) {
+            var repoBase = '/' + parts[0];
+            var fixUrl = function(u) {
+              if (typeof u === 'string') {
+                if ((u.startsWith('/images/') || u.startsWith('/assets/')) && !u.startsWith(repoBase + '/')) {
+                  return repoBase + u;
+                }
+              }
+              return u;
+            };
+
+            var origSrcDesc = Object.getOwnPropertyDescriptor(Image.prototype, 'src');
+            if (origSrcDesc && origSrcDesc.set) {
+              Object.defineProperty(Image.prototype, 'src', {
+                set: function(val) { origSrcDesc.set.call(this, fixUrl(val)); },
+                get: origSrcDesc.get
+              });
+            }
+
+            var origFetch = window.fetch;
+            if (origFetch) {
+              window.fetch = function(input, init) {
+                if (typeof input === 'string') input = fixUrl(input);
+                return origFetch.call(this, input, init);
+              };
+            }
+
+            window.addEventListener('error', function(e) {
+              var el = e.target;
+              if (el && el.tagName === 'IMG' && el.src) {
+                try {
+                  var urlObj = new URL(el.src);
+                  if ((urlObj.pathname.startsWith('/images/') || urlObj.pathname.startsWith('/assets/')) && !urlObj.pathname.startsWith(repoBase + '/')) {
+                    el.src = repoBase + urlObj.pathname + urlObj.search;
+                  }
+                } catch(err) {}
+              }
+            }, true);
+          }
+        }
+      })();
+    </script>
   </head>
   <body class="bg-eco-gray-50 text-eco-gray-900 antialiased">
     <div id="root"></div>

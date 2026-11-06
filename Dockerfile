@@ -1,4 +1,4 @@
-# Multi-stage Dockerfile cho website EcoBamboo (React + Vite + Tailwind)
+# Multi-stage Dockerfile cho website Plastics Enterprise (React + Vite + Tailwind)
 
 # ---------------------------------------------------
 # Stage 1: Build mã nguồn React

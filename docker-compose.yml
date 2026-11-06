@@ -1,9 +1,10 @@
 services:
-  ecobamboo-web:
+  plastics-enterprise-web:
+    image: plastics-enterprise-web
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: ecobamboo-web
+    container_name: plastics-enterprise-web
     restart: unless-stopped
     ports:
       - "3000:80"

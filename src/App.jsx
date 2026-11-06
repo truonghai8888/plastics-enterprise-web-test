@@ -22,11 +22,27 @@ import TermsPage from './pages/TermsPage';
 import { PRODUCTS } from './data/products';
 import BRAND, { getCurrentYear } from './config/brandConfig';
 
+// Hỗ trợ tự động phát hiện basePath khi deploy trên GitHub Pages (dạng https://user.github.io/repo-name/)
+export const getBasePath = () => {
+  if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
+    const parts = window.location.pathname.split('/').filter(Boolean);
+    if (parts.length > 0) {
+      return '/' + parts[0] + '/';
+    }
+  }
+  return '/';
+};
+
 // 38 URLs từ file ecobamboo.md
 export const normalizePath = (p) => {
   if (!p) return '/';
   const clean = p.split('?')[0].split('#')[0];
-  return clean.length > 1 && clean.endsWith('/') ? clean.slice(0, -1) : clean;
+  const base = getBasePath();
+  let path = clean;
+  if (base !== '/' && path.startsWith(base)) {
+    path = '/' + path.slice(base.length);
+  }
+  return path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
 };
 
 export const ECOBAMBOO_URLS = [
@@ -78,7 +94,8 @@ export default function App() {
     if (matched) return matched;
     // URL không tồn tại / không hoạt động -> Tự động chuyển hướng về trang chủ
     if (cleanPath !== '/' && typeof window !== 'undefined' && window.history) {
-      window.history.replaceState({}, '', '/');
+      const base = getBasePath();
+      window.history.replaceState({}, '', base);
     }
     return ECOBAMBOO_URLS[0];
   });
@@ -98,7 +115,8 @@ export default function App() {
       const matched = ECOBAMBOO_URLS.find(u => normalizePath(u.url) === cleanPath);
       // Nếu URL popstate không hoạt động -> chuyển về trang chủ
       if (!matched && cleanPath !== '/' && window.history) {
-        window.history.replaceState({}, '', '/');
+        const base = getBasePath();
+        window.history.replaceState({}, '', base);
       }
       navigateTo(matched || ECOBAMBOO_URLS[0], false);
     };
@@ -123,6 +141,17 @@ export default function App() {
 
       // Check against URLs
       const cleanPath = normalizePath(href);
+      const currentClean = normalizePath(window.location.pathname);
+
+      // YÊU CẦU 2 (TODO.md): Điều hướng đến hoặc rời khỏi /tu-thiet-ke-vach cần load trang trực tiếp
+      // để toàn bộ canvas WebGL, 3D Studio engine, assets và ảnh được khởi tạo mới hoàn toàn sạch sẽ
+      if (cleanPath === '/tu-thiet-ke-vach' || (currentClean === '/tu-thiet-ke-vach' && cleanPath !== '/tu-thiet-ke-vach')) {
+        const base = getBasePath();
+        const dest = base === '/' ? href : (base + href.replace(/^\//, ''));
+        window.location.assign(dest);
+        return;
+      }
+
       const matched = ECOBAMBOO_URLS.find(u => normalizePath(u.url) === cleanPath);
       if (matched) {
         e.preventDefault();
@@ -143,6 +172,15 @@ export default function App() {
   }, []);
 
   const navigateTo = (targetRoute, pushState = true) => {
+    const cleanTarget = normalizePath(targetRoute.url);
+    const cleanCurrent = normalizePath(window.location.pathname);
+    if (cleanTarget === '/tu-thiet-ke-vach' && cleanCurrent !== '/tu-thiet-ke-vach') {
+      const base = getBasePath();
+      const dest = base === '/' ? targetRoute.url : (base + targetRoute.url.replace(/^\//, ''));
+      window.location.assign(dest);
+      return;
+    }
+
     setCurrentRoute(targetRoute);
 
     if (targetRoute.productCode) {
@@ -155,7 +193,9 @@ export default function App() {
     }
 
     if (pushState && window.history && targetRoute.url) {
-      window.history.pushState({}, '', targetRoute.url);
+      const base = getBasePath();
+      const finalUrl = base === '/' ? targetRoute.url : (base + (targetRoute.url === '/' ? '' : targetRoute.url.replace(/^\//, '')));
+      window.history.pushState({}, '', finalUrl);
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });

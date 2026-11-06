@@ -5,7 +5,7 @@ filename = f'result_{now}.md'
 
 report = f"""# BÁO CÁO KẾT QUẢ XỬ LÝ TOÀN BỘ YÊU CẦU TRONG TODO.MD
 **Thời gian hoàn thành:** {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-**Môi trường:** Docker container `ecobamboo-web` chạy cổng `http://localhost:3000`
+**Môi trường:** Docker container `plastics-enterprise-web` chạy cổng `http://localhost:3000`
 
 ---
 

@@ -21,6 +21,40 @@
 <meta property="og:image:alt" content="Tự thiết kế vách tivi, vách sofa, đầu giường">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://nhuaamc.vn/assets/img/og/tu-thiet-ke-vach.jpg?v=b3af49fd">
+<script>
+  (function() {
+    if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
+      var parts = window.location.pathname.split('/').filter(Boolean);
+      if (parts.length > 0) {
+        var repoBase = '/' + parts[0];
+        var fixUrl = function(u) {
+          if (typeof u === 'string') {
+            if ((u.startsWith('/assets/') || u.startsWith('/images/')) && !u.startsWith(repoBase + '/')) {
+              return repoBase + u;
+            }
+          }
+          return u;
+        };
+
+        var origSrcDesc = Object.getOwnPropertyDescriptor(Image.prototype, 'src');
+        if (origSrcDesc && origSrcDesc.set) {
+          Object.defineProperty(Image.prototype, 'src', {
+            set: function(val) { origSrcDesc.set.call(this, fixUrl(val)); },
+            get: origSrcDesc.get
+          });
+        }
+
+        var origFetch = window.fetch;
+        if (origFetch) {
+          window.fetch = function(input, init) {
+            if (typeof input === 'string') input = fixUrl(input);
+            return origFetch.call(this, input, init);
+          };
+        }
+      }
+    }
+  })();
+</script>
 <link rel="icon" href="/assets/img/favicon-32.png?v=6c8f63d8" sizes="32x32" type="image/png">
 <link rel="icon" href="/assets/img/favicon.png?v=6c8f63d8" sizes="512x512" type="image/png">
 <link rel="apple-touch-icon" href="/assets/img/icon-180.png?v=6c8f63d8">
