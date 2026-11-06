@@ -39,17 +39,17 @@
 @font-face{font-family:'Be Vietnam Pro';font-style:normal;font-weight:600;font-display:swap;
   src:url(/assets/fonts/bvp-600-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 /* ===========================================================
-   Eco Bamboo — Design System
-   Brand: #24700B (xanh) · #CC8D00 (vàng)
+   Nhựa AMC — Design System
+   Brand: #deaa26 (xanh) · #CC8D00 (vàng)
    =========================================================== */
 
 :root{
   /* Brand */
-  --green-900:#0F3505;
-  --green-800:#1A5208;
-  --green-700:#24700B;   /* primary */
-  --green-600:#2E8A0E;
-  --green-500:#3DA818;
+  --green-900:#1e1c19;
+  --green-800:#2e2b27;
+  --green-700:#deaa26;   /* primary */
+  --green-600:#b88b1b;
+  --green-500:#e6b83b;
   --green-100:#DFEFD6;
   --green-050:#F1F8EC;
 
@@ -71,7 +71,7 @@
   --paper:#FFFFFF;
   --sand:#F7F5F0;
 
-  --ok:#24700B;
+  --ok:#deaa26;
   --warn:#B45309;
 
   /* Type */
@@ -90,7 +90,7 @@
   --shadow-1:0 1px 2px rgba(19,23,20,.06),0 2px 8px rgba(19,23,20,.05);
   --shadow-2:0 4px 12px rgba(19,23,20,.07),0 14px 36px rgba(19,23,20,.09);
   --shadow-3:0 10px 24px rgba(19,23,20,.10),0 30px 70px rgba(19,23,20,.14);
-  --ring:0 0 0 3px rgba(36,112,11,.28);
+  --ring:0 0 0 3px rgba(222,170,38,.28);
   --wrap:1240px;
   --gut:clamp(1rem,.55rem + 2vw,2.25rem);
   --sec:clamp(3.4rem,2.2rem + 4vw,6.5rem);
@@ -173,7 +173,7 @@ ul{margin:0 0 1.05em;padding-left:1.15em}
 .btn svg{width:1.05em;height:1.05em;flex:none}
 .btn-gold{--bg:var(--gold-600);--bd:var(--gold-600);--fg:#231A00}
 .btn-gold:hover{--bg:#E29E0B;--bd:#E29E0B}
-.btn-ghost{--bg:transparent;--fg:var(--green-700);--bd:rgba(36,112,11,.35)}
+.btn-ghost{--bg:transparent;--fg:var(--green-700);--bd:rgba(222,170,38,.35)}
 .btn-ghost:hover{--bg:var(--green-050);--bd:var(--green-700)}
 .btn-light{--bg:#fff;--fg:var(--green-800);--bd:#fff}
 .btn-outline-light{--bg:transparent;--fg:#fff;--bd:rgba(255,255,255,.45)}
@@ -184,7 +184,7 @@ ul{margin:0 0 1.05em;padding-left:1.15em}
 
 .link-more{
   display:inline-flex;align-items:center;gap:.45rem;font-weight:650;color:var(--green-700);
-  border-bottom:1.5px solid rgba(36,112,11,.28);padding-bottom:2px;transition:.2s;
+  border-bottom:1.5px solid rgba(222,170,38,.28);padding-bottom:2px;transition:.2s;
 }
 .link-more:hover{border-color:var(--green-700);gap:.7rem}
 .bg-green .link-more,.bg-ink .link-more{color:var(--gold-600);border-color:rgba(204,141,0,.4)}
@@ -406,7 +406,7 @@ table.spec a:hover{color:var(--green-800)}
 .chip-new[aria-pressed="true"]{background:var(--gold-600);border-color:var(--gold-600);color:#231A00}
 .chip-hot[aria-pressed="true"]{background:var(--green-700);border-color:var(--green-700);color:#fff}
 .sw-hot{
-  position:absolute;top:8px;left:8px;z-index:2;background:rgba(36,112,11,.95);color:#fff;
+  position:absolute;top:8px;left:8px;z-index:2;background:rgba(222,170,38,.95);color:#fff;
   font-size:.68rem;font-weight:700;letter-spacing:.03em;padding:.25rem .6rem;border-radius:999px;
 }
 
@@ -526,7 +526,7 @@ table.spec a:hover{color:var(--green-800)}
 .faq summary::after{content:"+";font-size:1.35rem;color:var(--green-700);font-weight:400;line-height:1;flex:none;transition:transform .2s}
 .faq details[open] summary::after{transform:rotate(45deg)}
 .faq .ans{padding:0 3rem 1.3rem .4rem;color:var(--ink-600);max-width:74ch}
-.faq .ans a{color:var(--green-700);font-weight:600;border-bottom:1px solid rgba(36,112,11,.28)}
+.faq .ans a{color:var(--green-700);font-weight:600;border-bottom:1px solid rgba(222,170,38,.28)}
 .faq .ans a:hover{border-color:var(--green-700)}
 .faq .ans p:last-child{margin-bottom:0}
 
@@ -562,12 +562,12 @@ table.spec a:hover{color:var(--green-800)}
 #toTop{
   /* nút lên đầu trang: nằm góc phải. Để giữa màn hình thì nó che mất chữ ở đáy trang. */
   position:fixed;right:clamp(14px,2vw,28px);bottom:24px;z-index:65;width:46px;height:46px;
-  border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(36,112,11,.55);
+  border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(222,170,38,.55);
   backdrop-filter:blur(8px) saturate(1.3);color:#fff;display:none;align-items:center;justify-content:center;
   cursor:pointer;opacity:0;transition:opacity .25s,background .25s;
 }
 #toTop.show{display:flex;opacity:.7}
-#toTop:hover{opacity:1;background:rgba(36,112,11,.95)}
+#toTop:hover{opacity:1;background:rgba(222,170,38,.95)}
 
 /* ---------- Utilities ---------- */
 .stack-sm>*+*{margin-top:.6rem}
@@ -747,7 +747,7 @@ svg.ico{width:22px;height:22px;flex:none}
 .tc-del:hover{border-color:#D46A6A;color:#B84A4A}
 .tc-rowout{grid-column:1/-1;font-size:.84rem;color:var(--green-700);font-weight:650;min-height:1em}
 .tc-hint{font-size:.84rem;color:var(--ink-500);margin:.9rem 0 0}
-.tc-hint a{color:var(--green-700);font-weight:600;border-bottom:1px solid rgba(36,112,11,.3)}
+.tc-hint a{color:var(--green-700);font-weight:600;border-bottom:1px solid rgba(222,170,38,.3)}
 .tc-empty{font-size:.9rem;color:var(--ink-500);background:var(--ink-100);border-radius:var(--r);padding:1rem 1.1rem;margin:0}
 .tc-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem}
 .tc-opts .fld{margin-bottom:0}
@@ -920,7 +920,7 @@ body.no-scroll{overflow:hidden}
 .article th,.article td{padding:.75rem .95rem;border-bottom:1px solid var(--ink-100);text-align:left;vertical-align:top}
 .article thead th,.article tr:first-child td strong{background:var(--green-050);color:var(--green-800)}
 .article tr:last-child td{border-bottom:0}
-.article a{color:var(--green-700);font-weight:600;border-bottom:1px solid rgba(36,112,11,.28)}
+.article a{color:var(--green-700);font-weight:600;border-bottom:1px solid rgba(222,170,38,.28)}
 .article a:hover{border-color:var(--green-700)}
 .article blockquote{border-left:3px solid var(--gold-600);padding:.2rem 0 .2rem 1.1rem;margin:1.5rem 0;color:var(--ink-600);font-style:italic}
 .article>*:first-child{margin-top:0}
@@ -1261,7 +1261,7 @@ body.lb-on{overflow:hidden}
 @media (max-width:480px){.sw-6{grid-template-columns:repeat(2,1fr)}}
 
 /* Dấu nhãn hiệu cạnh logo ở chân trang.
-   Dùng ® vì nhãn hiệu Eco Bamboo ĐÃ được cấp Giấy chứng nhận đăng ký (anh Andrew
+   Dùng ® vì nhãn hiệu Nhựa AMC ĐÃ được cấp Giấy chứng nhận đăng ký (anh Andrew
    xác nhận 23/08/2026). Ký tự nằm ở footer() trong chrome.py, đúng một chỗ. */
 /* Neo theo TÂM của ô logo rồi nâng lên, không neo theo mép trên: mép trên là mép
    khung SVG, không phải mép chữ — logo có khoảng đệm bao nhiêu thì dấu ® trôi lên

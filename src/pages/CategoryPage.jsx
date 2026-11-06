@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import MainLayout from '../components/layout/MainLayout';
+import BRAND from '../config/brandConfig';
 import { PRODUCTS, CATEGORY_FILTERS, SURFACE_FILTERS, THICKNESS_FILTERS } from '../data/products';
 
 // ==========================================
@@ -127,33 +128,39 @@ export default function CategoryPage({ onSelectProduct, initialCategory = 'all' 
   return (
     <MainLayout>
       {/* 1. BREADCRUMB & HEADER BANNER */}
-      <div className="bg-white border-b border-eco-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <nav aria-label="Breadcrumb" className="flex items-center space-x-2 text-xs text-eco-gray-500 mb-3">
-            <a href="/" className="hover:text-bamboo-700 transition-colors">Trang chủ</a>
+      <div className="bg-gradient-to-b from-bamboo-950 via-bamboo-900 to-bamboo-950 text-white py-12 sm:py-14 border-b border-bamboo-800 relative overflow-hidden">
+        {/* Glow accent */}
+        <div className="absolute right-10 top-0 w-96 h-96 bg-bamboo-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <nav aria-label="Breadcrumb" className="flex items-center space-x-2 text-xs text-eco-gray-300 mb-4">
+            <a href="/" className="hover:text-amber-400 transition-colors">Trang chủ</a>
             <ChevronRightIcon className="w-3.5 h-3.5 text-eco-gray-400" />
-            <a href="/san-pham-chinh" className="hover:text-bamboo-700 transition-colors">Sản phẩm chính</a>
+            <a href="/san-pham-chinh" className="hover:text-amber-400 transition-colors">Sản phẩm chính</a>
             <ChevronRightIcon className="w-3.5 h-3.5 text-eco-gray-400" />
-            <span className="text-bamboo-800 font-bold">
+            <span className="text-amber-300 font-bold">
               {CATEGORY_FILTERS.find(c => c.id === selectedCategory)?.name || 'Tất cả sản phẩm'}
             </span>
           </nav>
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-black text-eco-gray-900 tracking-tight">
+            <div className="space-y-2">
+              <span className="inline-block text-xs font-bold text-amber-400 uppercase tracking-widest bg-amber-950/60 px-3 py-1 rounded-full border border-amber-600/30">
+                Sản Phẩm Chính Hãng {BRAND.brandName}
+              </span>
+              <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
                 {CATEGORY_FILTERS.find(c => c.id === selectedCategory)?.name || `Danh Mục Sản Phẩm Chính ${BRAND.brandName}`}
               </h1>
-              <p className="mt-1 text-xs sm:text-sm text-eco-gray-500 max-w-2xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-eco-gray-200 max-w-2xl leading-relaxed font-light">
                 Các mã màu chính hãng từ dòng vân gỗ EB66006, đơn sắc White EB68038, Glossy Grey EB68032G đến vân đá Calacatta EB89019G chuẩn E0 Châu Âu.
               </p>
             </div>
 
             <button
               onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
-              className="lg:hidden inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-bamboo-50 text-bamboo-800 border border-bamboo-200 text-xs font-bold"
+              className="lg:hidden inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-bamboo-800/80 hover:bg-bamboo-700 text-amber-300 border border-bamboo-600/50 text-xs font-bold transition-all shadow-sm"
             >
-              <FilterIcon className="mr-2 w-4 h-4 text-bamboo-600" />
+              <FilterIcon className="mr-2 w-4 h-4 text-amber-400" />
               Bộ lọc phân loại ({filteredProducts.length})
             </button>
           </div>
@@ -195,12 +202,12 @@ export default function CategoryPage({ onSelectProduct, initialCategory = 'all' 
                       onClick={() => setSelectedCategory(cat.id)}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                         selectedCategory === cat.id
-                          ? 'bg-bamboo-100/80 text-bamboo-900 font-bold'
+                          ? 'bg-amber-50 text-amber-900 border-l-2 border-amber-500 font-bold'
                           : 'text-eco-gray-600 hover:bg-eco-gray-50'
                       }`}
                     >
                       <span className="flex items-center">
-                        <span className={`w-2 h-2 rounded-full mr-2.5 ${selectedCategory === cat.id ? 'bg-bamboo-600' : 'bg-eco-gray-300'}`} />
+                        <span className={`w-2 h-2 rounded-full mr-2.5 ${selectedCategory === cat.id ? 'bg-amber-500' : 'bg-eco-gray-300'}`} />
                         {cat.name}
                       </span>
                       <span className="text-[10px] text-eco-gray-400">({cat.count})</span>
@@ -221,12 +228,12 @@ export default function CategoryPage({ onSelectProduct, initialCategory = 'all' 
                       onClick={() => setSelectedSurface(s.id)}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-colors ${
                         selectedSurface === s.id
-                          ? 'bg-wood-100 text-wood-900 font-bold'
+                          ? 'bg-amber-50 text-amber-900 font-bold'
                           : 'text-eco-gray-600 hover:bg-eco-gray-50'
                       }`}
                     >
                       <span>{s.name}</span>
-                      {selectedSurface === s.id && <CheckIcon className="w-4 h-4 text-wood-700" />}
+                      {selectedSurface === s.id && <CheckIcon className="w-4 h-4 text-amber-600" />}
                     </button>
                   ))}
                 </div>
@@ -244,12 +251,12 @@ export default function CategoryPage({ onSelectProduct, initialCategory = 'all' 
                       onClick={() => setSelectedThickness(selectedThickness === th.id ? '' : th.id)}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-colors ${
                         selectedThickness === th.id
-                          ? 'bg-bamboo-100 text-bamboo-900 font-bold'
+                          ? 'bg-amber-50 text-amber-900 font-bold'
                           : 'text-eco-gray-600 hover:bg-eco-gray-50'
                       }`}
                     >
                       <span>{th.name}</span>
-                      {selectedThickness === th.id && <CheckIcon className="w-4 h-4 text-bamboo-700" />}
+                      {selectedThickness === th.id && <CheckIcon className="w-4 h-4 text-amber-600" />}
                     </button>
                   ))}
                 </div>
@@ -353,7 +360,7 @@ export default function CategoryPage({ onSelectProduct, initialCategory = 'all' 
                       <div className="p-4 space-y-2">
                         <div className="flex items-center justify-between text-xs">
                           <span className="font-mono font-bold text-bamboo-700">Mã: {prod.code}</span>
-                          <span className="text-emerald-700 font-bold text-[11px]">{prod.priceFormatted}</span>
+                          <span className="text-amber-700 font-bold text-[11px]">{prod.priceFormatted}</span>
                         </div>
 
                         <h3 className="text-sm font-bold text-eco-gray-900 group-hover:text-bamboo-800 transition-colors line-clamp-2 leading-snug">

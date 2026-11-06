@@ -221,7 +221,7 @@ export default function CostCalculator() {
       <div className="bg-gradient-to-b from-bamboo-950 via-bamboo-900 to-bamboo-950 text-white py-12 border-b border-bamboo-800 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-bamboo-800/80 border border-bamboo-600/40 text-bamboo-300 text-xs font-bold uppercase tracking-wider">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-950/60 border border-amber-600/30 text-amber-400 text-xs font-bold uppercase tracking-wider">
               <CalculatorIcon className="w-3.5 h-3.5 text-amber-400" />
               <span>Công Cụ Bóc Tách Khối Lượng Tự Động</span>
             </div>
@@ -717,14 +717,14 @@ export default function CostCalculator() {
               <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
                   onClick={handleSendZalo}
-                  className="w-full py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center"
+                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-bamboo hover:bg-bamboo-700 text-white font-extrabold text-xs uppercase tracking-wider shadow-soft hover:shadow-hover transition-all flex items-center justify-center"
                 >
                   Gửi Dự Toán Qua Zalo Báo Giá
                 </button>
 
                 <button
                   onClick={handleExportPDF}
-                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-bamboo hover:bg-bamboo-700 text-white font-extrabold text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center"
+                  className="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-bamboo-50 text-bamboo-900 border border-bamboo-300 font-extrabold text-xs uppercase tracking-wider shadow-sm transition-all flex items-center justify-center"
                 >
                   <DownloadIcon className="w-4 h-4 mr-1.5" />
                   Xuất File Bảng Dự Toán (PDF)

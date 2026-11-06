@@ -24,13 +24,13 @@
   src:url(/assets/fonts/bvp-400.ttf) format('truetype')}
 @font-face{font-family:'EB Ve';font-style:normal;font-weight:700;font-display:block;
   src:url(/assets/fonts/bvp-700.ttf) format('truetype')}
-:root{--nen:#eef1ee;--the:#fff;--muc:#15201b;--muc2:#41514a;--muc3:#767c78;--nhan:#1c6b4a;--nhan-nh:#e3efe8;--sai:#ac3a2b;--sai-nh:#fbeceb;--vang:#8a6a1e;--vang-nh:#f7efd9;--vien:#d4dad5;--vien2:#e8ebe8;--chon:#1c6b4a;--bong:0 1px 2px rgba(21,32,27,.06),0 10px 28px -14px rgba(21,32,27,.18)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--nen:#101514;--the:#181e1b;--muc:#e8eeea;--muc2:#a9b5af;--muc3:#7d8b85;--nhan:#5cc294;--nhan-nh:#163024;--sai:#f08b7c;--sai-nh:#331c19;--vang:#d9b45e;--vang-nh:#3a3016;--vien:#2b3430;--vien2:#222a26;--chon:#5cc294;--bong:0 1px 2px rgba(0,0,0,.45),0 12px 32px -16px rgba(0,0,0,.8)}}
-:root[data-theme="dark"]{--nen:#101514;--the:#181e1b;--muc:#e8eeea;--muc2:#a9b5af;--muc3:#7d8b85;--nhan:#5cc294;--nhan-nh:#163024;--sai:#f08b7c;--sai-nh:#331c19;--vang:#d9b45e;--vang-nh:#3a3016;--vien:#2b3430;--vien2:#222a26;--chon:#5cc294;--bong:0 1px 2px rgba(0,0,0,.45),0 12px 32px -16px rgba(0,0,0,.8)}
+:root{--nen:#eef1ee;--the:#fff;--muc:#15201b;--muc2:#41514a;--muc3:#767c78;--nhan:#deaa26;--nhan-nh:rgba(222,170,38,0.15);--sai:#ac3a2b;--sai-nh:#fbeceb;--vang:#8a6a1e;--vang-nh:#f7efd9;--vien:#d4dad5;--vien2:#e8ebe8;--chon:#deaa26;--bong:0 1px 2px rgba(21,32,27,.06),0 10px 28px -14px rgba(21,32,27,.18)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--nen:#101514;--the:#181e1b;--muc:#e8eeea;--muc2:#a9b5af;--muc3:#7d8b85;--nhan:#deaa26;--nhan-nh:rgba(222,170,38,0.15);--sai:#f08b7c;--sai-nh:#331c19;--vang:#d9b45e;--vang-nh:#3a3016;--vien:#2b3430;--vien2:#222a26;--chon:#deaa26;--bong:0 1px 2px rgba(0,0,0,.45),0 12px 32px -16px rgba(0,0,0,.8)}}
+:root[data-theme="dark"]{--nen:#101514;--the:#181e1b;--muc:#e8eeea;--muc2:#a9b5af;--muc3:#7d8b85;--nhan:#deaa26;--nhan-nh:rgba(222,170,38,0.15);--sai:#f08b7c;--sai-nh:#331c19;--vang:#d9b45e;--vang-nh:#3a3016;--vien:#2b3430;--vien2:#222a26;--chon:#deaa26;--bong:0 1px 2px rgba(0,0,0,.45),0 12px 32px -16px rgba(0,0,0,.8)}
 *{box-sizing:border-box}
-body{background:var(--nen);color:var(--muc);font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:14px;line-height:1.55;padding-block:0 40px;padding-left:16px;padding-right:16px}
+#vachStudioMount{background:var(--nen);color:var(--muc);font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:14px;line-height:1.55;padding-block:0 40px;padding-left:16px;padding-right:16px}
 .bao{max-width:1300px;margin:0 auto}
-h1{font-size:clamp(22px,3.4vw,30px);line-height:1.15;letter-spacing:-.02em;margin:0 0 4px;font-weight:700}
+.v3 h1, .vach-h1{font-size:clamp(22px,3.4vw,30px);line-height:1.15;letter-spacing:-.02em;margin:0 0 4px;font-weight:700}
 .eb{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--nhan);font-weight:600;margin:26px 0 12px}
 .eb::before{content:"";width:20px;height:2px;background:var(--nhan)}
 .dat{color:var(--muc2);margin:0 0 16px;max-width:76ch}
@@ -39,16 +39,15 @@ code,.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nu
 @media(max-width:960px){.app{grid-template-columns:1fr}.san{order:-1}.bang-dk{position:static;max-height:none}}
 .bang-dk{background:var(--the);border:1px solid var(--vien);border-radius:14px;padding:14px;box-shadow:var(--bong);position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto}
 .san{background:var(--the);border:1px solid var(--vien);border-radius:14px;box-shadow:var(--bong);overflow:hidden;position:relative}
-canvas{display:block;width:100%;height:auto;touch-action:none}
+#vachStudioMount canvas{display:block;width:100%;height:auto;touch-action:none}
 .hud{position:absolute;left:12px;bottom:10px;right:12px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:#fff;background:rgba(0,0,0,.58);padding:4px 9px;border-radius:5px;pointer-events:none}
 .kyhieu{position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#fff;background:rgba(16,22,20,.82);padding:6px 11px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .12s}
-.kyhieu.hien{opacity:1}.kyhieu .bt{font-family:"IBM Plex Mono",monospace;font-size:15px;line-height:1}.kyhieu.ve{background:rgba(28,107,74,.92)}.kyhieu.sau{background:rgba(120,80,20,.9)}
+.kyhieu.hien{opacity:1}.kyhieu .bt{font-family:"IBM Plex Mono",monospace;font-size:15px;line-height:1}.kyhieu.ve{background:rgba(222,170,38,.92)}.kyhieu.sau{background:rgba(120,80,20,.9)}
 .nh{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--muc3);font-weight:600;margin:14px 0 7px}.nh:first-child{margin-top:0}
-.hang{display:flex;gap:6px;flex-wrap:wrap}
-button{font-family:inherit;font-size:12.5px;font-weight:500;color:var(--muc);background:var(--nen);border:1px solid var(--vien);border-radius:8px;padding:7px 10px;cursor:pointer;transition:.12s}
-button:hover:not(:disabled){border-color:var(--nhan);color:var(--nhan)}button.ch{background:var(--nhan);border-color:var(--nhan);color:#fff}button:disabled{opacity:.38;cursor:not-allowed}
-button.ph{color:var(--sai)}button.ph:hover:not(:disabled){border-color:var(--sai)}button.to{width:100%;text-align:left}
-input[type=number]{font-family:"IBM Plex Mono",monospace;font-size:12.5px;width:100%;padding:6px 8px;border:1px solid var(--vien);border-radius:7px;background:var(--nen);color:var(--muc)}
+#vachStudioMount .hang{display:flex;gap:6px;flex-wrap:wrap}.v3 button, .bg-hop button, .pop button, #vachStudioMount button, [data-tang] button{font-family:inherit;font-size:12.5px;font-weight:500;color:var(--muc);background:var(--nen);border:1px solid var(--vien);border-radius:8px;padding:7px 10px;cursor:pointer;transition:.12s}
+#vachStudioMount button:hover:not(:disabled), .v3 button:hover:not(:disabled){border-color:var(--nhan);color:var(--nhan)}#vachStudioMount button.ch, .v3 button.ch{background:var(--nhan);border-color:var(--nhan);color:#fff}#vachStudioMount button:disabled, .v3 button:disabled{opacity:.38;cursor:not-allowed}
+button.ph{color:var(--sai)}button.ph:hover:not(:disabled){border-color:var(--sai)}#vachStudioMount button.to, .v3 button.to{width:100%;text-align:left}
+#vachStudioMount input[type=number], .v3 input[type=number]{font-family:"IBM Plex Mono",monospace;font-size:12.5px;width:100%;padding:6px 8px;border:1px solid var(--vien);border-radius:7px;background:var(--nen);color:var(--muc)}
 /* ══⚠⚠ HÀNG `.kt2` PHẢI XUỐNG DÒNG ĐƯỢC — KHÔNG CÒN LÀ LƯỚI 3 CỘT CỨNG ═══════════════
    Từ BS22 §1.2 mỗi cụm có thêm hai nút bước lớn (`−100` · `+100`), tức 4 nút × 40 px =
    160 px MỘT CỤM. Hai cụm + dấu `×` = 327 px, trong khi khung chứa chỉ ~367 px ở vỏ
@@ -88,9 +87,9 @@ input[type=number]{font-family:"IBM Plex Mono",monospace;font-size:12.5px;width:
   white-space:nowrap;padding-left:2px}
 .kt2>.so-cum[data-buoc-lon]~span:not(.so-cum){display:none}
 .o-mau{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}.o-mau i{display:block;aspect-ratio:1;border-radius:5px;cursor:pointer;border:2px solid transparent;background-size:cover}.o-mau i:hover{border-color:var(--muc3)}.o-mau i.ch{border-color:var(--chon);box-shadow:0 0 0 2px var(--the) inset}
-.tt{font-size:12px;color:var(--muc2);margin:6px 0 0}
-input[type=range]{width:100%;accent-color:var(--nhan);margin:4px 0 0}.so{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muc2);display:flex;justify-content:space-between}
-.cd{background:var(--nen);border-radius:9px;padding:9px 10px;font-size:12px;color:var(--muc2)}.cd b{color:var(--muc)}.cd.bac{background:var(--vang-nh);color:var(--vang)}.cd.bac b{color:var(--vang)}
+#vachStudioMount .tt{font-size:12px;color:var(--muc2);margin:6px 0 0}
+#vachStudioMount input[type=range], .v3 input[type=range]{width:100%;accent-color:var(--nhan);margin:4px 0 0}.so{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muc2);display:flex;justify-content:space-between}
+#vachStudioMount .cd{background:var(--nen);border-radius:9px;padding:9px 10px;font-size:12px;color:var(--muc2)}.cd b{color:var(--muc)}.cd.bac{background:var(--vang-nh);color:var(--vang)}.cd.bac b{color:var(--vang)}
 .the-nc{display:none;border:1px solid var(--vien);border-radius:11px;padding:11px 12px;margin-top:12px;background:var(--the)}.the-nc.mo{display:block}
 .the-nc .nh:first-child{margin-top:0}
 .chon-nep{display:flex;flex-direction:column;gap:6px}.chon-nep .vai{font-size:11px;color:var(--muc3);text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
@@ -103,7 +102,7 @@ input[type=range]{width:100%;accent-color:var(--nhan);margin:4px 0 0}.so{font-fa
 .bo-mau{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .mau-khoi{text-align:left;padding:0 0 6px;border-radius:9px;line-height:1.25;overflow:hidden}.mau-khoi .hinh{display:block;aspect-ratio:12/7;background-size:cover;background-position:center;border-bottom:1px solid var(--vien);margin-bottom:5px}.mau-khoi b{display:block;font-size:11.5px;padding:0 7px}i.stt{display:inline-block;font-style:normal;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;background:var(--nhan);color:#fff;border-radius:4px;padding:0 5px;margin-right:5px;vertical-align:1px}summary i.stt{margin-right:7px}.mau-khoi small{display:block;font-size:10.5px;color:var(--muc3);margin-top:2px}.mau-khoi em{display:inline-block;font-style:normal;font-size:9.5px;color:var(--muc3);border:1px solid var(--vien);border-radius:4px;padding:0 4px;margin:4px 7px 0}.nh .dem,summary .dem{font-weight:400;color:var(--muc3);font-size:11px}
 .tw{overflow-x:auto;border:1px solid var(--vien);border-radius:10px;margin-top:14px;background:var(--the)}
-table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:5px 8px;text-align:left;border-bottom:1px solid var(--vien2)}th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muc3);font-weight:600;white-space:nowrap}tbody tr:last-child td{border-bottom:none}
+.v3 table, .bg-hop table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:5px 8px;text-align:left;border-bottom:1px solid var(--vien2)}.v3 th, .bg-hop th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muc3);font-weight:600;white-space:nowrap}tbody tr:last-child td{border-bottom:none}
 td.n,th.n{text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
 .do{background:var(--the);border:1px solid var(--vien);border-radius:14px;padding:18px 20px;margin-top:14px;box-shadow:var(--bong)}.do h2{font-size:16px;margin:0 0 12px}
 .do-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));gap:10px}.do-grid>div{background:var(--nen);border-radius:10px;padding:11px 12px}
@@ -149,7 +148,7 @@ details.con[open]>summary::before{content:"▾ "}
 .pop input[type=range]{margin:6px 0 0}
 .pop .dong{display:none;padding-top:6px}.pop .dong.mo{display:block}
 .goiy{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:2;background:rgba(16,22,20,.86);color:#fff;border-radius:12px;padding:14px 18px;font-size:13.5px;line-height:1.7;pointer-events:none;text-align:left;box-shadow:0 12px 30px rgba(0,0,0,.35)}
-.goiy b{color:#8fe3bd}
+.goiy b{color:#deaa26}
 .goiy.an{display:none}
 .bo-lam{display:flex;flex-direction:column;gap:6px}
 .nhom-lam{border:1px solid var(--vien);border-radius:9px;padding:6px 7px 7px;background:var(--nen)}
@@ -159,7 +158,7 @@ details.con[open]>summary::before{content:"▾ "}
 .chip-lam{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
 .chip-lam button{display:flex;align-items:center;gap:5px;padding:3px 7px 3px 3px;font-size:10.5px;font-family:"IBM Plex Mono",monospace;border-radius:6px;background:var(--the)}
 .chip-lam button i{width:18px;height:18px;border-radius:4px;background-size:cover;background-position:center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15);flex:none}
-.chip-lam button.ch{background:var(--nhan);border-color:var(--nhan);color:#fff}.chip-lam button.ch:hover{color:#fff}
+.chip-lam #vachStudioMount button.ch, .v3 button.ch{background:var(--nhan);border-color:var(--nhan);color:#fff}.chip-lam button.ch:hover{color:#fff}
 
 /* ── KHUNG TRANG TRÊN WEBSITE ─────────────────────────────────────────────────
    Bản chạy thử là một tệp đứng riêng, không có thanh đầu trang và chân trang của
@@ -338,7 +337,7 @@ html.dt-on .dt-tam.mo{ transform:none }
  ⚠ KHÔNG đặt `stroke` hay `stroke-width` ở đây: hai thứ ấy do `veSoDoMD` tính theo MÃ
    MÀU và theo tỉ lệ (sàn 3 px), nên khai trong CSS là một bản thứ hai sẽ đè mất. */
 .sd-dot{cursor:pointer;touch-action:manipulation}
-.sd-dot:focus-visible{outline:2px solid var(--xanh,#1ac75c);outline-offset:2px}
+.sd-dot:focus-visible{outline:2px solid var(--xanh,#deaa26);outline-offset:2px}
 /* Dấu trên hàng chip. `attr()` đọc thuộc tính nên KHÔNG phải vẽ lại hàng chip khi số
    đổi — xem chú thích ở `dt.js::veViec`. */
 #dtViec[data-vp]{ position:relative }
@@ -351,7 +350,7 @@ html.dt-on .dt-tam.mo{ transform:none }
    1,1 s sau khi chạm. Đo 13/10 trên vỏ điện thoại 390px, bốn mốc thời gian, ba lần bấm:
 
        @  60 ms  tương phản 1,5:1   chữ rgb(131,136,134) trên nền rgb(140,178,161)
-       @ 200 ms  tương phản 6,5:1   chữ #fff trên nền #1c6b4a
+       @ 200 ms  tương phản 6,5:1   chữ #fff trên nền #deaa26
        @1100 ms  6,5:1      @2500 ms  6,5:1
 
    Tức chữ **chìm hẳn vào nền** trong lúc `button{transition:.12s}` (quy tắc nền, không
@@ -437,7 +436,7 @@ html.dt-on .dt-tong{ display:flex; align-items:center; justify-content:space-bet
 html.dt-on .loc-van button{ min-height:36px; padding:0 12px; font-size:12.5px }
 
 /* ── BẢNG KHỐI LƯỢNG (mục 4) ────────────────────────────────────────────────
-   Hai phần: vật liệu Eco Bamboo bán, và thứ thợ chuẩn bị. Sale chỉ báo giá phần
+   Hai phần: vật liệu Nhựa AMC bán, và thứ thợ chuẩn bị. Sale chỉ báo giá phần
    trên (Bổ sung 3, 23/09). */
 .bl-nh{ margin:14px 0 6px; font-size:12px; font-weight:700; letter-spacing:.3px;
   text-transform:uppercase; color:var(--muc3) }
@@ -840,7 +839,7 @@ html.dt-app.dt-bao .dt-tam{
   cursor:pointer; background:none; border:0; padding:2px 0; color:inherit }
 .dt-tong #dtSo b{ font-weight:700; color:var(--muc) }
 .dt-tong #dtSo i{ font-style:normal; opacity:.45; margin:0 5px }
-.dt-tong #dtSo:focus-visible{ outline:2px solid var(--xanh,#24700b); outline-offset:2px }
+.dt-tong #dtSo:focus-visible{ outline:2px solid var(--xanh,#deaa26); outline-offset:2px }
 @media (max-width:520px){
   html.dt-on .dt-tong{ flex-wrap:wrap; height:auto; min-height:56px; padding-top:4px }
   .dt-tong #dtSo{ order:-1; flex:1 0 100%; min-height:0 }
@@ -879,7 +878,7 @@ html.dt-app.dt-bao .dt-tam{
   background:var(--nhan); color:#fff; vertical-align:2px }
 .dx-xau{ color:var(--sai) }
 /* Câu giải thích vì sao dòng ĐỀ XUẤT thắng dù trông như thừa nhiều (LỆNH bản 4 · D5) */
-.dx-vi{ display:block; margin-top:3px; font-size:11.5px; color:var(--xanh,#24700B) }
+.dx-vi{ display:block; margin-top:3px; font-size:11.5px; color:var(--xanh,#deaa26) }
 
 /* ── BẢNG THEO DÕI VẬT TƯ trong khung 3D (lệnh quy trình bản 2, mục 2.7) ────── */
 .bang-vt{ position:absolute; left:10px; bottom:10px; z-index:4; pointer-events:none;
@@ -960,7 +959,7 @@ html.dt-app.dt-bao .dt-tam{
 .kt-sua .kt-b, .kt-sua .kt-c{ display:inline-flex; flex-wrap:wrap; gap:4px }
 .kt-sua button{ min-height:36px; padding:0 9px; border-radius:8px; font-size:12px;
   border:1px solid var(--vien); background:#fff; color:var(--muc) }
-.kt-sua .kt-xong{ background:var(--xanh,#24700b); color:#fff; border-color:transparent;
+.kt-sua .kt-xong{ background:var(--xanh,#deaa26); color:#fff; border-color:transparent;
   font-weight:700 }
 @media (pointer:coarse){
   .kt-n{ font-size:12px; padding:7px 11px }
@@ -986,7 +985,7 @@ html.dt-on .bang-vt{ bottom:auto; top:58px; left:10px; font-size:11.5px; padding
   transform:translateY(4px); transition:opacity .18s ease-out, transform .18s ease-out }
 .vt-chenh.hien{ opacity:1; transform:none }
 .vt-chenh.vt-tang{ background:rgba(150,30,20,.92) }
-.vt-chenh.vt-giam{ background:rgba(20,100,45,.92) }
+.vt-chenh.vt-giam{ background:rgba(222,170,38,.92) }
 /* §20 · W10 — dòng trung tính, dùng cho "Đã hoàn tác" / "Đã làm lại". */
 .vt-chenh.vt-tin{ background:rgba(20,26,23,.9) }
 @media (prefers-reduced-motion:reduce){ .vt-chenh{ transition:none } }
@@ -1072,7 +1071,7 @@ html.dt-on .vt-chenh{ bottom:auto; top:84px; font-size:11.5px; padding:4px 9px }
 .v3-ve-vach{margin-top:7px;padding:4px 10px;font-size:12.5px;
   line-height:1.2;border:1px solid var(--vien2);border-radius:999px;background:#fff;
   color:var(--muc);cursor:pointer}
-.v3-ve-vach:hover{border-color:var(--xanh,#24700b);color:var(--xanh,#24700b)}
+.v3-ve-vach:hover{border-color:var(--xanh,#deaa26);color:var(--xanh,#deaa26)}
 .v3-day{grid-area:day;display:flex;align-items:center;gap:12px;padding:0 14px;
   border-top:1px solid var(--vien);background:var(--the)}
 .v3-so{display:flex;gap:18px;align-items:center;min-width:0;overflow:hidden}
@@ -1216,7 +1215,7 @@ ul.soat li>span{ flex:1; min-width:0 }
 ul.soat i{ flex:0 0 17px; width:17px; height:17px; border-radius:50%; font-style:normal;
   font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;
   color:#fff; margin-top:1px }
-ul.soat i.s-ok{ background:#1f7a3d } ul.soat i.s-nhac{ background:#b07a00 }
+ul.soat i.s-ok{ background:#deaa26 } ul.soat i.s-nhac{ background:#b07a00 }
 ul.soat i.s-xau{ background:#b3261e }
 ul.soat button{ flex:0 0 auto; font-size:11.5px; padding:2px 8px }
 
@@ -1229,7 +1228,7 @@ ul.soat button{ flex:0 0 auto; font-size:11.5px; padding:2px 8px }
 /* §19.1 — khung kéo chọn nhiều mảng. `pointer-events:none`: nó nằm trên canvas đang
    nhận chính cú kéo vẽ ra nó. */
 .khung-chon{ position:absolute; z-index:6; pointer-events:none;
-  border:1.5px dashed #1aa04a; background:rgba(26,160,74,.12); border-radius:3px }
+  border:1.5px dashed #deaa26; background:rgba(222,170,38,.15); border-radius:3px }
 
 /* ── §20 · W1 — THẺ DẪN BA BƯỚC (hiện một lần) ──────────────────────────────────
    `position:fixed` vì nó neo theo khung nhìn: công cụ chiếm trọn màn hình và không
@@ -1302,7 +1301,7 @@ html.dt-app .so-nut{ width:46px; min-height:46px; font-size:20px }
 /* Bộ soi `?soi=1` (xem chú thích ở `ui.js`). `pointer-events:none` là BẮT BUỘC —
    một bộ soi chắn mất cú chạm thì nó tạo ra đúng triệu chứng đang đi tìm. */
 .v3-soi{ position:fixed; left:0; right:0; z-index:9500; pointer-events:none;
-  top:env(safe-area-inset-top,0px); background:#111a14; color:#9ef7c4;
+  top:env(safe-area-inset-top,0px); background:#111a14; color:#fdf6e7;
   font:11px/1.5 "IBM Plex Mono",ui-monospace,monospace; padding:5px 8px;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
 
@@ -1580,7 +1579,7 @@ html.dt-on .ic-chu{ font-size:11px }
 .chip-gt .tt{ margin:0 2px 0 0 }
 .chip-gt button{ min-height:30px; padding:0 9px; border-radius:8px; font-size:12px;
   border:1px solid var(--vien); background:#fff; color:var(--muc) }
-.chip-gt button.ch{ border-color:var(--xanh,#24700b); color:var(--xanh,#24700b);
+.chip-gt button.ch{ border-color:var(--xanh,#deaa26); color:var(--xanh,#deaa26);
   font-weight:700 }
 @media (pointer:coarse){ .chip-gt button{ min-height:44px; padding:0 12px } }
 
@@ -1636,7 +1635,7 @@ html.dt-on .ic-chu{ font-size:11px }
   padding:6px 10px; border-radius:9px; border:1px solid rgba(255,255,255,.28);
   background:rgba(255,255,255,.10); color:#fff; white-space:nowrap }
 .tt-viec button:disabled{ opacity:.42 }
-.tt-viec button.ch{ background:#1f7a3d; border-color:#1f7a3d }
+.tt-viec button.ch{ background:#deaa26; border-color:#deaa26 }
 .tt-viec .tt-nhom{ font-size:11px; letter-spacing:.05em; text-transform:uppercase;
   color:rgba(255,255,255,.62) }
 /* Mũi tên chỉ về điểm bấm — §28.2. Đặt bằng `left`/`top` từ JS. */
@@ -2138,7 +2137,7 @@ html.dt-on .dt-tam.dt-tang-dt{ background:#fff; border-left:4px solid #9aa3ab }
    (vuông, hoặc cung khi đã bo). */
 .sd-o{ cursor:pointer }
 .sd-o:hover{ filter:brightness(1.06) }
-.sd-o:focus-visible{ outline:2px solid var(--nhan,#24700B); outline-offset:2px }
+.sd-o:focus-visible{ outline:2px solid var(--nhan,#deaa26); outline-offset:2px }
 /* BS60 §2b.4 — dải chân đợt trên lam: VÙNG KHÔNG ỐP, tường lộ ra để đợt bắt vít.
  ⚠ Không `cursor:pointer` và không `role` — dải là HỆ QUẢ của đợt, sửa nó là sửa đợt,
    mà đợt đã có mục tiêu bấm riêng nằm ngay trên nó. */
@@ -2146,27 +2145,27 @@ html.dt-on .dt-tam.dt-tang-dt{ background:#fff; border-left:4px solid #9aa3ab }
 .sd-dai{ cursor:pointer }                 /* dải chạm của mạch: TRONG SUỐT, chỉ để bấm */
 .sd-net{ pointer-events:none }            /* nét là hình, không phải mục tiêu chạm */
 .sd-tay{ cursor:pointer }
-.sd-tay:focus-visible{ outline:2px solid var(--nhan,#24700B); outline-offset:2px }
+.sd-tay:focus-visible{ outline:2px solid var(--nhan,#deaa26); outline-offset:2px }
 /* ⚠ BS42 — `.sd-tay-mach` (viên thuốc của mạch ngắn) đã bỏ hẳn: TGĐ phải hỏi nó là
    gì, nó trồi ra ngoài đỉnh vách, và nó hiện cả ở tờ không có dải mạch. Mạch ngắn nay
    chạm được nhờ đĩa cắt co theo độ dài (`trimM` trong `sodo.js`). Giữ hai dòng này ở
    dạng chú thích để người sau không "khôi phục" lại một hình đã bị bác. */
 .sd-tay-goc rect{ fill:#fff; stroke:#3a423d; stroke-width:1.6 }
-.sd-tay-goc:hover rect{ stroke:var(--nhan,#24700B); stroke-width:2.2 }
+.sd-tay-goc:hover rect{ stroke:var(--nhan,#deaa26); stroke-width:2.2 }
 /* ══ BS50 §3.2 — dấu góc ĐÃ BO là một CHẤM TRÒN ĐẶC ở trung điểm cung ═══════════════
    Bản trước là một cung xanh vẽ lại hình bo (`.sd-tay-gocbo path`). Cung ấy không trùng
    đường bo đang vẽ ngay bên cạnh, và nó nói lại điều mắt đã thấy — nên nay là một chấm:
    nó TRỎ vào góc chứ không MÔ TẢ góc. Viền trắng mảnh để chấm đọc được trên cả ô sáng
    lẫn ô tối (cùng cách `.sd-chip` đang làm). */
-.sd-cham-goc{ fill:#0d6b31; stroke:#fff; stroke-width:1.2 }
-.sd-tay-gocbo:hover .sd-cham-goc{ fill:var(--nhan,#24700B); stroke-width:1.6 }
+.sd-cham-goc{ fill:#b88b1b; stroke:#fff; stroke-width:1.2 }
+.sd-tay-gocbo:hover .sd-cham-goc{ fill:var(--nhan,#deaa26); stroke-width:1.6 }
 .sd-tay-chon .sd-cham-goc{ fill:var(--vang,#cc8d00) }
 /* ══ BS39 §2.2 — GÓC VỪA CHẠM SÁNG LÊN. Khách phải thấy mình đang sửa góc nào, nếu
    không thì tờ Bo góc mở ra mà không biết nó nói về đâu. */
-.sd-tay-chon rect{ fill:#1ac75c; stroke:#0d6b31; stroke-width:2.2 }
-.sd-tay-chon path{ stroke:#1ac75c; stroke-width:3.4 }
+.sd-tay-chon rect{ fill:#deaa26; stroke:#b88b1b; stroke-width:2.2 }
+.sd-tay-chon path{ stroke:#deaa26; stroke-width:3.4 }
 /* Một dòng ở đầu ô chú thích tờ Bo góc: "Đang sửa góc n của M5 — chọn R bên dưới" */
-.tt-goc-chon{ font-weight:700; color:var(--nhan,#24700B); margin:0 0 4px }
+.tt-goc-chon{ font-weight:700; color:var(--nhan,#deaa26); margin:0 0 4px }
 /* ══ BS40 §1.3 — lam sóng: lớp gạch sọc phủ lên màu mảng, KHÔNG nhận chạm (ô ở dưới
    mới là vùng chạm). §1.4 — nẹp nối: nét dày 3 px đúng màu nẹp, cũng không nhận chạm
    (dải chạm trong suốt của mạch nằm trên). */
@@ -2210,9 +2209,9 @@ html:not(.dt-on) .v3-chi-dt{ display:none }
 /* ══ §2.2 · §3.2 — MẶT CẮT NHỎ TRONG THẺ MẠCH ═══════════════════════════════════ */
 .ts-td{ display:block; margin:8px 0 0; background:var(--the2,#f6f7f5);
   border:1px solid var(--vien); border-radius:8px }
-.td-mat{ fill:none; stroke:var(--nhan,#24700B); stroke-width:1.8;
+.td-mat{ fill:none; stroke:var(--nhan,#deaa26); stroke-width:1.8;
   stroke-linejoin:round; stroke-linecap:round }
-.td-tam{ stroke:#1ac75c; stroke-width:1; stroke-dasharray:3 3; opacity:.8 }
+.td-tam{ stroke:#deaa26; stroke-width:1; stroke-dasharray:3 3; opacity:.8 }
 .td-ghi{ font:600 9px/1 var(--font,system-ui,sans-serif); fill:var(--muc2,#4a524c) }
 /* §3.2 — khối mặt cắt thường trực dưới sơ đồ, chỉ ở cột máy tính. */
 .so-do{ display:flex; flex-direction:column }
@@ -2228,8 +2227,8 @@ html:not(.dt-on) .v3-chi-dt{ display:none }
 .so-do.sd-phong{ overflow:auto }
 .sd-so{ cursor:pointer; text-decoration:underline; text-decoration-style:dotted;
   text-underline-offset:2px }
-.sd-so:hover{ fill:var(--nhan,#24700B) }
-.sd-so:focus-visible{ outline:2px solid var(--nhan,#24700B); outline-offset:1px }
+.sd-so:hover{ fill:var(--nhan,#deaa26) }
+.sd-so:focus-visible{ outline:2px solid var(--nhan,#deaa26); outline-offset:1px }
 
 /* ══⚠⚠ BS26 §2 — Ô NHẬP ≥ 16 px Ở VỎ ĐIỆN THOẠI, VÀ KHÔNG CHẶN PHÓNG TO ═════════════
    TGĐ 11/10: *"hay bị nhảy zoom, mất chữ"*. Safari trên iPhone **tự phóng cả trang**
@@ -2284,11 +2283,11 @@ html.dt-on .bg-hang{ gap:6px; margin:6px 0 }
    phím không còn phân biệt được "đang gõ ở đây" với "vừa nhảy tới đây".
  ⚠ Tôn trọng `prefers-reduced-motion`: ở đó bỏ animation và để một viền tĩnh — JS vẫn
    gỡ lớp bằng hẹn giờ dự phòng nên nó không nằm lại. */
-@keyframes ktNhay{ 0%,100%{ box-shadow:0 0 0 0 rgba(36,112,11,0) }
-                   30%,70%{ box-shadow:0 0 0 3px rgba(36,112,11,.55) } }
+@keyframes ktNhay{ 0%,100%{ box-shadow:0 0 0 0 rgba(222,170,38,0) }
+                   30%,70%{ box-shadow:0 0 0 3px rgba(222,170,38,.55) } }
 .kt-nhay{ animation:ktNhay 1s ease-in-out 1 }
 @media (prefers-reduced-motion: reduce){
-  .kt-nhay{ animation:none; box-shadow:0 0 0 3px rgba(36,112,11,.55) }
+  .kt-nhay{ animation:none; box-shadow:0 0 0 3px rgba(222,170,38,.55) }
 }
 
 /* ══⚠⚠ NÚT BƯỚC LỚN TRÊN VỎ ỨNG DỤNG — CHỮ TRÀN RA NGOÀI CHÍNH CÁI NÚT ═════════════

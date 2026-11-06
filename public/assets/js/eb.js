@@ -1,4 +1,4 @@
-/* Eco Bamboo — UI */
+/* Nhựa AMC — UI */
 (function () {
   'use strict';
 
@@ -198,7 +198,7 @@
   /* ⚠ `ViewContent` của Meta ĐÃ GỠ KHỎI ĐÂY (30/08/2026) — nay là một thẻ trong GTM.
      Ghi lại đặc tả để người khai thẻ chép đúng, vì nó CHÉP TỪ SITE CŨ chứ không phải
      tự nghĩ ra: container cũ GTM-K4GV2ZPV bắn khi `gtm.js` (tải trang) VÀ Page URL
-     CHỨA `https://ecobamboo.vn/san-pham-chinh/tam-op-than-tre` — chỉ trang dòng sản
+     CHỨA `https://nhuaamc.vn/san-pham-chinh/tam-op-than-tre` — chỉ trang dòng sản
      phẩm tấm ốp, KHÔNG phải mọi trang mã. Ba tham số giữ nguyên từng chữ, kể cả
      'San Pham' không dấu:
          content_name = document.title · content_category = 'San Pham'
@@ -242,7 +242,7 @@
      đây là một quyết định bị đảo, có chủ ý, và vế THỨ HAI mới là vế TGĐ nhấn mạnh.
 
      ⚠ VẾ THỨ HAI LÀ VẾ QUAN TRỌNG HƠN, và nó là chỗ dễ viết hỏng nhất: khách bấm
-     quảng cáo hôm nay, BA NGÀY SAU gõ thẳng ecobamboo.vn rồi mới điền form. Lượt vào
+     quảng cáo hôm nay, BA NGÀY SAU gõ thẳng nhuaamc.vn rồi mới điền form. Lượt vào
      trực tiếp đó KHÔNG được xoá bộ thẻ cũ — xoá là quảng cáo mất công ghi nhận, và
      số liệu nói dối theo hướng "khách tự tìm đến". Đó là hướng nguy hiểm nhất, vì nó
      khiến người đọc kết luận không cần chạy quảng cáo. */
@@ -302,7 +302,7 @@
 
      Mất sạch, dù tham số nằm ngay trên URL của chính trang đang mở. Ca này KHÔNG hiếm:
      trình duyệt trong ứng dụng Facebook / Messenger và chế độ riêng tư đều có thể
-     chặn, mà đó lại là nơi phần lớn khách của Eco Bamboo đi vào.
+     chặn, mà đó lại là nơi phần lớn khách của Nhựa AMC đi vào.
 
      Biến này sống theo VÒNG ĐỜI CỦA TRANG, nên nó chỉ cứu được lượt xem hiện tại —
      đúng ca "vào trang đích rồi nộp form ngay tại đó", tức ca của quảng cáo dẫn thẳng
@@ -459,7 +459,7 @@
       data.tb = ebTb();
 
       if (!ep) {
-        say('Biểu mẫu chưa được kết nối. Vui lòng gọi 0915.189.389 — chúng tôi tư vấn ngay.', false);
+        say('Biểu mẫu chưa được kết nối. Vui lòng gọi 0325.999.238 — chúng tôi tư vấn ngay.', false);
         return;
       }
       btn.disabled = true; btn.textContent = 'Đang gửi…';
@@ -494,7 +494,7 @@
           f.dispatchEvent(new CustomEvent('eb:gui-xong', { detail: { loai: data.loai } }));
         })
         .catch(function () {
-          say('Chưa gửi được. Vui lòng gọi 0915.189.389 để được hỗ trợ ngay.', false);
+          say('Chưa gửi được. Vui lòng gọi 0325.999.238 để được hỗ trợ ngay.', false);
         })
         .then(function () { btn.disabled = false; btn.textContent = 'Gửi yêu cầu'; });
     });
@@ -521,7 +521,7 @@
       'Tôi là thợ / nhà thầu / đại lý — xin nhận bảng giá riêng theo sản lượng.',
       'Anh chị là thợ, nhà thầu hay đại lý — chúng tôi sẽ gửi bảng giá riêng.'],
     'doi-tho': ['gioi_thieu_tho',
-      'Tôi là chủ nhà — nhờ Eco Bamboo giới thiệu đội thợ đã thi công vật liệu này.',
+      'Tôi là chủ nhà — nhờ Nhựa AMC giới thiệu đội thợ đã thi công vật liệu này.',
       'Chúng tôi sẽ giới thiệu đội thợ đã thi công vật liệu này trong khu vực của anh chị.'],
     'tu-van-le': ['tu_van_le',
       'Tôi cần tư vấn vật tư cho công trình của mình.',
@@ -687,7 +687,7 @@
       var src = nut.getAttribute('data-src');
       if (!src) return;
       var f = document.createElement('iframe');
-      f.src = src; f.title = 'Bản đồ tới Eco Bamboo'; f.loading = 'lazy';
+      f.src = src; f.title = 'Bản đồ tới Nhựa AMC'; f.loading = 'lazy';
       f.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
       f.setAttribute('allowfullscreen', '');
       nut.parentNode.replaceChild(f, nut);

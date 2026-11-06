@@ -113,7 +113,7 @@ export default function ColorLibraryPage({ onOpenVisualizer }) {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-bamboo-800/80 border border-bamboo-600/40 text-bamboo-300 text-xs font-bold uppercase tracking-wider">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-950/60 border border-amber-600/30 text-amber-400 text-xs font-bold uppercase tracking-wider">
               <SparklesIcon className="w-3.5 h-3.5 text-amber-400" />
               <span>Thư Viện Mã Màu & Bề Mặt Chuẩn {BRAND.shortName}</span>
             </div>
@@ -129,7 +129,7 @@ export default function ColorLibraryPage({ onOpenVisualizer }) {
             <div className="pt-2 flex flex-wrap gap-3">
               <button
                 onClick={() => onOpenVisualizer ? onOpenVisualizer('EB66006') : (window.location.href = '/thu-vien-ma-mau/phoi-mau')}
-                className="px-5 py-2.5 rounded-xl bg-wood-500 hover:bg-wood-600 text-white text-xs font-extrabold uppercase tracking-wider shadow-md transition-all flex items-center hover:scale-105"
+                className="px-5 py-2.5 rounded-xl bg-gradient-bamboo hover:bg-bamboo-700 text-white text-xs font-extrabold uppercase tracking-wider shadow-soft hover:shadow-hover transition-all flex items-center hover:scale-105"
               >
                 <LayersIcon className="w-4 h-4 mr-2" />
                 Vào Trình Phối Màu Phòng (Room Visualizer) &rarr;
@@ -152,12 +152,12 @@ export default function ColorLibraryPage({ onOpenVisualizer }) {
                   onClick={() => setSelectedGroup(cat.id)}
                   className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                     selectedGroup === cat.id
-                      ? 'bg-bamboo-700 text-white shadow-sm'
-                      : 'bg-eco-gray-100 hover:bg-eco-gray-200 text-eco-gray-700'
+                      ? 'bg-amber-500 text-white shadow-sm'
+                      : 'bg-eco-gray-100 hover:bg-amber-50 hover:text-amber-900 text-eco-gray-700'
                   }`}
                 >
                   {cat.name}
-                  <span className={`ml-1.5 text-[10px] ${selectedGroup === cat.id ? 'text-bamboo-200' : 'text-eco-gray-400'}`}>
+                  <span className={`ml-1.5 text-[10px] ${selectedGroup === cat.id ? 'text-amber-100' : 'text-eco-gray-400'}`}>
                     ({cat.count})
                   </span>
                 </button>
@@ -376,7 +376,7 @@ export default function ColorLibraryPage({ onOpenVisualizer }) {
 
               <a
                 href={`tel:${BRAND.hotline.replace(/\./g, '')}`}
-                className="w-full py-3 px-4 rounded-xl bg-wood-50 hover:bg-wood-100 text-wood-800 border-2 border-wood-500 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center text-center"
+                className="w-full py-3 px-4 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border-2 border-amber-400 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center text-center"
               >
                 Nhận Mẫu Thử Mã Này ({BRAND.hotlineDisplay})
               </a>

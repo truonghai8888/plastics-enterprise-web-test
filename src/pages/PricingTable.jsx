@@ -222,7 +222,7 @@ export default function PricingTable({ onOpenCalculator }) {
       <div className="bg-gradient-to-b from-bamboo-950 via-bamboo-900 to-bamboo-950 text-white py-12 sm:py-16 border-b border-bamboo-800 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-bamboo-800/80 border border-bamboo-600/40 text-bamboo-300 text-xs font-bold uppercase tracking-wider">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-950/60 border border-amber-600/30 text-amber-400 text-xs font-bold uppercase tracking-wider">
               <span>{getPriceTableTitle()}</span>
             </div>
 
@@ -237,7 +237,7 @@ export default function PricingTable({ onOpenCalculator }) {
             <div className="pt-3 flex flex-wrap gap-3">
               <button
                 onClick={handleDownloadPricingPDF}
-                className="px-5 py-2.5 rounded-xl bg-wood-500 hover:bg-wood-600 text-white text-xs font-extrabold uppercase tracking-wider shadow-md transition-all flex items-center hover:scale-105"
+                className="px-5 py-2.5 rounded-xl bg-gradient-bamboo hover:bg-bamboo-700 text-white text-xs font-extrabold uppercase tracking-wider shadow-soft hover:shadow-hover transition-all flex items-center hover:scale-105"
               >
                 <DownloadIcon className="w-4 h-4 mr-2" />
                 Tải Bảng Giá PDF / Excel
@@ -254,7 +254,7 @@ export default function PricingTable({ onOpenCalculator }) {
 
             {downloadNotice && (
               <div className="p-3 rounded-xl bg-bamboo-900/90 text-bamboo-200 text-xs font-bold border border-bamboo-500 flex items-center animate-fade-in mt-3">
-                <CheckCircleIcon className="w-4 h-4 mr-2 text-emerald-400" />
+                <CheckCircleIcon className="w-4 h-4 mr-2 text-amber-400" />
                 Đang tải xuống tài liệu: {`Bang_Gia_${BRAND.id.toUpperCase()}_${getCurrentYear()}_Chinh_Hang.pdf`}
               </div>
             )}
@@ -351,7 +351,7 @@ export default function PricingTable({ onOpenCalculator }) {
                             {formatVND(unitPriceSheet)}
                           </td>
                           <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                            <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
                               {item.stock}
                             </span>
                           </td>
@@ -378,7 +378,7 @@ export default function PricingTable({ onOpenCalculator }) {
           </div>
 
           <div className="p-6 rounded-2xl bg-white border border-eco-gray-200 space-y-2 shadow-sm">
-            <div className="w-10 h-10 rounded-xl bg-wood-100 text-wood-800 font-black flex items-center justify-center text-sm mb-2">
+            <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 font-black flex items-center justify-center text-sm mb-2">
               10%
             </div>
             <h3 className="font-bold text-sm text-eco-gray-900">Chiết Khấu Đơn Hàng &gt; 100m²</h3>

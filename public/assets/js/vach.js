@@ -84,7 +84,7 @@ const HS = {                                 /* hang so san pham + gioi han dung
          · Boisen (TQ), ván composite gốc sợi gỗ phủ PET 12–18 mm: chuẩn an toàn
            R/t ≥ 10; xẻ rãnh CNC sâu 2/3 bề dày; 18 mm uốn tốt ở R200–300.
          · Longtime (TQ), tấm PVC vân đá 2–3 mm: xẻ rãnh mặt sau cách nhau 10–20 mm.
-     ⚠ Số PVC THUẦN (2–3 t) là cận dưới lý thuyết, KHÔNG áp thẳng: cốt Eco Bamboo có
+     ⚠ Số PVC THUẦN (2–3 t) là cận dưới lý thuyết, KHÔNG áp thẳng: cốt Nhựa AMC có
        hàm lượng bột đá cao nên giòn hơn PVC thuần. Số composite R/t ≥ 10 là cận thực
        tế hơn cho uốn nóng nguyên tấm.
      ⚠ `min` LẤY THEO CỘT XẺ RÃNH, không theo cột uốn nóng — TGĐ 25/09: "ngoài cách khò
@@ -183,7 +183,7 @@ const HS = {                                 /* hang so san pham + gioi han dung
 };
 const NEP_KIEU = ["khong","den","gold","hong","bac","led"];
 
-/* ---------- MAU LAM: bien dang mat truoc theo ban ve thong so tren ecobamboo.vn (do tu ban ve, sai so ~0,5 mm) ----------
+/* ---------- MAU LAM: bien dang mat truoc theo ban ve thong so tren nhuaamc.vn (do tu ban ve, sai so ~0,5 mm) ----------
    pts = [[u, z]] : u doc be rong thanh (mm), z = do day mat truoc tinh tu lung thanh (mm).
    Canh dung cua gan lam bang vach nghieng 0,6 mm de luoi van la mot mat lien (khong can mat dung rieng). */
 function lamGan(W,zDay,zGan,gans,nghieng){ const d=nghieng||0.6, p=[[0,zDay]];
@@ -2336,7 +2336,7 @@ function zNenCua(S){ return Math.min(-40, ...S.mat.map(f=>(f.lech||0)-10)); }
    MỘT nguồn cho hai chỗ vẽ: mặt cắt `banve.js` ② (cột đứng, L = W hoặc H) và khung xương
    3D chỉ-để-xem ở X-ray/Nét (`dung.js`: thanh đứng theo W, thanh ngang theo H).
    ⚠ Đây là MINH HOẠ theo hồ sơ ("Khung xương sau tấm (thợ chuẩn bị) · bước ≤ 400 mm"),
-     không phải bản vẽ gia công: Eco Bamboo không bán xương, thợ dựng theo tường thật.
+     không phải bản vẽ gia công: Nhựa AMC không bán xương, thợ dựng theo tường thật.
    ⚠ Giữ ĐÚNG phép lặp cũ của `banve.js` (`s ≤ L+1`, kẹp `min(s,L)`): đổi nó là đổi số cột
      trên tờ 1 — một thay đổi hồ sơ, không thuộc chặng C. */
 const BUOC_XUONG=400;
@@ -2692,7 +2692,7 @@ function kiemBo(S){                        /* CONG 3: cat + cung = goc, tung mat
    v: noi = mach hai tam cung mat · loi = canh ngoai khoi noi · lom = goc trong chan khoi / hoc · bien = vien vach · chan = sat san · tran = cham tran · chi = chi trang tri dat tren mat
    hinh: phang(rong,ranh) = nap phang bang mat tam · noi(rong,cao) = thanh T noi len · led(rong) = rãnh LED · L(canh) = boc goc ngoai · Lin(canh) = goc trong ·
          tron(R) = goc tron · vat(canh) = goc nhon · J(canh,mep) = ket thuc · Jled(rong) = ket thuc co LED · hop(rong,cao) = ket thuc vuong goc LED · chan(cao,day) = chan tuong · V(canh) = nep V
-   Kich thuoc lay tu ban ve mat cat tren ecobamboo.vn (so 8 mm; 5 mm nho hon, cung hinh). */
+   Kich thuoc lay tu ban ve mat cat tren nhuaamc.vn (so 8 mm; 5 mm nho hon, cung hinh). */
 const NEP_DM=window.NEP_DM||(()=>{throw new Error("[vách] thiếu window.NEP_DM — danh mục nẹp sinh ở build/vach_nep.py, kiểm thứ tự nạp script")})(); const _NEP_DM_BAN21=[
  {ma:"EBN85001",ma5:"EBN55001",ten:"Nẹp H không rãnh",v:"noi",mau:"BGHD",hinh:"phang",rong:6},
  {ma:"EBN85003",ma5:"EBN55003",ten:"Nẹp H có rãnh",v:"noi",mau:"GHD",hinh:"phang",rong:10,ranh:4},
@@ -3759,7 +3759,7 @@ function tinhTu(S,cfg){ cfg=cfg||{}; const tus=S.tu||[]; if(!tus.length&&!(S.dot
    đại lượng không đếm được.
  ⚠ Đơn vị theo đúng đơn vị hồ sơ ghi: bản lề **cái** · ray **BỘ** (một bộ = hai thanh,
    KHÔNG tách) · tay nắm **cái**.
- ⚠ Ba thứ này đều **THỢ CHUẨN BỊ** — Eco Bamboo không bán, nên chúng không được nằm
+ ⚠ Ba thứ này đều **THỢ CHUẨN BỊ** — Nhựa AMC không bán, nên chúng không được nằm
    trong bảng vật liệu bán hàng (§Bổ sung 1 · R6, và luật §10). `cho:"tho"` nói ra điều
    đó ngay trong dữ liệu, để chỗ gọi không phải nhớ. */
 /* ══⚠⚠ VI TRI TUNG PHU KIEN — doc `matTruocTu`, KHONG tu chia lai mat truoc ═══════
@@ -5238,7 +5238,7 @@ const TU_TEN={hoc:"Kệ hở",canh:"Tủ có cánh",keo:"Ngăn kéo",ke:"Kệ n�
    không theo số lượng loại. */
 const VIEN_LOAI={
   mang:"#9aa3ab",   /* xám đá — xem ngoại lệ ở trên */
-  mach:"#1ac75c",   /* = rgb [0.10,0.78,0.36], vạch mạch đang chọn (§21 U9b · T19) */
+  mach:"#deaa26",   /* = rgb [0.10,0.78,0.36], vạch mạch đang chọn (§21 U9b · T19) */
   dot: "#f5b31f",   /* = rgb [0.96,0.70,0.12], màu mốc/đợt */
   tu:  "#8a5a2b",   /* nâu thùng tủ */
   hoc: "#8a5a2b", ke:"#8a5a2b", canh:"#8a5a2b", ngan:"#8a5a2b", o:"#8a5a2b"
@@ -5601,7 +5601,7 @@ function ghiChuThiCong(S){ const H=_X;
      ⚠⚠ GHI SỐ, KHÔNG GHI CHUNG CHUNG. "Chừa khe giãn nở" là một câu ai cũng gật rồi
        không làm; "3–5 mm" là một con số thợ căn được bằng thước. Cổng §62.8 vì thế đòi
        *"ba cụm khe · xương · hộp kỹ thuật CÓ SỐ"* — một cụm không số là chưa đạt.
-     ⚠ "Thợ chuẩn bị" cho xương và ống: Eco Bamboo không bán hai thứ đó, và luật §10 cấm
+     ⚠ "Thợ chuẩn bị" cho xương và ống: Nhựa AMC không bán hai thứ đó, và luật §10 cấm
        nêu giá thứ mình không bán. Nói ai chuẩn bị là nói đủ mà không chạm luật.
      ⚠ Dòng hộp kỹ thuật chỉ nêu khi vách CÓ vị trí tivi/ổ điện — in thường trực là dạy
        thợ bỏ qua dòng báo (bài học đã ghi ở khối "Cần lưu ý khi thi công"). */
@@ -5666,7 +5666,7 @@ function ghiChuThiCong(S){ const H=_X;
       nDot+" đợt · bắt vào bê tông hoặc mạch vữa, đặt trong khung trước khi ốp tấm"]); }
   /* ══⚠⚠ §62.4 — BA DÒNG CHO MẢNG CÓ UỐN MẶT (TGĐ 03/10) ═══════════════════════════
      ① cách làm mặt cong: *"xương cong + rãnh lưng + khò 100–120 °C theo R"*;
-     ② mạch nằm TRÊN vùng cong: *"Nẹp T uốn (thị trường, Eco Bamboo chưa có mã) — thợ
+     ② mạch nằm TRÊN vùng cong: *"Nẹp T uốn (thị trường, Nhựa AMC chưa có mã) — thợ
         chuẩn bị"*, và lệnh nói rõ **không chặn, không bỏ thao tác** — "không vì ta chưa
         có mà bỏ thao tác thi công".
    ⚠ Dòng ② chỉ nêu khi THỰC SỰ có mạch chạy qua mảng uốn. Nêu thường trực là dạy thợ
@@ -5681,7 +5681,7 @@ function ghiChuThiCong(S){ const H=_X;
       let nT=0;
       S.doan.forEach((e,k)=>{ const tt=H.trangThaiCanh(S,k);
         if(tt&&!tt.bien&&(iUon.has(tt.cao)||iUon.has(tt.thap))) nT++; });
-      if(nT) TC.push(["Nẹp T uốn (thị trường, Eco Bamboo chưa có mã) — thợ chuẩn bị",
+      if(nT) TC.push(["Nẹp T uốn (thị trường, Nhựa AMC chưa có mã) — thợ chuẩn bị",
         nT+" mạch trên vùng cong"]); } }
   /* ══ §62.9 — MỘT DÒNG NHỎ, GIỌNG NHẸ, CHỈ TRONG HỒ SƠ ════════════════════════════
      TGĐ 03/10: *"sản phẩm đang được nói là dễ bo góc, nên KHÔNG cảnh báo trong công cụ,
@@ -5930,7 +5930,7 @@ if(typeof module!=="undefined") module.exports=_X; if(typeof window!=="undefined
    Dinh: x,y,z, nx,ny,nz  (6 float)
    ===================================================================== */
 (function(root){
-const H = (typeof require!=="undefined") ? require("./hinh.js") : root.HINH;
+const H = (root && root.HINH) || (typeof window!=="undefined" && window.HINH) || ((typeof require!=="undefined") ? (function(){ try { return require("./hinh.js"); } catch(e){ return root.HINH; } })() : null);
 const {HS,trangThaiCanh,kieuCanh,matCatBo,catNua,catTai,dtDaGiac,canhNeoUon,neoUonDs,hinhUon,zUonTai,zUonMax,trongDaGiac} = H;
 const SAU_HOP=60;
 /* ⚠⚠ BA HANG SO NEP CHET DA GO (Bo sung 15 §3) — be rong nep 18 mm, be day
@@ -7102,7 +7102,7 @@ function dungLuoi(S,opt){
        `BS80 đợt A` so tập mã với bảng cắt TẤM 8 mm, để dưỡng rơi vào lớp "Tấm" là nó
        đọc ra "thừa".
      ⚠ Dưỡng KHÔNG có dòng nào trong báo giá có giá (`ui.js` xếp nó vào nhóm `'tc'` —
-       Thợ chuẩn bị, vì Eco Bamboo không bán thanh đùn). Nên thêm vật ở đây KHÔNG được
+       Thợ chuẩn bị, vì Nhựa AMC không bán thanh đùn). Nên thêm vật ở đây KHÔNG được
        làm báo giá đổi một đồng; đó là một ca nghiệm thu của mục này. */
     (v.cung||[]).forEach(c=>{
       if(!c||!c.tam||!(c.Rd>0)) return;
@@ -7470,7 +7470,7 @@ function dungLuoi(S,opt){
      nên không vật nào ứng với dòng ấy.
    ⇒ Mỗi ĐOẠN dây LED một vật, mã `LED.<k>.<j>` (k = mạch, j = thứ tự trong mạch, đúng
      khuôn dấu tên `k.ri` của nẹp), lớp "Phụ kiện & dưỡng" — dây LED là hàng THỢ CHUẨN
-     BỊ, cùng nhóm với bản lề/ray (mục 6), không phải nẹp Eco Bamboo bán.
+     BỊ, cùng nhóm với bản lề/ray (mục 6), không phải nẹp Nhựa AMC bán.
    ⚠ Đoạn lấy ĐÚNG đoạn đang dựng vệt sáng (`leds`), nên vật nằm đúng rãnh của nẹp LED
      hoặc khe chân bậc — không có phép đặt vị trí thứ hai.
    ⚠ `ledLoai` = "trong" | "ngoai" để cổng so từng loại với đúng dòng Mua gì của nó. */
@@ -8011,7 +8011,7 @@ function kiemLuoi(S,L){
   return {truoc,cung,tong:truoc+cung,mong,sai:Math.abs(truoc+cung-mong)/mong};
 }
 const out={dungLuoi,kiemLuoi,SAU_HOP};
-if(typeof module!=="undefined") module.exports=out; else root.DUNG=out;
+if(typeof module!=="undefined") module.exports=out; if(typeof root!=="undefined") root.DUNG=out;
 })(typeof window!=="undefined"?window:globalThis);
 ;
 /* ==== anh.js ==== */
@@ -9221,7 +9221,7 @@ function taoAnh(cv){
   return api;
 }
 const out={taoAnh,kRgb,nguonPhong,chuanHoa,doRoi};
-if(typeof module!=="undefined") module.exports=out; else root.ANH=out;
+if(typeof module!=="undefined") module.exports=out; if(typeof root!=="undefined") root.ANH=out;
 })(typeof window!=="undefined"?window:globalThis);
 ;
 /* ==== mau.js ==== */
@@ -10972,7 +10972,7 @@ function veMatCat(g,S,ngang,tai,ox,oy,wPx,hPx,ten,tenMa,scEp){
     /* lồi ghi TRÊN mép mảng cao, lõm ghi DƯỚI chân bậc — hai nhãn cùng cạnh phải tách ra,
        không thì chúng đè lên nhau và người đọc không biết số nào của bo nào. */
     const yTxt = o.loai==="bo lõm" ? Z(o.z)+22 : Math.max(oy+30,Z(o.z)-18);
-    datNhan(o.loai+" R"+f0(o.R),X(s),yTxt,{co:10,can:"center",mau:o.loai==="bo lõm"?"#0a7a3a":"#a04000"},o.loai==="bo lõm"?1:-1); });
+    datNhan(o.loai+" R"+f0(o.R),X(s),yTxt,{co:10,can:"center",mau:o.loai==="bo lõm"?"#deaa26":"#a04000"},o.loai==="bo lõm"?1:-1); });
   S.mat.forEach((f,fi)=>{ if(!f.uon) return; const hu=H.hinhUon(f); const co=pts.find(p=>p.fi===fi); if(!co) return; const xs=f.pts.map(p=>p.x),ys=f.pts.map(p=>p.y); const sm=ngang?(Math.min(...xs)+Math.max(...xs))/2:(Math.min(...ys)+Math.max(...ys))/2;
     /* ⚠ ĐI QUA `H.tenUon` — bản gõ tay ở đây là bản thứ BA của cùng một câu (bảng
        mảng và nhãn trên hình đã dùng `tenUon`), và nó thiếu chữ "mặt" lẫn vế "hai bên"
@@ -11096,7 +11096,7 @@ function veSoTrang(g,opt,Wc){
      `hoc` · `ke` ⇒ không ký hiệu (`H.matTruocTu` trả rỗng, nên chỗ gọi không phải lọc)
 
  ⚠⚠ MẪU NÉT PHẢI KHÁC CẢ HAI THỨ ĐANG Ở CÙNG TỜ, không chỉ khác một:
-       mạch hậu     `#0a7a3a` [10,4,2,4]   (đứt-chấm xanh)
+       mạch hậu     `#deaa26` [10,4,2,4]   (đứt-chấm xanh)
        khoanh CT    `#7a1fa2` [4,3]        (đứt tím)
        ký hiệu này  `#555`    [9,4]        (đứt dài xám đậm)
    Lẫn một cặp thì người đọc đọc sai cái thứ ba — ba thứ chứ không phải hai.
@@ -11160,7 +11160,7 @@ function ve(S,opt){ opt=opt||{}; const tenMa=opt.tenMa||(id=>id);
              : "BẢN VẼ THI CÔNG VÁCH ỐP",
       44,68,{co:30,dam:1});
   chu(g,"Kích thước tường "+f0(W)+" × "+f0(Hh)+" mm  ·  "+S.mat.length+" mảng  ·  tấm ốp "+(opt.khoTam||"bề ngang 1220 × tấm dài 2800 mm, dày 8 mm")+"  ·  đơn vị: mm  ·  cao độ tính từ mặt tường chuẩn (0), + nổi ra / − lõm vào",44,96,{co:14,mau:"#333",tranh:1});
-  chu(g,"Eco Bamboo · trang tự thiết kế vách · "+(opt.ngay||new Date().toLocaleDateString("vi-VN")),Wc-44,68,{co:13,can:"right",mau:"#555"});
+  chu(g,"Nhựa AMC · trang tự thiết kế vách · "+(opt.ngay||new Date().toLocaleDateString("vi-VN")),Wc-44,68,{co:13,can:"right",mau:"#555"});
   /* ⚠ Dòng này vẽ SAU nhãn mã vách (cùng y = 96, cùng căn phải), nên chính nó phải
      tự tránh — `tranh` chỉ dời nhãn đặt SAU, nhãn vào sổ trước giữ chỗ của nó. */
   chu(g,"Bản vẽ sinh tự động từ mô hình; kiểm tra lại kích thước thực tế tại công trình trước khi cắt tấm.",Wc-44,96,{co:12,can:"right",mau:"#a04000",tranh:1,huong:1});
@@ -11691,7 +11691,7 @@ function ve(S,opt){ opt=opt||{}; const tenMa=opt.tenMa||(id=>id);
       /* ⚠ `tranh` — nhãn này vẽ SAU khoanh `CT`, mà `CT` cũng bám vào chính các mối nối
          (cổng 93e bắt `CT3` × `bo lồi R30`). Nhãn đặt sau phải là nhãn chịu lùi. */
       {co:10,can:"center",tranh:1,huong:o.loai==="bo lõm"?1:-1,
-       mau:o.loai==="bo lõm"?"#0a7a3a":(o.loai==="bo mép ngoài"?"#7a1fa2":"#a04000")}); }); }
+       mau:o.loai==="bo lõm"?"#deaa26":(o.loai==="bo mép ngoài"?"#7a1fa2":"#a04000")}); }); }
   /* §32.1 — GỜ: ghi `cao · α · R` ở giữa cạnh, và dòng cảnh báo mặt sau khi chỉ một bên. */
   if(!_BANG){ const daGo=new Set(); goCanhVach(S).forEach(o=>{ const kh=o.lid+"|"+o.fi; if(daGo.has(kh)) return; daGo.add(kh);
     const mx=(o.a.x+o.b.x)/2, my=(o.a.y+o.b.y)/2;
@@ -11795,7 +11795,7 @@ function ve(S,opt){ opt=opt||{}; const tenMa=opt.tenMa||(id=>id);
   if(VL.ds.length){
     chu(g,"KÝ HIỆU VẬT LIỆU",lx,ly,{co:13,dam:1}); ly+=_kCG;
     const hVL=VL.ds.map(o=>[o.vl,o.ma,o.ten||"",o.loai,f2(o.dt,2)+" m²"]);
-    ly=bang(g,lx,ly,[["KH",52],["Mã Eco Bamboo",120],["Tên màu",150],["Loại",120],["Diện tích",70]],hVL,15)+_kCG; }
+    ly=bang(g,lx,ly,[["KH",52],["Mã Nhựa AMC",120],["Tên màu",150],["Loại",120],["Diện tích",70]],hVL,15)+_kCG; }
   chu(g,"CHÚ GIẢI",lx,ly,{co:13,dam:1}); ly+=_kCG;
   const cg=[["#111",.9,[],"mạch hèm khít (cùng mặt phẳng)","hem"],["#111",1.6,[],"cạnh bậc (đổi cao độ)","bac"],["#1a1b1b",2.4,[],"nẹp đen · các màu nẹp khác tô đúng màu","nep"],["#e0a020",3,[8,4],"dải LED trên mạch","ledMach"],["#e0a020",2.5,[3,3],"LED hắt ở chân bậc (vẽ lệch về phía mặt thấp)","ledChan"],["#0a5a8a",1,[5,3],"ranh giới phần uốn mặt ra phía trước","uon"],["#a04000",2.6,[],"đợt 17 mm trên tường — gạch chấm là thanh đỡ đặt trong khung xương","dot"],["#7a1fa2",1.6,[],"tấm bít đầu cung — miếng ¼ tròn cắt từ tấm ốp, đóng chỗ cung kết thúc","bitCung"],["#7a1fa2",1.8,[6,3],"mối vát 45° — hai cung cùng R gặp nhau ở góc, cưa vát một nhát","vat45"],
     /* BS60 §2b.4 — chú giải chỉ in khi vách THẬT SỰ có dải (khoá `lamCatDot`). */
@@ -12429,8 +12429,8 @@ function veTu(S,opt){ opt=opt||{}; const tenMa=opt.tenMa||(id=>id); const T=H.ti
   chu(g,T.tus.length+" khối tủ · "+soDot+" đợt trên tường · "+T.P.length+" chi tiết · "
     +f2(T.m2,2)+" m² tấm 17 mm · cốt Loại "+cot17+" (khách chọn ở bước báo giá) · "
     +"tấm 1220 × 2440 · mạch cưa "+H.HS.KERF+" mm · đơn vị mm",44,96,{co:14,mau:"#333",tranh:1});
-  chu(g,"Eco Bamboo · trang tự thiết kế vách · "+(opt.ngay||new Date().toLocaleDateString("vi-VN")),Wc-44,68,{co:13,can:"right",mau:"#555"});
-  chu(g,"Số tấm xếp theo mảng và khổ đã chọn; thợ có thể cắt khác. Không xoay chiều vân. Chỉ dán cạnh là vật liệu Eco Bamboo; bản lề, ray do thợ chuẩn bị.",Wc-44,96,{co:12,can:"right",mau:"#a04000",tranh:1,huong:1});
+  chu(g,"Nhựa AMC · trang tự thiết kế vách · "+(opt.ngay||new Date().toLocaleDateString("vi-VN")),Wc-44,68,{co:13,can:"right",mau:"#555"});
+  chu(g,"Số tấm xếp theo mảng và khổ đã chọn; thợ có thể cắt khác. Không xoay chiều vân. Chỉ dán cạnh là vật liệu Nhựa AMC; bản lề, ray do thợ chuẩn bị.",Wc-44,96,{co:12,can:"right",mau:"#a04000",tranh:1,huong:1});
   /* ══⚠⚠ BS102 §3 (mục 50, bản 2) — "Mã vách" CŨNG vẽ SAU DÒNG THÔNG SỐ ═══════
      Đo trên **mẫu `tu` thật**, vỏ điện thoại: dòng thông số ở y = 96 chạy SUỐT bề
      ngang (x 52 → 1138 pt) và **đè nhãn "Mã vách"** cùng hàng — 15 cặp trên tờ 1,
@@ -12668,10 +12668,10 @@ function veTu(S,opt){ opt=opt||{}; const tenMa=opt.tenMa||(id=>id); const T=H.ti
     if(tu.loai!=="keo" && H.machHau){
       const hv=_hau[tu.id], KH=(hv&&hv.ds[0]&&hv.ds[0].kho)||2800;
       const mx=H.machHau(tu,Math.round(tu.w),1220,'x'), my=H.machHau(tu,Math.round(tu.h),KH,'y');
-      const veM=(pts,nhan,xx,yy)=>{ g.save(); g.strokeStyle="#0a7a3a"; g.lineWidth=1.6;
+      const veM=(pts,nhan,xx,yy)=>{ g.save(); g.strokeStyle="#deaa26"; g.lineWidth=1.6;
         g.setLineDash([10,4,2,4]); g.beginPath(); g.moveTo(pts[0][0],pts[0][1]);
         g.lineTo(pts[1][0],pts[1][1]); g.stroke(); g.restore();
-        chu(g,nhan,xx,yy,{co:9,mau:"#0a7a3a",can:"center",tranh:1}); };
+        chu(g,nhan,xx,yy,{co:9,mau:"#deaa26",can:"center",tranh:1}); };
       /* ⚠ BS13 bản chốt đòi *"ghi hướng xếp hậu (dọc/ngang)"* trên mặt đứng. Lấy từ
          chính miếng hậu (`hv.huong`), không suy lại — suy lại là nguồn thứ hai. */
       const _hg=(hv&&hv.ds[0]&&hv.ds[0].huong)||"";
@@ -12683,7 +12683,7 @@ function veTu(S,opt){ opt=opt||{}; const tenMa=opt.tenMa||(id=>id); const T=H.ti
          vẽ ở chỗ cuối — còn chạm 0,5–0,8 pt. Dời sẵn một hàng là phép xác định; trông
          vào `tranh` ở chỗ đông nhãn là trông vào một kết quả không ai đoán được. */
       if(_hg) chu(g,"hậu xếp "+_hg,X(tu.w)-2,Y(tu.h)-5-caoDong(g,9),
-        {co:9,mau:"#0a7a3a",can:"right",tranh:1});
+        {co:9,mau:"#deaa26",can:"right",tranh:1});
     }
     cotNgang(g,[X(0),X(tu.w)],[0,tu.w],Y(0)+18,{co:10,duoi:1}); cotDoc(g,[Y(0),Y(tu.h)],[0,tu.h],X(0)-14,{co:10});
     /* ══⚠⚠ BS11 §3.4 — KHỐI HỘC PHẢI GHI KÍCH THƯỚC LÒNG Ô VÀ VỊ TRÍ VÁCH NGĂN ═══════
@@ -12968,7 +12968,7 @@ function veTu17(S,opt){ opt=opt||{}; const T=H.tinhTu(S); if(!T) return null;
   chu(g,"SƠ ĐỒ CẮT TẤM 17 mm",44,68,{co:30,dam:1});
   chu(g,tam.length+" tấm 1220 × 2440 · "+T.P.length+" chi tiết · mạch cưa "+H.HS.KERF
     +" mm · mã "+(_ma.join(" · ")||"—")+" · đơn vị mm",44,96,{co:14,mau:"#333",tranh:1,rong:1700});
-  chu(g,"Eco Bamboo · trang tự thiết kế vách · "+(opt.ngay||new Date().toLocaleDateString("vi-VN")),Wc-44,68,{co:13,can:"right",mau:"#555"});
+  chu(g,"Nhựa AMC · trang tự thiết kế vách · "+(opt.ngay||new Date().toLocaleDateString("vi-VN")),Wc-44,68,{co:13,can:"right",mau:"#555"});
   chu(g,"Mã trong miếng là MÃ CHI TIẾT — khớp cột ID của bảng cắt và nhãn trong tệp DXF.",
     Wc-44,96,{co:12,can:"right",mau:"#a04000",tranh:1,huong:1});
   nhanTrang(g,opt,Wc);
@@ -13081,7 +13081,7 @@ function veNep(S,opt){ opt=opt||{}; const tenMa=opt.tenMa||(id=>id);
   duong(g,[[24,24],[Wc-24,24],[Wc-24,Hc-24],[24,Hc-24]],{kin:1,mau:"#111",day:2});
   chu(g,"NẸP THEO MẠCH · CHI TIẾT PHÓNG · CẮT TẤM ỐP"+(_NTIEP?" (tiếp)":""),44,68,{co:30,dam:1});
   chu(g,"Phương án: "+(cfgN.phuongAn==="hem"?"hèm khít (không nẹp nối)":"nẹp nối")+" · tấm ốp dày "+(cfgN.dayTam||8)+" mm · màu nẹp chung "+(H.NEP_MAU[cfgN.mauNep||"D"])+" · "+N.tongThanh+" thanh nẹp, "+N.soMa+" mã · "+T.tongTam+" tấm ốp 1220×"+([...new Set(Object.values(T.theoMa||{}).map(v=>v.kho||T.kho))].sort((x,y)=>x-y).join("/"))+" (thợ có thể cắt khác) · đơn vị mm",44,96,{co:14,mau:"#333",tranh:1});
-  chu(g,"Eco Bamboo · trang tự thiết kế vách · "+(opt.ngay||new Date().toLocaleDateString("vi-VN")),Wc-44,68,{co:13,can:"right",mau:"#555"});
+  chu(g,"Nhựa AMC · trang tự thiết kế vách · "+(opt.ngay||new Date().toLocaleDateString("vi-VN")),Wc-44,68,{co:13,can:"right",mau:"#555"});
   chu(g,"Số thanh xếp theo thanh 3000 mm (chân tường 2500), mạch cưa 3 mm, chưa tính hao hụt cắt góc. Thợ kiểm lại tại công trình.",Wc-44,96,{co:12,can:"right",mau:"#a04000",tranh:1,huong:1});
   /* ══⚠⚠ BS102 §3 (mục 50, bản 2) — "Mã vách" CŨNG vẽ SAU DÒNG THÔNG SỐ ═══════
      Đo trên **mẫu `tu` thật**, vỏ điện thoại: dòng thông số ở y = 96 chạy SUỐT bề
@@ -13386,7 +13386,7 @@ function veNep(S,opt){ opt=opt||{}; const tenMa=opt.tenMa||(id=>id);
   const ghi=[..._cn.slice(0,_soH),
     "Hèm khít: cạnh tấm cắt bằng máy, mài phẳng, ghép sát và bơm keo dọc mạch; không được để hở quá 0,5 mm.",
     ..._cn.slice(_soH,_soH+3),
-    "Nẹp có rãnh LED: rãnh 16 mm, dây LED 12/24 V, dẫn dây về nguồn giấu sau xương. Eco Bamboo chỉ bán nẹp nhôm; dây LED và nguồn do thợ chuẩn bị.",
+    "Nẹp có rãnh LED: rãnh 16 mm, dây LED 12/24 V, dẫn dây về nguồn giấu sau xương. Nhựa AMC chỉ bán nẹp nhôm; dây LED và nguồn do thợ chuẩn bị.",
     ..._cn.slice(_soH+3)];
   /* ══⚠⚠ BS116 §5.1 ② — TỜ NẸP CŨNG PHẢI KHAI, VÀ KHAI SỔ CỦA RIÊNG NÓ ════════════════
      Bản đầu của tôi chỉ thêm dòng khai vào tờ 1. Đo ngay sau đó: tờ nẹp **bỏ nhãn mà
@@ -13599,7 +13599,7 @@ window.BANVE={ve,veTu,veTu17,veNep,hangCat17,hangCatTam,zTai,matCat,veMatCat,cao
   /* Khuôn module của kho này: IIFE nhận `root`, xuất qua `module.exports` khi chạy
      bằng node và qua `root.<TEN>` khi chạy trên trang. Đi đúng khuôn để `node` kiểm
      được tệp này một mình, và để `build/vach.py` nối nó vào gói như mọi tệp khác. */
-  const H = (typeof require!=="undefined") ? require("./hinh.js") : root.HINH;
+  const H = (root && root.HINH) || (typeof window!=="undefined" && window.HINH) || ((typeof require!=="undefined") ? (function(){ try { return require("./hinh.js"); } catch(e){ return root.HINH; } })() : null);
 
   /* Bán kính chấm bấm: lệnh ghi 44 px (điện thoại) và 28 px (máy tính) là ĐƯỜNG KÍNH
      mục tiêu chạm, nên nửa đó là bán kính. Khai thành hằng để cổng đọc được cùng con
@@ -14301,7 +14301,7 @@ window.BANVE={ve,veTu,veTu17,veNep,hangCat17,hangCatTam,zTai,matCat,veMatCat,cao
   const out = { hinhHoc, doChong, CHAM, tietDienMach, tai,
                 DAI_MACH_PX, LOI_O_PX, DAI_MIN_PX, TAY_NGAN_PX, TAY_TOI_DA,
                 GOC_VUONG_PX, HIEN };
-  if(typeof module!=="undefined") module.exports=out; else root.SODO=out;
+  if(typeof module!=="undefined") module.exports=out; if(typeof root!=="undefined") root.SODO=out;
 })(typeof window!=="undefined"?window:globalThis);
 ;
 /* ==== ui.js ==== */
@@ -18691,7 +18691,7 @@ function veSoDoMD(){
     const chon=(m.fi===chonMat);
     /* ⚠ Nét viền ô và nét mạch phải ĐỔI SANG MÀU SÁNG trên nền tối, nếu không chúng
        chìm hẳn — mảng nâu tối của TGĐ (M5) là đúng ca ấy. */
-    const vien = chon? "#1ac75c" : (toi? "#d7ded8" : "#5c6660");
+    const vien = chon? "#deaa26" : (toi? "#d7ded8" : "#5c6660");
     sv+='<path class="sd-o'+(chon?" sd-o-chon":"")+'" data-sdl="mang" data-sdf="'+m.fi+'"'
        +' role="button" tabindex="0" aria-label="'+esc(m.nhan)+'"'
        +' d="'+m.d+'" fill="'+_hexS(cc)+'" stroke="'+vien
@@ -18727,7 +18727,7 @@ function veSoDoMD(){
     for(const fi of [c.trai,c.phai]){ if(fi>=0 && _toi[fi]) return true; } return false; };
   for(const q of hh.mach){
     const chon=(q.k===chonCanh);
-    const mauNet = chon? "#1ac75c" : "#3a423d";
+    const mauNet = chon? "#deaa26" : "#3a423d";
     if(!chon && _toiKe(q.k))
       sv+='<line class="sd-net-vo" x1="'+q.x1.toFixed(1)+'" y1="'+q.y1.toFixed(1)
          +'" x2="'+q.x2.toFixed(1)+'" y2="'+q.y2.toFixed(1)
@@ -18775,7 +18775,7 @@ function veSoDoMD(){
     const cc=(cfg.rgb? cfg.rgb(q.mau||"") : null)||[0.72,0.70,0.66];
     const toi=_neuToi(cc);
     const chonD=(chonDot===q.id);
-    const vien=chonD? "#1ac75c" : (toi? "#e6ece7" : "#2f3632");
+    const vien=chonD? "#deaa26" : (toi? "#e6ece7" : "#2f3632");
     const day=Math.max(q.trongTu? 1.5 : 3, q.day);
     sv+='<line class="sd-dot'+(chonD?" sd-dot-chon":"")+'" data-sdl="dot" data-sdid="'+q.id+'"'
        +' role="button" tabindex="0" aria-label="'+esc(q.nhan)+' mm ở cao độ '+q.y+' mm"'
@@ -19691,7 +19691,7 @@ $("boLomHet").onclick=()=>{ nho(); let n=0; const r=boLomMacDinh||30;
         : "vách chưa có cạnh nào lệch cao độ"); };
 /* ── ⚠ BỎ "LED HẮT Ở CHÂN BẬC" VÀ "LED TẤT CẢ" (bước 3.5) ────────────────────
    Hai nút này gắn `e.ledB` cho cạnh bậc, vẽ một dải sáng trên 3D và cộng mét dây
-   LED vào khối lượng — nhưng Eco Bamboo KHÔNG có nẹp LED nào cho cạnh bậc (bảng
+   LED vào khối lượng — nhưng Nhựa AMC KHÔNG có nẹp LED nào cho cạnh bậc (bảng
    bước 3.5: `loi`/`lom` không có mã nào `led:1`). Tức là công cụ vẽ ra một thứ
    khách không mua được ở đâu, rồi bản vẽ và báo giá chở nó đi.
    ⚠ Trường `e.ledB` GIỮ LẠI trong hình học: bản thiết kế đã lưu trước bước này có
@@ -23845,12 +23845,12 @@ $("bTuXoa").onclick=()=>{ if(!canMang()) return; const f=S.mat[chonMat]; if(!f.t
   nho(); boTuVeOp(f.tuId); };
 /* ══ §62.4 · CẠNH LỘ — ai xử lý ═══════════════════════════════════════════════════
    TGĐ 03/10: *"Mép/cạnh lộ bất kỳ: thêm lựa chọn «Cạnh lộ: thợ tự xử lý (sơn cạnh,
-   dán chỉ…)» bên cạnh «Chỉ dán cạnh Eco Bamboo»; chọn thợ tự xử lý → KHÔNG TÍNH chỉ
+   dán chỉ…)» bên cạnh «Chỉ dán cạnh Nhựa AMC»; chọn thợ tự xử lý → KHÔNG TÍNH chỉ
    dán cạnh, hồ sơ ghi dòng ấy."*
  ⚠ Cờ nằm ở `S.cfgNep`, không ở một biến mô-đun: `chupTT()` chụp `cfgNep` nên hoàn tác
    và mở lại bản lưu đi theo. Một biến mô-đun sẽ lệch ngay ở cú ↶ đầu tiên — đúng bệnh
    đã ghi ở thẻ mối nối (*"trạng thái đọc từ CHÍNH `S`, không giữ một biến riêng"*).
- ⚠ Mặc định là `eb` (Eco Bamboo bán chỉ dán cạnh) — giữ nguyên hành vi cũ cho mọi vách
+ ⚠ Mặc định là `eb` (Nhựa AMC bán chỉ dán cạnh) — giữ nguyên hành vi cũ cho mọi vách
    đã lưu, vì `undefined !== 'tho'`. Đổi mặc định là lặng lẽ bỏ một dòng khỏi báo giá
    của những đơn đã chốt. */
 $("canhLo")&&[...$("canhLo").children].forEach(b=>b.onclick=()=>{
@@ -23862,7 +23862,7 @@ $("canhLo")&&[...$("canhLo").children].forEach(b=>b.onclick=()=>{
   lamMoi(false);
   nhac(v==="tho"
     ? "Cạnh lộ: THỢ tự xử lý — không tính chỉ dán cạnh vào báo giá; hồ sơ ghi dòng này."
-    : "Cạnh lộ: dùng chỉ dán cạnh Eco Bamboo."); });
+    : "Cạnh lộ: dùng chỉ dán cạnh Nhựa AMC."); });
 /* bang chon ma lam: nhom theo mat cat, moi chip la mot ma EBL voi film that */
 function nhomLamHtml(chiBd){ const out=[]; H.LAM_MAU.forEach(M=>{ const ks=window.LAM_SKU.filter(k=>k.bd===M.id); if(!ks.length||(chiBd&&chiBd!==M.id)) return;
     const sx=64/M.W, sy=16/22, d="M0,18 "+M.pts.map(p=>"L"+(p[0]*sx).toFixed(2)+","+(18-p[1]*sy).toFixed(2)).join(" ")+" L64,18 Z";
@@ -25578,9 +25578,9 @@ $("d-led").textContent=f2(N.metLed+(d.ledNgoai||0),2); $("d-tam").textContent=d.
    Bản chạy thử gom hết vào một dòng chữ `#d-ct`. Lệnh đòi bảng theo mã: khách phải
    đặt hàng được từ nó, mà "12,6 m² tấm ốp" thì không đặt được — bán theo TẤM.
 
-   ⚠ HAI PHẦN, KHÔNG MỘT (Bổ sung 3, 23/09): "Vật liệu Eco Bamboo" và "Thợ chuẩn
+   ⚠ HAI PHẦN, KHÔNG MỘT (Bổ sung 3, 23/09): "Vật liệu Nhựa AMC" và "Thợ chuẩn
      bị". Sale chỉ báo giá phần trên. Gộp chung thì dây LED, bản lề, ray nằm lẫn
-     trong bảng vật liệu và khách đọc ra là Eco Bamboo bán cả những thứ đó.
+     trong bảng vật liệu và khách đọc ra là Nhựa AMC bán cả những thứ đó.
    ⚠ CHỈ DÁN CẠNH thuộc phần VẬT LIỆU (Bổ sung 3 đảo lại: trước nó nằm trong câu
      "bản lề, ray, chỉ cạnh do thợ chuẩn bị"). Dây LED thì ngược lại — vẫn hiện số
      mét nhưng ở phần thợ chuẩn bị.
@@ -25589,7 +25589,7 @@ function veBangKL(){
   const hop=$("blKL"); if(!hop) return;
   const d=V_DO(), q=qcDangDung(), r=[];
   const so=(v,n)=>f2(v,n==null?2:n);
-  /* ── phần 1: vật liệu Eco Bamboo ── */
+  /* ── phần 1: vật liệu Nhựa AMC ── */
   const T=d.tamOp;
   Object.keys(T.theoMa).sort().forEach(sku=>{
     const t=T.theoMa[sku];
@@ -25632,11 +25632,11 @@ function veBangKL(){
   /* ⚠⚠ BA DÒNG TÁCH BẠCH (Bổ sung 16 ⑤), không gộp thành một dòng "Dây LED".
      Mã nẹp LED đã nằm ở phần VẬT LIỆU theo thanh; hai dòng dưới là mét DÂY, và hai
      mét đó khác hạng nhau: dây trong nẹp đi cùng nẹp mình bán, còn LED ngoài thì
-     Eco Bamboo không bán gì cả. Gộp lại là để khách đọc ra "tất cả đều do thợ lo",
+     Nhựa AMC không bán gì cả. Gộp lại là để khách đọc ra "tất cả đều do thợ lo",
      hoặc ngược lại "tất cả đều nằm trong báo giá" — hai cách hiểu, cùng một dòng. */
   if((d.nep.metLed||0)>0.001) r.push(['tc',"Dây LED trong nẹp","Mét",
     so(d.nep.metLed,2)+" m",
-    "Eco Bamboo bán nẹp nhôm có rãnh LED; dây LED và nguồn do thợ chuẩn bị"]);
+    "Nhựa AMC bán nẹp nhôm có rãnh LED; dây LED và nguồn do thợ chuẩn bị"]);
   if((d.ledNgoai||0)>0.001) r.push(['tc',"LED ngoài","Mét",so(d.ledNgoai,2)+" m",
     "dây LED của khách, KHÔNG trong báo giá — đoạn này không có nẹp LED phù hợp"]);
   /* ══⚠⚠ BS69 §4.2 — DƯỠNG GÓC PHẢI RA TỚI HỒ SƠ, KHÔNG CHỈ NẰM TRONG DỮ LIỆU ══════
@@ -25644,8 +25644,8 @@ function veBangKL(){
      tôi ghi "dưỡng R100 × 4 thanh 350 mm" — con số ấy có thật, nhưng chỉ có trong
      `tinhTu().duongGoc`, tức **chưa ra tới thứ khách và thợ đọc**. Đúng họ §265: một
      `✔` nói về dữ liệu chứ không nói về hồ sơ.
-   ⚠ Xếp vào nhóm **Thợ chuẩn bị**: thanh dưỡng là phụ kiện đùn, Eco Bamboo không bán —
-     cùng hạng với bản lề và ray. Đặt vào nhóm "Vật liệu Eco Bamboo" là ngầm nhận bán. */
+   ⚠ Xếp vào nhóm **Thợ chuẩn bị**: thanh dưỡng là phụ kiện đùn, Nhựa AMC không bán —
+     cùng hạng với bản lề và ray. Đặt vào nhóm "Vật liệu Nhựa AMC" là ngầm nhận bán. */
   ((d.tu&&d.tu.duongGoc)||[]).forEach(o=>r.push(['tc',"Dưỡng góc R"+o.Rd,"Thanh",
     o.so+" thanh × "+so(o.dai,0)+" mm",
     "thanh dưỡng đùn R"+o.Rd+" — vỏ thùng uốn ôm thanh này ở góc"
@@ -25669,7 +25669,7 @@ function veBangKL(){
     +'</td><td class="gc">'+x[4]+'</td></tr>';
   const vl=r.filter(x=>x[0]==='vl'), tc=r.filter(x=>x[0]==='tc');
   hop.innerHTML=
-    '<div class="bl-nh">Vật liệu Eco Bamboo</div>'
+    '<div class="bl-nh">Vật liệu Nhựa AMC</div>'
    +'<div class="table-scroll"><table class="bl"><thead><tr><th>Hạng mục</th>'
    +'<th>Đơn vị</th><th class="sl">Số lượng</th><th>Ghi chú</th></tr></thead><tbody>'
    +(vl.map(hang).join("")||'<tr><td colspan="4">—</td></tr>')+'</tbody></table></div>'
@@ -28840,7 +28840,7 @@ const VIEC={
   "h-led":  {ten:"LED", node:["khuLed","khuNep"], rieng:()=>
              '<p class="dt-tt">LED đi trong <b>nẹp nhôm có rãnh LED</b> — chọn mã nẹp có '
             +'rãnh ở trên. Mạch có bậc thì thêm được <b>LED hắt ở chân bậc</b>.<br>'
-            +'Eco Bamboo chỉ bán nẹp nhôm có rãnh; dây LED và nguồn do thợ chuẩn bị.</p>'},
+            +'Nhựa AMC chỉ bán nẹp nhôm có rãnh; dây LED và nguồn do thợ chuẩn bị.</p>'},
   "h-dich": {ten:"Dịch mạch", rieng:()=>htmlDich()},
   /* Bước 3.3: một tờ cho cả ba kiểu bo, chọn nhiều cạnh bằng chạm. Trên điện thoại
      không có Shift, nên ba nút "Tất cả cạnh bậc / viền ngoài / của mảng này" CHÍNH LÀ
@@ -29960,7 +29960,7 @@ function dungKhung(){
     if(!u){ V.nhac&&V.nhac("Chưa tạo được link — bấm Gửi link vách này trước."); return; }
     $("lvO").value=u; $("lvODong").hidden=false;
     /* Zalo share: mở bảng chia sẻ của máy nếu có, không thì chép link. */
-    if(navigator.share){ navigator.share({text:"Vách mình thiết kế trên Eco Bamboo: "+u})
+    if(navigator.share){ navigator.share({text:"Vách mình thiết kế trên Nhựa AMC: "+u})
       .catch(()=>{}); return; }
     try{ navigator.clipboard.writeText(u); V.nhac&&V.nhac("đã chép link — dán vào Zalo"); }catch(_){}
   };
@@ -30406,7 +30406,7 @@ window.VACH_LUU={luuMoi,moVach,ds,anhNho,tenMacDinh,KHOA_DANG,KHOA_DS};
         B.s('<</Type/Pages/Kids[' + idTrang.map(function (x) { return x + ' 0 R'; }).join(' ')
           + ']/Count ' + idTrang.length + '>>\n'); dongO();
         var iInfo = moO();
-        B.s('<</Title(Eco Bamboo - ho so tham khao)/Producer(Eco Bamboo - tu thiet ke vach)>>\n');
+        B.s('<</Title(Nhựa AMC - ho so tham khao)/Producer(Nhựa AMC - tu thiet ke vach)>>\n');
         dongO();
         var iCat = moO();
         B.s('<</Type/Catalog/Pages ' + iP + ' 0 R>>\n'); dongO();
@@ -30742,11 +30742,11 @@ function anhCoNhan(rong,xong){
   x.fillStyle="#fff"; x.fillRect(0,0,c.width,c.height);
   x.drawImage(g3,0,0);
   x.fillStyle="#f6f7f5"; x.fillRect(0,g3.height,r,cao);
-  x.fillStyle="#24700B"; x.fillRect(0,g3.height,r,Math.max(2,Math.round(r*0.002)));
+  x.fillStyle="#deaa26"; x.fillRect(0,g3.height,r,Math.max(2,Math.round(r*0.002)));
   const le=Math.round(r*0.022), gi=g3.height+cao/2;
   const ve=()=>{
     x.textBaseline="middle";
-    x.fillStyle="#24700B"; x.font="600 "+Math.round(cao*0.30)+"px system-ui,sans-serif";
+    x.fillStyle="#deaa26"; x.font="600 "+Math.round(cao*0.30)+"px system-ui,sans-serif";
     x.fillText("Vách dựng 3D", le+(HS.LOGO?Math.round(cao*1.9):0), gi-cao*0.16);
     x.fillStyle="#5a635e"; x.font=Math.round(cao*0.23)+"px system-ui,sans-serif";
     const ma=maDangDung().join("  ·  ");
@@ -30756,7 +30756,7 @@ function anhCoNhan(rong,xong){
     const web=HS.WEB||(window.BRAND && window.BRAND.domain)||"nhuaamc.vn";
     x.font="600 "+Math.round(cao*0.26)+"px system-ui,sans-serif";
     const wWeb=x.measureText(web).width;
-    x.fillStyle="#24700B"; x.fillText(web,r-le-wWeb,gi);
+    x.fillStyle="#deaa26"; x.fillText(web,r-le-wWeb,gi);
     x.font=Math.round(cao*0.23)+"px system-ui,sans-serif"; x.fillStyle="#5a635e";
     let t=ma; const tran=r-le-wWeb-tr-le;
     while(t&&x.measureText(t).width>tran) t=t.slice(0,-2);
@@ -30903,7 +30903,7 @@ function luuAnh(){
   catch(_){ duocChia = false; }
   if(duocChia){
     try{
-      navigator.share({files:[tep], title:"Vách Eco Bamboo"})
+      navigator.share({files:[tep], title:"Vách Nhựa AMC"})
         .then(()=>{ window.ebDo&&window.ebDo("vach_xuat_anh",{mau:tenMauHienTai()}); })
         .catch(e=>{
           /* Khách đóng bảng chia sẻ: KHÔNG phải lỗi, không làm gì (BS94 §2.2). */
@@ -31026,7 +31026,7 @@ async function xinMaVach(){
    ("mở trên máy tính" thay vì "gửi cho người thân"). Chép ra bản thứ hai là hai
    đường cho một việc, rồi một đường quên cập nhật. */
 async function guiLink(dan){
-  const _d=dan||"Vách mình thiết kế trên Eco Bamboo: ";
+  const _d=dan||"Vách mình thiết kế trên Nhựa AMC: ";
   const m=await xinMaVach();
   if(m){ const u=location.origin+(HS.SLUG||location.pathname)+"?m="+m;
     const chu=_d+u;
@@ -31341,11 +31341,11 @@ function banVePdf(){
      — `QC` trong ui.js dựng thẳng từ `VACH_KT` và giữ `o.s` làm `qc`, nên KHÔNG
      phải ánh xạ lại. Ánh xạ lại là bản thứ hai của một phép tra, rồi lệch.
    ⚠ TẤM 17 mm và CHỈ DÁN CẠNH KHÔNG CÓ GIÁ TRÊN WEBSITE: nhóm "Chỉ cạnh" đã bị
-     bỏ hẳn khỏi web (TGĐ 29/08), còn tấm 17mm thì lệnh ⑧ ghi rõ "Eco Bamboo báo
+     bỏ hẳn khỏi web (TGĐ 29/08), còn tấm 17mm thì lệnh ⑧ ghi rõ "Nhựa AMC báo
      riêng". Hiện dòng nhưng KHÔNG bịa số — thà nói "báo riêng" còn hơn một con số
      sai nằm trên tờ khách cầm đi so.                                            */
 const NHAN_GIA = 'Giá niêm yết, chưa gồm VAT và vận chuyển. Mức giảm giá theo nhóm '
-  + 'khách: để lại thông tin, Eco Bamboo gửi báo giá chi tiết.';
+  + 'khách: để lại thông tin, Nhựa AMC gửi báo giá chi tiết.';
 
 /* ⚠⚠ CÂU THAM KHẢO — BẮT BUỘC ở CHÂN MỌI bản vẽ, ảnh xuất có bảng, popup báo giá và
    PDF (LỆNH bản 4 §11.5, cổng G7). TGĐ 28/09: *"trong bảng giá hay bản vẽ thi công
@@ -31406,7 +31406,7 @@ function soTamTinh(){
       const q17 = (V.H && V.H.quyCach17) ? V.H.quyCach17(r.ma) : '';
       rieng.push(r.ma + (q17 ? ' · ' + q17 : '') + ' · ' + r.soTam + ' tấm'); });
     /* ══ §62.4 · CẠNH LỘ — ai xử lý (TGĐ 03/10) ═══════════════════════════════════
-       Chọn "thợ tự xử lý" thì KHÔNG tính chỉ dán cạnh vào phần Eco Bamboo bán, và hồ sơ
+       Chọn "thợ tự xử lý" thì KHÔNG tính chỉ dán cạnh vào phần Nhựa AMC bán, và hồ sơ
        phải NÓI RA — bỏ im lặng thì khách đọc báo giá thấy thiếu một dòng mà không hiểu
        vì sao, còn thợ thì không biết mình phải lo cạnh.
      ⚠ Dòng vẫn mang SỐ MÉT. Bỏ số là bỏ mất thứ thợ cần để đi mua chỉ/sơn. */
@@ -31427,7 +31427,7 @@ function soTamTinh(){
       + (k.ghi ? ' (' + k.ghi + ')' : '')));
   }
   /* Hai dòng, không gộp (Bổ sung 16 ⑤): dây trong nẹp đi cùng nẹp mình bán; LED
-     ngoài thì Eco Bamboo không bán gì cả. Gộp lại là mời đọc ra một trong hai. */
+     ngoài thì Nhựa AMC không bán gì cả. Gộp lại là mời đọc ra một trong hai. */
   if ((d.nep.metLed || 0) > 0.001)
     tho.push('Dây LED trong nẹp · ' + f2(d.nep.metLed, 2) + ' m');
   if ((d.ledNgoai || 0) > 0.001)
@@ -31498,10 +31498,10 @@ function htmlTamTinh(){
     + (r.don ? tienVN(r.don) : '—') + '</td><td>' + (r.don ? tienVN(r.tt) : '—') + '</td></tr>'));
   h.push('</tbody><tfoot><tr><th colspan="3">Tổng tạm tính</th><th>' + tienVN(k.tong)
        + '</th></tr></tfoot></table></div>');
-  if (k.rieng.length) h.push('<p class="bg-rieng"><b>Eco Bamboo báo riêng:</b> '
+  if (k.rieng.length) h.push('<p class="bg-rieng"><b>Nhựa AMC báo riêng:</b> '
     + k.rieng.join(' · ') + '</p>');
   if (k.tho.length) h.push('<p class="bg-tho"><b>Thợ chuẩn bị:</b> ' + k.tho.join(' · ')
-    + ' — Eco Bamboo không bán các hạng mục này.</p>');
+    + ' — Nhựa AMC không bán các hạng mục này.</p>');
   /* ⚠ KHỐI RIÊNG, không nhồi vào dòng "Thợ chuẩn bị" chạy dài. Hai câu này là thứ
      sale đọc để nói trước với khách và thợ đọc để căn mạch — chúng phải bắt mắt,
      không phải một cụm lẫn giữa mười cụm cách nhau dấu chấm giữa. Và chỉ hiện khi
@@ -31684,7 +31684,7 @@ function veXemTruoc(){
    Bổ sung 3 cho phép đoán nhưng bắt báo về để nửa WEB sửa, và đoán theo tên dòng là
    đúng thứ hỏng im lặng khi đặt thêm một dòng tên lạ.
 
-   ⚠ CHỈ DÁN CẠNH thuộc phần VẬT LIỆU (Eco Bamboo có bán), còn DÂY LED thì KHÔNG —
+   ⚠ CHỈ DÁN CẠNH thuộc phần VẬT LIỆU (Nhựa AMC có bán), còn DÂY LED thì KHÔNG —
      dù mét LED do chính công cụ tính ra. Đây là hai dòng dễ đổi chỗ cho nhau nhất,
      và đổi nhầm thì sale báo giá một thứ công ty không bán. */
 /* ── HAI CÂU "CHỖ NỐI TẤM" VÀ "MẢNG VÂN KHÔNG LIỀN" (bước 4) ──────────────────
@@ -31763,13 +31763,13 @@ function dongKhoiLuong(){
     (d.tu.ro||[]).forEach(r=>{ if(!r.soTam) return;
       const qc=(V.H&&V.H.quyCach17)?V.H.quyCach17(r.ma):"";
       vl.push(r.ma+" · "+(qc||"1220×2440")+" · "+r.soTam+" tấm"); });
-    /* Bổ sung 3: chỉ dán cạnh là vật liệu Eco Bamboo, làm tròn LÊN 0,5 m. */
+    /* Bổ sung 3: chỉ dán cạnh là vật liệu Nhựa AMC, làm tròn LÊN 0,5 m. */
     if(d.tu.chiCanh>0.01) vl.push("Chỉ dán cạnh tấm 17 mm · mét · "
       +f2(Math.ceil(d.tu.chiCanh*2)/2,1)+" m");
     /* ⚠⚠ MỘT NGUỒN (`H.phuKienTu`). Hai dòng cũ ở đây khai CÙNG ba con số với hai
        điều kiện KHÁC NHAU (`soCanh` và `tayNam`), nên chúng nói hai chuyện khác nhau
        về cùng một cái vách. §Bổ sung 1 · R6 và luật §10 vẫn đứng: ba thứ này THỢ
-       CHUẨN BỊ, Eco Bamboo không bán, nên không được nằm trong bảng vật liệu — nay
+       CHUẨN BỊ, Nhựa AMC không bán, nên không được nằm trong bảng vật liệu — nay
        chính dữ liệu nói thế (`cho:"tho"`), chỗ gọi không phải nhớ.
      ⚠ Giữ chữ "vít" ở cuối dòng ray: thợ cần nó, mà nó không phải một món đếm được
        nên không vào `phuKienTu` (cùng lý lẽ `chiCanh` là chiều dài). */
@@ -31778,10 +31778,10 @@ function dongKhoiLuong(){
       + " — thợ chuẩn bị"));
   }
   if((d.nep.metLed||0)>0.001) tcb.push("Dây LED trong nẹp · mét · "+f2(d.nep.metLed,2)+" m"
-    +" — Eco Bamboo bán nẹp nhôm có rãnh LED; dây LED, nguồn do thợ chuẩn bị");
+    +" — Nhựa AMC bán nẹp nhôm có rãnh LED; dây LED, nguồn do thợ chuẩn bị");
   if((d.ledNgoai||0)>0.001) tcb.push("LED ngoài · mét · "+f2(d.ledNgoai,2)+" m"
     +" — dây LED của khách, KHÔNG trong báo giá; đoạn này không có nẹp LED phù hợp");
-  /* ① Bo canh bac la GIA CONG, khong phai vat lieu Eco Bamboo ban — nen nam o nhom
+  /* ① Bo canh bac la GIA CONG, khong phai vat lieu Nhựa AMC ban — nen nam o nhom
      tho, va noi ro "gia cong tai cho" de khong ai doc thanh mot mon phai mua. */
   if(d.bo>0.001) tcb.push("Bo lồi mép trên cạnh bậc (uốn/bào tròn) · mét · "+f2(d.bo,2)+" m — gia công tại chỗ");
   /* ⚠ TẤM BÍT ĐẦU CUNG (Bổ sung 17 §1c). Chỗ cung kết thúc giữa thân vách hở ra mặt
@@ -32034,7 +32034,7 @@ V.capNhat();
 /* ==== cnc.js ==== */
 /* ══════════════════════════════════════════════════════════════════════════════════
    §62.8c · XUẤT CNC — một nút, một tệp .zip, không thư viện ngoài
-   TGĐ 03/10/2026: *"Eco Bamboo không cắt gì, thợ tự làm; công cụ hỗ trợ tối đa."*
+   TGĐ 03/10/2026: *"Nhựa AMC không cắt gì, thợ tự làm; công cụ hỗ trợ tối đa."*
 
    ⚠⚠ MỘT NÚT DUY NHẤT, MỘT TỆP. Lệnh nói thẳng: *"mỗi tấm một tệp thì giao diện không
      được nhiều nút"*. Nên tất cả đi trong một `.zip`, tên = mã vách + ngày.
@@ -32824,7 +32824,7 @@ V.capNhat();
       if (_tk) tep.push({ ten: 'THIEU-KHE-GIAN-NO.txt',
         data: enc.encode('CANH BAO: ' + _tk + ' mieng KHONG co kich thuoc CAT.\r\n'
           + 'Tep nay dang mang kich thuoc MAT (chua tru khe gian no) cho nhung mieng do.\r\n'
-          + 'Dung cat theo chung — bao lai cho Eco Bamboo.\r\n') }); }
+          + 'Dung cat theo chung — bao lai cho Nhựa AMC.\r\n') }); }
     /* ══⚠⚠ BS14 §3.2 (TGĐ gật 10/10) · BS19 §3.3 — LỚP `NAP`: miếng bít đầu cuộn ═════
        Chỗ mép cuộn kết thúc giữa thân, đoạn kế còn nguyên vật liệu nên hở ra một mặt
        hình "lune" (vuông R×R trừ ¼ đĩa). Đó là **miếng thật** phải cắt, không phải một
@@ -33052,7 +33052,7 @@ V.capNhat();
 
   function DOC_TRUOC(tam, ms, duongGoc) {
     return [
-      'HO SO THAM KHAO — do khach tu dung tren cong cu Eco Bamboo.',
+      'HO SO THAM KHAO — do khach tu dung tren cong cu Nhựa AMC.',
       'Kich thuoc, ket cau khung xuong va cach thi cong phai duoc tho kiem tra tai hien',
       'truong truoc khi dat hang va thi cong.',
       '',
@@ -33526,3 +33526,16 @@ V.capNhat();
     trang:()=>({mo:B.mo, che:B.che, tt:B.tt, chon:B.chon, s:B.s, tx:B.tx, ty:B.ty}), lamMoi:()=>{ B.khoa=null; if(B.mo) veHinh(); }};
 })();
 ;
+;
+window.VACH_REINIT = function() {
+  try {
+    if (typeof veCot === 'function') veCot();
+    if (typeof moMuc === 'function') moMuc('1a');
+    if (typeof veDay === 'function') veDay();
+    if (typeof veMoc === 'function') veMoc();
+    document.documentElement.classList.add('v3-on');
+    console.log('[vách] VACH_REINIT completed successfully');
+  } catch(e) {
+    console.warn('[vách] VACH_REINIT error:', e);
+  }
+};
