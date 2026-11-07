@@ -46,7 +46,7 @@
             var repoBase = '/' + parts[0];
             var fixUrl = function(u) {
               if (typeof u === 'string') {
-                if ((u.startsWith('/images/') || u.startsWith('/assets/') || u.startsWith('/videos/') || u.startsWith('/favicon')) && !u.startsWith(repoBase + '/')) {
+                if ((u.startsWith('/images/') || u.startsWith('/assets/') || u.startsWith('/videos/') || u.startsWith('/favicon') || u.startsWith('/thu-vien-ma-mau/')) && !u.startsWith(repoBase + '/')) {
                   return repoBase + u;
                 }
               }

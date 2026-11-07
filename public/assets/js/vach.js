@@ -2,6 +2,13 @@
 /* 18 ma lam theo bang gia website + App (EBL...). tex = film that (anh o mau tren website) lat theo kho 400 mm;
    ma 88xxx khong co film rieng tren web: mau lay tu anh san pham, van muon tu film cung ho. */
 window.LAM_SKU=[{"ma":"EBL88007","ten":"Lam bán nguyệt dương 175 · Trắng","bd":"bnduong175","nguon":"màu trắng theo ảnh sản phẩm","rgb":[244,243,238],"tex":"/assets/img/vach/lam/EBL88007.webp"},{"ma":"EBL88008","ten":"Lam bán nguyệt âm 185 · Trắng","bd":"bnam185","nguon":"màu trắng theo ảnh sản phẩm","rgb":[244,243,238],"tex":"/assets/img/vach/lam/EBL88008.webp"},{"ma":"EBL79055","ten":"Lam nhỏ 145 · Vân vải","bd":"nho145","nguon":"film EB79055","rgb":[226,221,203],"tex":"/assets/img/vach/lam/EBL79055.webp"},{"ma":"EBL88005","ten":"Lam nhỏ 149 · Gỗ sồi","bd":"nho149","nguon":"màu gỗ sồi lấy từ ảnh lam gỗ sồi, vân mượn","rgb":[193,159,121],"tex":"/assets/img/vach/lam/EBL88005.webp"},{"ma":"EBL58005","ten":"Lam nhỏ 149 · Vân da","bd":"nho149","nguon":"film EB58005","rgb":[184,173,159],"tex":"/assets/img/vach/lam/EBL58005.webp"},{"ma":"EBL66017","ten":"Lam nhỏ 149 · Vân gỗ","bd":"nho149","nguon":"film EB66017","rgb":[136,119,101],"tex":"/assets/img/vach/lam/EBL66017.webp"},{"ma":"EBL-153x7-79056","ten":"Lam nhỏ 153 · Vân vải","bd":"nho153","nguon":"film EB79056","rgb":[218,213,207],"tex":"/assets/img/vach/lam/EBL-153x7-79056.webp"},{"ma":"EBL-153x7-68037","ten":"Lam nhỏ 153 · Đơn sắc","bd":"nho153","nguon":"film EB68037","rgb":[144,146,148],"tex":"/assets/img/vach/lam/EBL-153x7-68037.webp"},{"ma":"EBL-153x7-68038","ten":"Lam nhỏ 153 · Đơn sắc","bd":"nho153","nguon":"film EB68038","rgb":[249,249,249],"tex":"/assets/img/vach/lam/EBL-153x7-68038.webp"},{"ma":"EBL88001","ten":"Lam nhỡ 168 · Gỗ sồi","bd":"vuong168","nguon":"màu gỗ sồi lấy từ ảnh sản phẩm, vân mượn","rgb":[183,147,106],"tex":"/assets/img/vach/lam/EBL88001.webp"},{"ma":"EBL66006","ten":"Lam nhỡ 168 · Gỗ óc chó","bd":"vuong168","nguon":"film EB66006","rgb":[81,60,49],"tex":"/assets/img/vach/lam/EBL66006.webp"},{"ma":"EBL66014","ten":"Lam nhỡ 168 · Vân gỗ","bd":"vuong168","nguon":"film EB66014","rgb":[183,151,113],"tex":"/assets/img/vach/lam/EBL66014.webp"},{"ma":"EBL66044","ten":"Lam nhỡ 168 · Vân gỗ","bd":"vuong168","nguon":"film EB66044 (mã có trên App, chưa có trên website)","rgb":[82,77,74],"tex":"/assets/img/vach/lam/EBL66044.webp"},{"ma":"EBL68001","ten":"Lam nhỡ 168 · Đơn sắc","bd":"vuong168","nguon":"film EB68001","rgb":[87,83,80],"tex":"/assets/img/vach/lam/EBL68001.webp"},{"ma":"EBL68017","ten":"Lam nhỡ 168 · Đơn sắc","bd":"vuong168","nguon":"film EB68017","rgb":[168,157,149],"tex":"/assets/img/vach/lam/EBL68017.webp"},{"ma":"EBL68019","ten":"Lam nhỡ 168 · Đơn sắc","bd":"vuong168","nguon":"film EB68019","rgb":[204,193,178],"tex":"/assets/img/vach/lam/EBL68019.webp"},{"ma":"EBL88003","ten":"Lam to 204 · Gỗ sồi","bd":"vuong204","nguon":"màu gỗ sồi lấy từ ảnh sản phẩm, vân mượn","rgb":[193,159,121],"tex":"/assets/img/vach/lam/EBL88003.webp"},{"ma":"EBL88004","ten":"Lam to 204 · Gỗ óc chó","bd":"vuong204","nguon":"màu óc chó lấy từ ảnh sản phẩm, vân mượn","rgb":[84,58,46],"tex":"/assets/img/vach/lam/EBL88004.webp"}];
+if (typeof window !== 'undefined' && window.LAM_SKU) {
+  var _rf = window._resolveVachAsset || function(u) { return u; };
+  window.LAM_SKU.forEach(function(item) {
+    if (item.tex) item.tex = _rf(item.tex);
+  });
+}
+;
 ;
 /* ==== hinh.js ==== */
 /* =====================================================================
@@ -24800,26 +24807,36 @@ function nhacGocMotLan(){ if(_daNhacGoc) return; _daNhacGoc=true;
    ⚠ `cfg.denBat` vẫn sống và vẫn đổi — `datBoSang()` đặt nó theo từng bộ phối. Thứ
      mất là việc bật/tắt TẮNG ĐÈN MỘT, mà đó đúng là "tham số nội bộ của bộ
      phối" theo §51.3. */
-MAUVACH.forEach(m=>{ const b=document.createElement("button"); b.className="mau-khoi"; const th=(window.MAU_THUMB||{})[m.id];
-  b.innerHTML=(th?`<span class="hinh" style="background-image:url(${th})"></span>`:"")+`<b>${m.so?`<i class="stt">${m.so}</i>`:""}${m.ten}</b>`; /* §20 · W8 — KHÔNG in dòng "ảnh 0276·0277" ra ô mẫu: đó là số hiệu ảnh gốc TGĐ gửi, vô nghĩa với khách. Trường `m.anh` GIỮ LẠI trong `mau.js` (nó là dấu vết nguồn của từng mẫu, và `title` vẫn chở câu mô tả), chỉ thôi hiển thị. */ b.title=m.mo;
-  /* ══⚠⚠ §53.3 · X11 — CHỌN MẪU LÀ DỰNG VÁCH **VÀ** ĐI SANG BƯỚC SAU ═══════════════
-     TGĐ 02/10: *"Chạm một ô → dựng vách và chuyển ngay sang Tạo hình (3D hiện, mảng
-     chưa chọn); chip Mẫu vẫn quay lại được."* Trước bản này chạm một ô chỉ dựng vách,
-     còn 3D thì nằm sau tờ lưới mẫu — tức khách chọn mẫu xong **không thấy kết quả**
-     cho tới khi tự đóng tờ. Trên máy tính thì lệnh chốt đi sang **1b**.
-     ⚠ Đi qua cửa của VỎ (`VACH_DT.moViec` · `VACH_VO.moMuc`), không tự gán trạng thái:
-       hai vỏ có hai cơ chế mở bước, và một phép gán tay ở đây là bản thứ hai của chúng.
-     ⚠ "mảng chưa chọn": `mo()` của tầng điện thoại tự chọn mảng cuối, nên bỏ chọn lại
-       sau một nhịp — cùng lý do đã ghi ở `boChon()` của §53.2. */
-  b.onclick=()=>{ vachMoi(m.id);
-    const dt=document.documentElement.classList.contains("dt-on");
-    if(dt && window.VACH_DT && VACH_DT.moViec){ VACH_DT.moViec("mau");
-      setTimeout(()=>{ chonMat=-1; chonCanh=-1; lamMoi(false); },0); }
-    else if(!dt && window.VACH_VO && VACH_VO.moMuc) VACH_VO.moMuc("1b");
-  };
-  /* §53.3 — phân nhóm theo `loai` cho MỌI mẫu, không riêng mẫu ảnh: hai mẫu cơ bản vừa
-     được gán lại (`om` · `cot`) phải vào đúng nhóm nội dung của chúng. */
-  $(m.loai?("boMau"+m.loai):"boMau").appendChild(b); });
+function dungBoMau() {
+  const bmc = $("boMau");
+  if (!bmc) return;
+  ['boMau', 'boMaucoBan', 'boMauhienDai', 'boMaucoDien'].forEach(id => {
+    const el = $(id);
+    if (el) el.innerHTML = '';
+  });
+  MAUVACH.forEach(m => {
+    const b = document.createElement("button");
+    b.className = "mau-khoi";
+    let th = (window.MAU_THUMB || {})[m.id];
+    if (th && window._resolveVachAsset) th = window._resolveVachAsset(th);
+    b.innerHTML = (th ? `<span class="hinh" style="background-image:url(${th})"></span>` : "") + `<b>${m.so ? `<i class="stt">${m.so}</i>` : ""}${m.ten}</b>`;
+    b.title = m.mo;
+    b.onclick = () => {
+      vachMoi(m.id);
+      const dt = document.documentElement.classList.contains("dt-on");
+      if (dt && window.VACH_DT && VACH_DT.moViec) {
+        VACH_DT.moViec("mau");
+        setTimeout(() => { chonMat = -1; chonCanh = -1; lamMoi(false); }, 0);
+      } else if (!dt && window.VACH_VO && VACH_VO.moMuc) {
+        VACH_VO.moMuc("1b");
+      }
+    };
+    const target = $(m.loai ? ("boMau" + m.loai) : "boMau") || bmc;
+    target.appendChild(b);
+  });
+}
+window.dungBoMau = dungBoMau;
+dungBoMau();
 /* (LỊCH SỬ) Luật bản 4 · E3 từng đòi: kẹp kích thước tường thì PHẢI NÓI RA kẹp về
    đâu — đo 28/09, gõ một số ngoài khoảng thì vách đổi mà không dòng nào nói vì sao.
    Luật ấy đúng **khi còn có khoảng kẹp**. Bổ sung 6 §1 (TGĐ 04/10) bỏ hẳn khoảng kẹp,
@@ -30474,7 +30491,7 @@ window.VACH_LUU={luuMoi,moVach,ds,anhNho,tenMacDinh,KHOA_DANG,KHOA_DS};
       .then(function (ps) { return dungPdf(to, kho, ps[0], ps[1]); })
       .then(function (r) {
         if (o.khongTai) return r;
-        taiVe(r.byte, o.ten || 'eco-bamboo-ho-so.pdf');
+        taiVe(r.byte, o.ten || 'amc-ho-so-vach.pdf');
         return r;
       });
   }
@@ -30823,7 +30840,7 @@ function _tenTep(){
   let ma = ""; try{ ma = maSan || ""; }catch(_){}
   const sach = String(ma || ngay()).replace(/[^A-Za-z0-9_-]+/g, "-")
                                    .replace(/^-+|-+$/g, "") || "vach";
-  return "eco-bamboo-vach-" + sach + ".jpg";
+  return "amc-vach-" + sach + ".jpg";
 }
 function _vanTay(){ try{ return JSON.stringify(V.S()); }catch(_){ return String(Date.now()); } }
 
@@ -31316,7 +31333,7 @@ function banVePdf(){
   if(!window.VACH_PDF){ V.nhac("Bộ ghi PDF chưa nạp xong — thử lại sau một nhịp."); return; }
   const tos=[anhBV,...dsBang,anhTu,anhTu17,...dsNep].filter(Boolean);   /* BS117 — nẹp nhiều tờ */
   const nay=new Date(), hai=v=>String(v).padStart(2,"0");
-  const tenTep="eco-bamboo-ho-so-"+nay.getFullYear()+hai(nay.getMonth()+1)+hai(nay.getDate())
+  const tenTep="amc-ho-so-vach-"+nay.getFullYear()+hai(nay.getMonth()+1)+hai(nay.getDate())
     +"-"+hai(nay.getHours())+hai(nay.getMinutes())+".pdf";
   V.nhac("đang tạo tệp PDF…");
   window.VACH_PDF.hoSo(tos,{ten:tenTep}).then(r=>{
@@ -31681,7 +31698,7 @@ function veXemTruoc(){
    TGĐ chốt hai câu: *"Chỉ bán nẹp, chỉ cạnh; không bán dây LED."* Nên bảng gửi sang
    App phải tách sẵn:
 
-     [VẬT LIỆU ECO BAMBOO]  tấm ốp · lam · nẹp nhôm · tấm 17mm · CHỈ DÁN CẠNH
+     [VẬT LIỆU AMC]  tấm ốp · lam · nẹp nhôm · tấm 17mm · CHỈ DÁN CẠNH
      [THỢ CHUẨN BỊ]         dây LED · nguồn · bản lề · ray · keo
 
    Sale chỉ báo giá phần trên. Gộp một danh sách thì App phải đoán theo tên dòng —
@@ -31712,7 +31729,7 @@ function cauNoiTam(T){
     tomVan:ds.length+" mảng vân không liền"+(ten? " ("+ten+")":"")
   };
 }
-const NHAN_VL = "[VẬT LIỆU ECO BAMBOO]";
+const NHAN_VL = "[VẬT LIỆU AMC]";
 const NHAN_TCB = "[THỢ CHUẨN BỊ]";
 
 /* ⚠ BƯỚC 3 CỦA CẢ HAI BẢN DÙNG CHUNG `htmlTamTinh()`. Không chép bảng ra bản thứ
@@ -31857,7 +31874,7 @@ function bangChu(){
          mã méo không được phép làm mất cả cái lead.
 
          Danh sách mã sản phẩm ĐÃ nằm đủ trong `vach_khoi_luong`, phần
-         [VẬT LIỆU ECO BAMBOO] — sale đọc ở đó. Nhét vào đây thì vừa không hiện,
+         [VẬT LIỆU AMC] — sale đọc ở đó. Nhét vào đây thì vừa không hiện,
          vừa đẻ một dòng cảnh báo mỗi lead.
 
          Ô vẫn giữ trong biểu mẫu, chờ ngày nối `/api/vach`: lúc đó điền đúng mã
@@ -33042,7 +33059,7 @@ V.capNhat();
     if (!ms.length) { V.nhac && V.nhac('Vách chưa có miếng tấm ốp nào để xuất.'); return; }
 
     const d = new Date(), p2 = v => String(v).padStart(2, '0');
-    const ten = 'eco-bamboo-vach-' + d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate()) + '.zip';
+    const ten = 'amc-vach-' + d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate()) + '.zip';
     const blob = new Blob([zip(tep)], { type: 'application/zip' });
     const u = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = u; a.download = ten;
@@ -33533,6 +33550,9 @@ V.capNhat();
 ;
 window.VACH_REINIT = function() {
   try {
+    if (typeof window.dungBoMau === 'function') {
+      window.dungBoMau();
+    }
     if (window.VACH_VO) {
       if (typeof window.VACH_VO.traHet === 'function') window.VACH_VO.traHet();
       if (typeof window.VACH_VO.veCot === 'function') window.VACH_VO.veCot();
