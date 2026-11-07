@@ -139,8 +139,20 @@ export default function App() {
       const href = anchor.getAttribute('href');
       if (!href) return;
       
-      // Ignore mailto, tel, external links
-      if (href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('http://') || href.startsWith('https://')) {
+      // Ignore mailto, tel, external links, blob URLs, data URIs, downloads, and target="_blank"
+      if (
+        href.startsWith('mailto:') ||
+        href.startsWith('tel:') ||
+        href.startsWith('http://') ||
+        href.startsWith('https://') ||
+        href.startsWith('blob:') ||
+        href.startsWith('data:') ||
+        href.startsWith('#') ||
+        href.startsWith('javascript:') ||
+        anchor.hasAttribute('download') ||
+        anchor.target === '_blank' ||
+        /\.(pdf|csv|xlsx?|zip|png|jpe?g|webp|mp4|webm)(\?.*)?$/i.test(href)
+      ) {
         return;
       }
       
@@ -159,7 +171,7 @@ export default function App() {
         e.preventDefault();
         navigateTo(matched);
       } else {
-        // YÊU CẦU: Bất kỳ URL nào không hoạt động -> Tự động trả về trang chủ!
+        // YÊU CẦU: Bất kỳ URL con nào không hoạt động -> Tự động trả về trang chủ!
         e.preventDefault();
         navigateTo(PLASTICS_ENTERPRISE_URLS[0]);
       }

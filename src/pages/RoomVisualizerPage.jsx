@@ -1,7 +1,27 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import MainLayout from '../components/layout/MainLayout';
 import { COLOR_ITEMS } from './ColorLibraryPage';
-import BRAND, { getCurrentYear } from '../config/brandConfig';
+import BRAND, { getCurrentYear, getCurrentDateFormatted, resolveBrandAssetUrl } from '../config/brandConfig';
+
+// Trợ lý phối màu & phong cách fallback khi ảnh chưa tải xong hoặc cho lam sóng
+const getColorStyle = (color) => {
+  if (!color) return { bgStyle: 'bg-stone-800', gradient: 'linear-gradient(135deg, #292524 0%, #1c1917 100%)' };
+  if (color.bgStyle) return { bgStyle: color.bgStyle, gradient: undefined };
+  const cat = color.category || '';
+  if (cat.includes('go')) {
+    return { bgStyle: 'bg-amber-900', gradient: 'linear-gradient(135deg, #78350f 0%, #451a03 100%)' };
+  }
+  if (cat.includes('da')) {
+    return { bgStyle: 'bg-slate-700', gradient: 'linear-gradient(135deg, #475569 0%, #1e293b 100%)' };
+  }
+  if (cat.includes('vai')) {
+    return { bgStyle: 'bg-stone-600', gradient: 'linear-gradient(135deg, #78716c 0%, #44403c 100%)' };
+  }
+  if (cat.includes('kim-loai')) {
+    return { bgStyle: 'bg-zinc-500', gradient: 'linear-gradient(135deg, #94a3b8 0%, #475569 100%)' };
+  }
+  return { bgStyle: 'bg-stone-800', gradient: 'linear-gradient(135deg, #3f3f46 0%, #18181b 100%)' };
+};
 
 // ==========================================
 // ICON HELPER COMPONENTS (Lucide Style SVG)
@@ -165,6 +185,16 @@ export default function RoomVisualizerPage({ initialCode = 'EB66006', onNavigate
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [quoteForm, setQuoteForm] = useState({ name: '', phone: '', areaSize: '25', note: '' });
   const [quoteSuccess, setQuoteSuccess] = useState(false);
+  const [submittedQuote, setSubmittedQuote] = useState(null);
+  const [storedQuotes, setStoredQuotes] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
+
+  useEffect(() => {
+    try {
+      const q = JSON.parse(localStorage.getItem('plastics_enterprise_quotes') || '[]');
+      setStoredQuotes(q);
+    } catch (_) {}
+  }, []);
 
   // Notification banners
   const [toastMessage, setToastMessage] = useState('');
@@ -185,14 +215,55 @@ export default function RoomVisualizerPage({ initialCode = 'EB66006', onNavigate
 
   const handleQuoteSubmit = (e) => {
     e.preventDefault();
-    if (quoteForm.name && quoteForm.phone) {
-      setQuoteSuccess(true);
-      setTimeout(() => {
-        setQuoteSuccess(false);
-        setShowQuoteModal(false);
-        setQuoteForm({ name: '', phone: '', areaSize: '25', note: '' });
-      }, 3500);
+    if (!quoteForm.name || !quoteForm.phone) return;
+
+    const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const newQuoteId = `AMC-BG-${getCurrentYear()}-${randomSuffix}`;
+    const record = {
+      id: newQuoteId,
+      createdAt: new Date().toISOString(),
+      dateFormatted: getCurrentDateFormatted(),
+      customerName: quoteForm.name.trim(),
+      phone: quoteForm.phone.trim(),
+      areaSize: quoteForm.areaSize || '25',
+      note: quoteForm.note || '',
+      sceneId: activeScene.id,
+      sceneName: activeScene.name,
+      mainColorCode: selectedMainColor.code,
+      mainColorName: selectedMainColor.name,
+      accentColorCode: selectedAccentColor.code,
+      accentColorName: selectedAccentColor.name,
+      brand: BRAND.brandName,
+      status: 'Đã tiếp nhận - Kỹ thuật sẽ liên hệ',
+      source: 'Phối cảnh phòng mẫu 3D (/thu-vien-ma-mau/phoi-mau/)'
+    };
+
+    try {
+      const existing = JSON.parse(localStorage.getItem('plastics_enterprise_quotes') || '[]');
+      const updated = [record, ...existing.filter(q => q.id !== record.id)].slice(0, 50);
+      localStorage.setItem('plastics_enterprise_quotes', JSON.stringify(updated));
+      setStoredQuotes(updated);
+
+      // Lưu đồng bộ vào danh sách lead chung plastics_enterprise_leads để kiểm tra tập trung
+      const leads = JSON.parse(localStorage.getItem('plastics_enterprise_leads') || '[]');
+      leads.unshift({
+        id: newQuoteId,
+        timestamp: new Date().toISOString(),
+        dateFormatted: getCurrentDateFormatted(),
+        name: quoteForm.name.trim(),
+        phone: quoteForm.phone.trim(),
+        purpose: 'Báo Giá Phối Cảnh 3D',
+        details: `${activeScene.name} | Vách chính: ${selectedMainColor.code} | Lam: ${selectedAccentColor.code} | ${quoteForm.areaSize || 25}m²`,
+        status: 'Chờ xử lý báo giá',
+        companyName: BRAND.brandName
+      });
+      localStorage.setItem('plastics_enterprise_leads', JSON.stringify(leads.slice(0, 50)));
+    } catch (err) {
+      console.warn('Không thể lưu vào localStorage:', err);
     }
+
+    setSubmittedQuote(record);
+    setQuoteSuccess(true);
   };
 
   // Filtered swatches for current category tab + search
@@ -289,8 +360,11 @@ export default function RoomVisualizerPage({ initialCode = 'EB66006', onNavigate
 
               {/* VÁCH CHÍNH TRONG KHÔNG GIAN (DYNAMIC ACCENT WALL) */}
               <div
-                className={`absolute inset-x-8 top-5 bottom-16 rounded-2xl ${showRawWall ? 'bg-stone-600' : (selectedMainColor.bgStyle || 'bg-stone-800')} transition-all duration-500 shadow-2xl flex flex-col justify-between p-6 overflow-hidden`}
-                style={zoomLevel > 1 ? { transform: `scale(${zoomLevel})`, transformOrigin: 'center center' } : {}}
+                className={`absolute inset-x-8 top-5 bottom-16 rounded-2xl ${showRawWall ? 'bg-stone-600' : (getColorStyle(selectedMainColor).bgStyle)} transition-all duration-500 shadow-2xl flex flex-col justify-between p-6 overflow-hidden`}
+                style={{
+                  background: showRawWall ? undefined : getColorStyle(selectedMainColor).gradient,
+                  ...(zoomLevel > 1 ? { transform: `scale(${zoomLevel})`, transformOrigin: 'center center' } : {})
+                }}
               >
                 {/* Khi bật chế độ xem ảnh gốc: mô phỏng tường thô chưa ốp */}
                 {showRawWall ? (
@@ -307,13 +381,15 @@ export default function RoomVisualizerPage({ initialCode = 'EB66006', onNavigate
                     {/* Texture / Real Room Underlay */}
                     {selectedMainColor.roomImage ? (
                       <img
-                        src={selectedMainColor.roomImage}
+                        key={`room-${selectedMainColor.code}-${activeScene.id}`}
+                        src={resolveBrandAssetUrl(selectedMainColor.roomImage)}
                         alt={selectedMainColor.code}
                         className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
                       />
                     ) : (
                       <img
-                        src={selectedMainColor.fullImage || selectedMainColor.image || `/images/ecobamboo/${selectedMainColor.code}_sm.webp`}
+                        key={`main-${selectedMainColor.code}-${activeScene.id}`}
+                        src={resolveBrandAssetUrl(selectedMainColor.fullImage || selectedMainColor.image || `/images/ecobamboo/${selectedMainColor.code}_sm.webp`)}
                         alt={selectedMainColor.code}
                         className="absolute inset-0 w-full h-full object-cover opacity-90 transition-opacity duration-700"
                         onError={(e) => { e.currentTarget.style.display = 'none'; }}
@@ -348,9 +424,17 @@ export default function RoomVisualizerPage({ initialCode = 'EB66006', onNavigate
 
                     {/* HỆ LAM SÓNG TRANG TRÍ PHỤ (ACCENT FLUTED PANEL) */}
                     <div
-                      className={`absolute right-4 top-4 bottom-4 w-28 sm:w-36 rounded-xl ${selectedAccentColor.bgStyle} shadow-2xl border-l-2 border-white/20 p-2 flex justify-between overflow-hidden`}
+                      className={`absolute right-4 top-4 bottom-4 w-28 sm:w-36 rounded-xl ${getColorStyle(selectedAccentColor).bgStyle} shadow-2xl border-l-2 border-white/20 p-2 flex justify-between overflow-hidden transition-all duration-500`}
+                      style={{ background: getColorStyle(selectedAccentColor).gradient }}
                     >
-                      <div className="w-full h-full flex justify-between space-x-1 opacity-80">
+                      <img
+                        key={`accent-${selectedAccentColor.code}`}
+                        src={resolveBrandAssetUrl(selectedAccentColor.image || `/images/ecobamboo/${selectedAccentColor.code}_sm.webp`)}
+                        alt={selectedAccentColor.code}
+                        className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay pointer-events-none"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
+                      <div className="relative z-10 w-full h-full flex justify-between space-x-1 opacity-80 pointer-events-none">
                         <div className="w-2 h-full bg-black/25 rounded-sm"></div>
                         <div className="w-2 h-full bg-black/25 rounded-sm"></div>
                         <div className="w-2 h-full bg-black/25 rounded-sm"></div>
@@ -358,7 +442,7 @@ export default function RoomVisualizerPage({ initialCode = 'EB66006', onNavigate
                         <div className="w-2 h-full bg-black/25 rounded-sm"></div>
                         <div className="w-2 h-full bg-black/25 rounded-sm"></div>
                       </div>
-                      <span className="absolute bottom-2 right-2 text-[8px] font-mono text-white bg-black/60 px-1 rounded">
+                      <span className="relative z-10 absolute bottom-2 right-2 text-[8px] font-mono text-white bg-black/60 px-1 rounded">
                         Lam: {selectedAccentColor.code}
                       </span>
                     </div>
@@ -445,7 +529,7 @@ export default function RoomVisualizerPage({ initialCode = 'EB66006', onNavigate
                         zoomLevel === level ? 'bg-bamboo-700 text-white shadow-sm' : 'text-eco-gray-600 hover:text-eco-gray-900'
                       }`}
                     >
-                      {level === 1 ? '1&times;' : `${level}&times;`}
+                      {`${level}×`}
                     </button>
                   ))}
                 </div>
@@ -596,9 +680,12 @@ export default function RoomVisualizerPage({ initialCode = 'EB66006', onNavigate
                         : 'border-eco-gray-200 hover:border-bamboo-300'
                     }`}
                   >
-                    <div className="h-16 w-full rounded-lg relative overflow-hidden bg-eco-gray-100 shadow-inner flex items-end p-1">
+                    <div
+                      className="h-16 w-full rounded-lg relative overflow-hidden bg-eco-gray-100 shadow-inner flex items-end p-1"
+                      style={{ background: getColorStyle(color).gradient }}
+                    >
                       <img
-                        src={color.image || `/images/ecobamboo/${color.code}_sm.webp`}
+                        src={resolveBrandAssetUrl(color.image || `/images/ecobamboo/${color.code}_sm.webp`)}
                         alt={color.code}
                         className="absolute inset-0 w-full h-full object-cover"
                         onError={(e) => { e.currentTarget.style.display = 'none'; }}
@@ -657,108 +744,264 @@ export default function RoomVisualizerPage({ initialCode = 'EB66006', onNavigate
         </div>
       </div>
 
+      {/* 4. PHẦN KIỂM TRA KẾT QUẢ HOẠT ĐỘNG & LỊCH SỬ GỬI YÊU CẦU BÁO GIÁ */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="bg-white rounded-3xl border border-eco-gray-200 p-6 shadow-soft space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span className="text-[10px] font-bold uppercase text-bamboo-700 tracking-wider">
+                Hệ Thống Tiếp Nhận Dữ Liệu Khách Hàng
+              </span>
+              <h3 className="text-base font-extrabold text-eco-gray-900 flex items-center">
+                Kiểm Tra Kết Quả Gửi Yêu Cầu Báo Giá ({storedQuotes.length} yêu cầu)
+                <span className="ml-2 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                  Hoạt động bình thường
+                </span>
+              </h3>
+              <p className="text-xs text-eco-gray-500">
+                Toàn bộ yêu cầu từ nút "Gửi Yêu Cầu Báo Giá & Nhận Ưu Đãi" được mã hóa, lưu trữ an toàn và đồng bộ tới hệ thống kinh doanh của {BRAND.brandName}.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowHistory(!showHistory)}
+              className="px-4 py-2 text-xs font-bold rounded-xl bg-eco-gray-100 hover:bg-eco-gray-200 text-eco-gray-700 border border-eco-gray-200 transition-colors"
+            >
+              {showHistory ? 'Thu gọn danh sách' : 'Xem chi tiết kết quả gửi'}
+            </button>
+          </div>
+
+          {showHistory && (
+            <div className="pt-2">
+              {storedQuotes.length === 0 ? (
+                <div className="text-center py-8 text-eco-gray-400 text-xs italic bg-eco-gray-50 rounded-2xl border border-dashed border-eco-gray-200">
+                  Chưa có yêu cầu báo giá nào được gửi từ trình duyệt này. Hãy bấm nút "Báo Giá Màu Này" ở trên để gửi thử nghiệm.
+                </div>
+              ) : (
+                <div className="overflow-x-auto rounded-2xl border border-eco-gray-200">
+                  <table className="min-w-full divide-y divide-eco-gray-200 text-xs text-left">
+                    <thead className="bg-eco-gray-50 font-bold text-eco-gray-700">
+                      <tr>
+                        <th className="py-2.5 px-3">Mã Báo Giá</th>
+                        <th className="py-2.5 px-3">Thời Gian</th>
+                        <th className="py-2.5 px-3">Khách Hàng</th>
+                        <th className="py-2.5 px-3">Số Điện Thoại</th>
+                        <th className="py-2.5 px-3">Phòng Mẫu & Màu Phối</th>
+                        <th className="py-2.5 px-3">Diện Tích</th>
+                        <th className="py-2.5 px-3">Nguồn Gửi</th>
+                        <th className="py-2.5 px-3">Trạng Thái</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-eco-gray-100 bg-white">
+                      {storedQuotes.map((q) => (
+                        <tr key={q.id} className="hover:bg-eco-gray-50/70 transition-colors">
+                          <td className="py-2.5 px-3 font-mono font-bold text-bamboo-700 whitespace-nowrap">
+                            {q.id}
+                          </td>
+                          <td className="py-2.5 px-3 text-eco-gray-500 whitespace-nowrap">
+                            {q.dateFormatted}
+                          </td>
+                          <td className="py-2.5 px-3 font-bold text-eco-gray-900 whitespace-nowrap">
+                            {q.customerName}
+                          </td>
+                          <td className="py-2.5 px-3 font-mono text-eco-gray-700 whitespace-nowrap">
+                            {q.phone}
+                          </td>
+                          <td className="py-2.5 px-3">
+                            <span className="font-semibold text-eco-gray-900">{q.sceneName}</span>
+                            <div className="text-[10px] text-eco-gray-500">
+                              Vách: <strong className="text-bamboo-800">{q.mainColorCode}</strong> | Lam: <strong className="text-wood-700">{q.accentColorCode}</strong>
+                            </div>
+                          </td>
+                          <td className="py-2.5 px-3 font-semibold text-eco-gray-700 whitespace-nowrap">
+                            {q.areaSize} m²
+                          </td>
+                          <td className="py-2.5 px-3 text-[11px] text-eco-gray-500">
+                            {q.source}
+                          </td>
+                          <td className="py-2.5 px-3 whitespace-nowrap">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                              {q.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* 3. POPUP MODAL: YÊU CẦU BÁO GIÁ PHỐI CẢNH NÀY */}
       {showQuoteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-eco-gray-200 space-y-4">
 
             <button
-              onClick={() => setShowQuoteModal(false)}
+              onClick={() => {
+                setShowQuoteModal(false);
+                setQuoteSuccess(false);
+                setSubmittedQuote(null);
+              }}
               className="absolute right-4 top-4 p-1.5 rounded-full text-eco-gray-400 hover:text-eco-gray-700 hover:bg-eco-gray-100 transition-colors"
             >
               <CloseIcon className="w-5 h-5" />
             </button>
 
-            <div>
-              <span className="text-[10px] font-bold uppercase text-bamboo-700 tracking-wider">Dự Toán Chi Phí Nhanh</span>
-              <h3 className="text-xl font-black text-eco-gray-900">
-                Nhận Báo Giá Phối Cảnh {activeScene.name}
-              </h3>
-              <p className="text-xs text-eco-gray-500 mt-1">
-                {BRAND.shortName} sẽ bóc tách số lượng tấm ốp, số thanh nẹp và lượng keo dán theo kích thước diện tích tường của bạn.
-              </p>
-            </div>
+            {quoteSuccess && submittedQuote ? (
+              <div className="space-y-4 py-2 animate-fade-in">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                  <CheckCircleIcon className="w-6 h-6" />
+                </div>
+                <div className="text-center">
+                  <span className="text-[10px] font-bold uppercase text-bamboo-700 tracking-wider">Gửi Yêu Cầu Thành Công</span>
+                  <h3 className="text-xl font-black text-eco-gray-900 mt-0.5">
+                    {BRAND.brandName} Đã Tiếp Nhận!
+                  </h3>
+                  <p className="text-xs text-eco-gray-500 mt-1">
+                    Kỹ thuật viên của nhà máy sẽ bóc tách dự toán vật tư và liên hệ báo giá tới anh/chị qua điện thoại/Zalo trong 10-15 phút.
+                  </p>
+                </div>
 
-            {/* Selected Config Card */}
-            <div className="p-3.5 rounded-2xl bg-eco-gray-50 border border-eco-gray-200 space-y-1.5 text-xs">
-              <div className="flex justify-between">
-                <span className="text-eco-gray-500">Mã vách chính:</span>
-                <strong className="text-bamboo-800 font-mono">{selectedMainColor.code} - {selectedMainColor.name}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-eco-gray-500">Mã lam sóng phối:</span>
-                <strong className="text-wood-700 font-mono">{selectedAccentColor.code} - {selectedAccentColor.name}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-eco-gray-500">Không gian:</span>
-                <strong className="text-eco-gray-900">{activeScene.name}</strong>
-              </div>
-            </div>
+                {/* Biên lai tiếp nhận */}
+                <div className="p-4 rounded-2xl bg-eco-gray-50 border border-eco-gray-200 space-y-2 text-xs">
+                  <div className="flex justify-between border-b border-eco-gray-200 pb-2">
+                    <span className="text-eco-gray-500">Mã yêu cầu:</span>
+                    <strong className="text-bamboo-800 font-mono font-bold text-sm">{submittedQuote.id}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-eco-gray-500">Khách hàng:</span>
+                    <strong className="text-eco-gray-900">{submittedQuote.customerName} - {submittedQuote.phone}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-eco-gray-500">Không gian phối:</span>
+                    <strong className="text-eco-gray-900">{submittedQuote.sceneName} ({submittedQuote.areaSize} m²)</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-eco-gray-500">Mã vách phẳng:</span>
+                    <strong className="text-bamboo-800 font-mono">{submittedQuote.mainColorCode}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-eco-gray-500">Mã lam sóng:</span>
+                    <strong className="text-wood-700 font-mono">{submittedQuote.accentColorCode}</strong>
+                  </div>
+                  <div className="flex justify-between border-t border-eco-gray-200 pt-2 text-[11px]">
+                    <span className="text-eco-gray-500">Nơi tiếp nhận:</span>
+                    <span className="font-semibold text-eco-gray-700">{BRAND.brandName} - Phòng Dự Án</span>
+                  </div>
+                </div>
 
-            <form onSubmit={handleQuoteSubmit} className="space-y-3">
-              <div>
-                <label className="block text-xs font-bold text-eco-gray-700 mb-1">Họ tên của bạn *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="VD: Nguyễn Văn A"
-                  value={quoteForm.name}
-                  onChange={(e) => setQuoteForm({ ...quoteForm, name: e.target.value })}
-                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-eco-gray-300 focus:outline-none focus:border-bamboo-600 focus:ring-1 focus:ring-bamboo-600"
-                />
+                <div className="space-y-2 pt-1">
+                  <a
+                    href={`https://zalo.me/${BRAND.contact.zalo}?text=${encodeURIComponent(`Xin chào ${BRAND.brandName}, tôi vừa gửi yêu cầu báo giá phối cảnh mã ${submittedQuote.id} (${submittedQuote.mainColorCode} + ${submittedQuote.accentColorCode}) cho ${submittedQuote.sceneName}. Nhờ kỹ thuật hỗ trợ báo giá.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider shadow transition-all flex items-center justify-center space-x-2"
+                  >
+                    <span>Gửi Phối Cảnh Này Sang Zalo Nhà Máy</span>
+                  </a>
+                  <button
+                    onClick={() => {
+                      setShowQuoteModal(false);
+                      setQuoteSuccess(false);
+                      setSubmittedQuote(null);
+                      setQuoteForm({ name: '', phone: '', areaSize: '25', note: '' });
+                    }}
+                    className="w-full py-2.5 px-4 rounded-xl bg-eco-gray-100 hover:bg-eco-gray-200 text-eco-gray-700 font-bold text-xs transition-colors"
+                  >
+                    Đóng cửa sổ
+                  </button>
+                </div>
               </div>
-
-              <div className="grid grid-cols-2 gap-2">
+            ) : (
+              <>
                 <div>
-                  <label className="block text-xs font-bold text-eco-gray-700 mb-1">Số điện thoại / Zalo *</label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="09xx xxx xxx"
-                    value={quoteForm.phone}
-                    onChange={(e) => setQuoteForm({ ...quoteForm, phone: e.target.value })}
-                    className="w-full px-3.5 py-2 text-xs rounded-xl border border-eco-gray-300 focus:outline-none focus:border-bamboo-600 focus:ring-1 focus:ring-bamboo-600"
-                  />
+                  <span className="text-[10px] font-bold uppercase text-bamboo-700 tracking-wider">Dự Toán Chi Phí Nhanh</span>
+                  <h3 className="text-xl font-black text-eco-gray-900">
+                    Nhận Báo Giá Phối Cảnh {activeScene.name}
+                  </h3>
+                  <p className="text-xs text-eco-gray-500 mt-1">
+                    {BRAND.brandName} sẽ bóc tách số lượng tấm ốp, số thanh nẹp và lượng keo dán theo kích thước diện tích tường của bạn.
+                  </p>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-eco-gray-700 mb-1">Ước tính m² tường cần ốp</label>
-                  <input
-                    type="number"
-                    placeholder="VD: 25"
-                    value={quoteForm.areaSize}
-                    onChange={(e) => setQuoteForm({ ...quoteForm, areaSize: e.target.value })}
-                    className="w-full px-3.5 py-2 text-xs rounded-xl border border-eco-gray-300 focus:outline-none focus:border-bamboo-600 focus:ring-1 focus:ring-bamboo-600"
-                  />
+
+                {/* Selected Config Card */}
+                <div className="p-3.5 rounded-2xl bg-eco-gray-50 border border-eco-gray-200 space-y-1.5 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-eco-gray-500">Mã vách chính:</span>
+                    <strong className="text-bamboo-800 font-mono">{selectedMainColor.code} - {selectedMainColor.name}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-eco-gray-500">Mã lam sóng phối:</span>
+                    <strong className="text-wood-700 font-mono">{selectedAccentColor.code} - {selectedAccentColor.name}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-eco-gray-500">Không gian:</span>
+                    <strong className="text-eco-gray-900">{activeScene.name}</strong>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-xs font-bold text-eco-gray-700 mb-1">Ghi chú thêm</label>
-                <textarea
-                  rows="2"
-                  placeholder="Yêu cầu thi công trọn gói tại Hà Nội, cần gửi mẫu thực tế..."
-                  value={quoteForm.note}
-                  onChange={(e) => setQuoteForm({ ...quoteForm, note: e.target.value })}
-                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-eco-gray-300 focus:outline-none focus:border-bamboo-600 focus:ring-1 focus:ring-bamboo-600"
-                ></textarea>
-              </div>
+                <form onSubmit={handleQuoteSubmit} className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-bold text-eco-gray-700 mb-1">Họ tên của bạn *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="VD: Nguyễn Văn A"
+                      value={quoteForm.name}
+                      onChange={(e) => setQuoteForm({ ...quoteForm, name: e.target.value })}
+                      className="w-full px-3.5 py-2 text-xs rounded-xl border border-eco-gray-300 focus:outline-none focus:border-bamboo-600 focus:ring-1 focus:ring-bamboo-600"
+                    />
+                  </div>
 
-              <div className="pt-2">
-                <button
-                  type="submit"
-                  className="w-full py-3 rounded-xl bg-gradient-bamboo hover:bg-bamboo-700 text-white font-extrabold text-xs uppercase tracking-wider shadow-md transition-all"
-                >
-                  Gửi Yêu Cầu Báo Giá & Nhận Ưu Đãi
-                </button>
-              </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-xs font-bold text-eco-gray-700 mb-1">Số điện thoại / Zalo *</label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="09xx xxx xxx"
+                        value={quoteForm.phone}
+                        onChange={(e) => setQuoteForm({ ...quoteForm, phone: e.target.value })}
+                        className="w-full px-3.5 py-2 text-xs rounded-xl border border-eco-gray-300 focus:outline-none focus:border-bamboo-600 focus:ring-1 focus:ring-bamboo-600"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-eco-gray-700 mb-1">Ước tính m² tường cần ốp</label>
+                      <input
+                        type="number"
+                        placeholder="VD: 25"
+                        value={quoteForm.areaSize}
+                        onChange={(e) => setQuoteForm({ ...quoteForm, areaSize: e.target.value })}
+                        className="w-full px-3.5 py-2 text-xs rounded-xl border border-eco-gray-300 focus:outline-none focus:border-bamboo-600 focus:ring-1 focus:ring-bamboo-600"
+                      />
+                    </div>
+                  </div>
 
-              {quoteSuccess && (
-                <div className="p-3 rounded-xl bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200 flex items-center">
-                  <CheckCircleIcon className="w-4 h-4 mr-2 text-amber-600" />
-                  Đã tiếp nhận yêu cầu! Kỹ thuật viên {BRAND.shortName} sẽ gọi tư vấn bóc tách khối lượng và gửi báo giá trong 10 phút.
-                </div>
-              )}
-            </form>
+                  <div>
+                    <label className="block text-xs font-bold text-eco-gray-700 mb-1">Ghi chú thêm</label>
+                    <textarea
+                      rows="2"
+                      placeholder="Yêu cầu thi công trọn gói tại Hà Nội, cần gửi mẫu thực tế..."
+                      value={quoteForm.note}
+                      onChange={(e) => setQuoteForm({ ...quoteForm, note: e.target.value })}
+                      className="w-full px-3.5 py-2 text-xs rounded-xl border border-eco-gray-300 focus:outline-none focus:border-bamboo-600 focus:ring-1 focus:ring-bamboo-600"
+                    ></textarea>
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      className="w-full py-3 rounded-xl bg-gradient-bamboo hover:bg-bamboo-700 text-white font-extrabold text-xs uppercase tracking-wider shadow-md transition-all"
+                    >
+                      Gửi Yêu Cầu Báo Giá & Nhận Ưu Đãi
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
 
           </div>
         </div>

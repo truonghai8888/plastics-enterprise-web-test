@@ -1,5 +1,5 @@
 with open('public/assets/js/vach.js', 'r', encoding='utf-8') as f:
-    js = f.read()
+    text = f.read()
 
-idx = js.find('function moMuc(')
-print(js[idx:idx+1500])
+idx = text.find('document.documentElement.classList.toggle("v3-mau", id==="1a");')
+print(text[idx+1400:idx+3500])

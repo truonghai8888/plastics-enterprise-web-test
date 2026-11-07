@@ -1,6 +1,7 @@
 import BRAND, { getCurrentYear, getYearSpan } from '../config/brandConfig';
 import React, { useState } from 'react';
 import MainLayout from '../components/layout/MainLayout';
+import { downloadCertificatesPdf } from '../utils/fileDownload';
 
 // ==========================================
 // ICON HELPER COMPONENTS (Lucide Style SVG)
@@ -149,8 +150,11 @@ export default function CertificatesPage() {
   const [downloadNotice, setDownloadNotice] = useState(false);
 
   const handleDownloadAllPDF = () => {
+    try {
+      downloadCertificatesPdf(BRAND.brandName);
+    } catch (_) {}
     setDownloadNotice(true);
-    setTimeout(() => setDownloadNotice(false), 4000);
+    setTimeout(() => setDownloadNotice(false), 5000);
   };
 
   return (

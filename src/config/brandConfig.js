@@ -64,7 +64,13 @@ export const resolveBrandAssetUrl = (path) => {
       base = '/' + parts[0] + '/';
     }
   }
+  if (base !== '/' && path.startsWith(base)) {
+    return path;
+  }
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  if (base !== '/' && cleanPath.startsWith(base.slice(1))) {
+    return '/' + cleanPath;
+  }
   return base === '/' ? ('/' + cleanPath) : (base + cleanPath);
 };
 

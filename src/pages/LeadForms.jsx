@@ -1,6 +1,7 @@
 import BRAND, { getCurrentYear, getCatalogTitle } from '../config/brandConfig';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '../components/layout/MainLayout';
+import { downloadCataloguePdf } from '../utils/fileDownload';
 
 // ==========================================
 // ICON HELPER COMPONENTS (Lucide Style SVG)
@@ -72,33 +73,33 @@ export const FORM_PURPOSES = {
     id: 'dealer',
     badge: 'Hợp Tác Phân Phối',
     title: 'Đăng Ký Làm Đại Lý / Nhà Phân Phối',
-    desc: 'Nhận chính sách chiết khấu trực tiếp từ nhà máy lên tới 25%, bảo hộ khu vực độc quyền và hỗ trợ bảng hiệu showroom 100%.',
+    desc: `Nhận chính sách chiết khấu trực tiếp từ nhà máy ${BRAND.shortName} lên tới 25%, bảo hộ khu vực độc quyền và hỗ trợ bảng hiệu showroom 100%.`,
     buttonText: 'Gửi Đăng Ký Đại Lý Ngay',
-    successMsg: 'Cảm ơn quý đối tác! Giám đốc kinh doanh khu vực {BRAND.shortName} sẽ liên hệ gửi hợp đồng mẫu và chính sách chiết khấu trong 15 phút.'
+    successMsg: `Cảm ơn quý đối tác! Giám đốc kinh doanh khu vực ${BRAND.shortName} sẽ liên hệ gửi hợp đồng mẫu và chính sách chiết khấu trong 15 phút.`
   },
   sample: {
     id: 'sample',
     badge: 'Xâu Mẫu Thực Tế',
     title: 'Đăng Ký Nhận Mẫu Vật Liệu Tận Nơi (Sample Box)',
-    desc: '{BRAND.shortName} gửi miễn phí bộ mẫu cắt thực tế kích thước 15x20cm gồm các dòng vân gỗ, vân đá cẩm thạch và lam sóng để kiểm nghiệm chất lượng.',
+    desc: `${BRAND.shortName} gửi miễn phí bộ mẫu cắt thực tế kích thước 15x20cm gồm các dòng vân gỗ, vân đá cẩm thạch và lam sóng để kiểm nghiệm chất lượng.`,
     buttonText: 'Gửi Yêu Cầu Nhận Mẫu Miễn Phí',
-    successMsg: 'Đã tiếp nhận yêu cầu gửi mẫu! Nhân viên điều phối kho sẽ đóng gói Sample Box và gửi chuyển phát nhanh đến địa chỉ của bạn trong 24h.'
+    successMsg: `Đã tiếp nhận yêu cầu gửi mẫu! Nhân viên điều phối kho ${BRAND.shortName} sẽ đóng gói Sample Box và gửi chuyển phát nhanh đến địa chỉ của bạn trong 24h.`
   },
   catalogue: {
     id: 'catalogue',
     badge: `Tài Liệu ${getCurrentYear()}`,
     title: 'Tải Trọn Bộ Catalogue & Bảng Giá PDF (60 Trang)',
-    desc: 'Xem trọn bộ 160+ mã màu thớ vân độ phân giải cao, kèm bảng báo giá niêm yết và hướng dẫn thi công chi tiết.',
+    desc: `Xem trọn bộ 160+ mã màu thớ vân độ phân giải cao của ${BRAND.brandName}, kèm bảng báo giá niêm yết và hướng dẫn thi công chi tiết.`,
     buttonText: 'Tải Xuống Bản Đầy Đủ (PDF)',
-    successMsg: 'Đang tải xuống bộ tài liệu Catalogue_`${BRAND.brandName}_${getCurrentYear()}.pdf` và Báo giá niêm yết.'
+    successMsg: `Đang tải xuống bộ tài liệu Catalogue_${BRAND.brandName}_${getCurrentYear()}.pdf và Báo giá niêm yết ${BRAND.shortName}.`
   },
   contact: {
     id: 'contact',
     badge: 'Tư Vấn Trực Tiếp',
     title: 'Liên Hệ Nhà Máy & Tư Vấn Kỹ Thuật Công Trình',
-    desc: 'Giải đáp thắc mắc về kỹ thuật soi rãnh V, phương án uốn vòm cong hoặc bóc tách khối lượng vật tư theo bản vẽ CAD/3D.',
+    desc: `Giải đáp thắc mắc về kỹ thuật soi rãnh V, phương án uốn vòm cong hoặc bóc tách khối lượng vật tư tấm ốp ${BRAND.shortName} theo bản vẽ CAD/3D.`,
     buttonText: 'Gửi Yêu Cầu Tư Vấn Ngay',
-    successMsg: 'Cảm ơn bạn! Kỹ sư vật liệu {BRAND.shortName} sẽ gọi lại giải đáp chi tiết cho bạn ngay.'
+    successMsg: `Cảm ơn bạn! Kỹ sư vật liệu ${BRAND.shortName} sẽ gọi lại giải đáp chi tiết cho bạn ngay.`
   }
 };
 
@@ -109,7 +110,8 @@ export function LeadCaptureForm({
   purpose = 'dealer',
   customTitle,
   customDesc,
-  embedded = false
+  embedded = false,
+  onLeadSubmitted
 }) {
   const config = FORM_PURPOSES[purpose] || FORM_PURPOSES.dealer;
 
@@ -125,26 +127,65 @@ export function LeadCaptureForm({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [submittedLead, setSubmittedLead] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    const leadCode = `AMC-${Math.floor(100000 + Math.random() * 900000)}`;
+    const newLead = {
+      code: leadCode,
+      purposeId: purpose,
+      purposeTitle: config.title,
+      fullName: formData.fullName.trim(),
+      phone: formData.phone.trim(),
+      email: formData.email.trim(),
+      city: formData.city.trim(),
+      address: formData.address.trim(),
+      role: formData.role,
+      note: formData.note.trim(),
+      companyName: BRAND.legalName,
+      brandShort: BRAND.shortName,
+      status: 'Đã tiếp nhận thành công',
+      createdAt: new Date().toISOString(),
+      displayTime: new Date().toLocaleString('vi-VN')
+    };
+
+    try {
+      const existing = JSON.parse(localStorage.getItem('plastics_enterprise_leads') || '[]');
+      existing.unshift(newLead);
+      localStorage.setItem('plastics_enterprise_leads', JSON.stringify(existing));
+      if (onLeadSubmitted) onLeadSubmitted(newLead);
+      window.dispatchEvent(new CustomEvent('plastics_enterprise_lead_added', { detail: newLead }));
+    } catch (_) {}
+
+    // Tự động tải file catalogue nếu người dùng đăng ký tải catalogue
+    if (purpose === 'catalogue') {
+      try {
+        downloadCataloguePdf(BRAND.brandName);
+      } catch (_) {}
+    }
+
     setTimeout(() => {
       setIsSubmitting(false);
+      setSubmittedLead(newLead);
       setIsSuccess(true);
-      setTimeout(() => {
-        setIsSuccess(false);
-        setFormData({
-          fullName: '',
-          phone: '',
-          email: '',
-          city: '',
-          address: '',
-          role: 'Đại lý / Cửa hàng nội thất',
-          note: ''
-        });
-      }, 5000);
-    }, 800);
+    }, 600);
+  };
+
+  const handleReset = () => {
+    setIsSuccess(false);
+    setSubmittedLead(null);
+    setFormData({
+      fullName: '',
+      phone: '',
+      email: '',
+      city: '',
+      address: '',
+      role: 'Đại lý / Cửa hàng nội thất',
+      note: ''
+    });
   };
 
   return (
@@ -277,10 +318,46 @@ export function LeadCaptureForm({
           {isSubmitting ? 'Đang gửi thông tin...' : config.buttonText}
         </button>
 
-        {isSuccess && (
-          <div className="p-3.5 rounded-xl bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200 flex items-start animate-fade-in">
-            <CheckCircleIcon className="w-4 h-4 mr-2 text-amber-600 shrink-0 mt-0.5" />
-            <span>{config.successMsg}</span>
+        {isSuccess && submittedLead && (
+          <div className="p-4 rounded-2xl bg-amber-50 text-amber-900 border border-amber-300 space-y-3 animate-fade-in">
+            <div className="flex items-center text-sm font-bold text-amber-800">
+              <CheckCircleIcon className="w-5 h-5 mr-2 text-amber-600 shrink-0" />
+              <span>Đăng ký thành công tại {BRAND.shortName}!</span>
+            </div>
+            <p className="text-xs text-eco-gray-700 leading-relaxed font-medium">
+              {config.successMsg}
+            </p>
+            <div className="p-3 bg-white/90 rounded-xl border border-amber-200 text-xs space-y-1">
+              <div className="flex justify-between">
+                <span className="text-eco-gray-500">Mã tiếp nhận:</span>
+                <span className="font-mono font-black text-amber-800">{submittedLead.code}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-eco-gray-500">Người đăng ký:</span>
+                <span className="font-bold text-eco-gray-800">{submittedLead.fullName} - {submittedLead.phone}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-eco-gray-500">Doanh nghiệp:</span>
+                <span className="font-semibold text-bamboo-800">{BRAND.legalName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-eco-gray-500">Thời gian gửi:</span>
+                <span className="text-eco-gray-600">{submittedLead.displayTime}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-eco-gray-500">Trạng thái:</span>
+                <span className="font-bold text-green-700">✓ Đã lưu trên hệ thống ({BRAND.shortName})</span>
+              </div>
+            </div>
+            <div className="flex justify-end pt-1">
+              <button
+                type="button"
+                onClick={handleReset}
+                className="text-xs font-bold text-amber-800 hover:text-amber-950 underline"
+              >
+                + Gửi thêm yêu cầu khác
+              </button>
+            </div>
           </div>
         )}
       </form>
@@ -293,6 +370,22 @@ export function LeadCaptureForm({
 // ==========================================
 export default function LeadForms() {
   const [activeTab, setActiveTab] = useState('dealer');
+  const [leadList, setLeadList] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
+
+  const loadLeads = () => {
+    try {
+      const items = JSON.parse(localStorage.getItem('plastics_enterprise_leads') || '[]');
+      setLeadList(items);
+    } catch (_) {}
+  };
+
+  useEffect(() => {
+    loadLeads();
+    const handleLeadAdded = () => loadLeads();
+    window.addEventListener('plastics_enterprise_lead_added', handleLeadAdded);
+    return () => window.removeEventListener('plastics_enterprise_lead_added', handleLeadAdded);
+  }, []);
 
   return (
     <MainLayout>
@@ -474,6 +567,69 @@ export default function LeadForms() {
 
           </div>
 
+        </div>
+
+        {/* 3. LỊCH SỬ TIẾP NHẬN YÊU CẦU & KIỂM TRA HOẠT ĐỘNG */}
+        <div className="mt-12 pt-8 border-t border-eco-gray-200">
+          <div className="bg-white rounded-3xl border border-eco-gray-200 p-6 shadow-sm space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h4 className="text-base font-bold text-eco-gray-900 flex items-center">
+                  <CheckCircleIcon className="w-5 h-5 mr-2 text-bamboo-600" />
+                  Kiểm Tra Kết Quả Hoạt Động & Lịch Sử Đăng Ký ({leadList.length})
+                </h4>
+                <p className="text-xs text-eco-gray-500 mt-0.5">
+                  Tất cả các thông tin đăng ký làm đại lý, nhận mẫu, tải catalogue và tư vấn tại {BRAND.legalName} được lưu trữ minh bạch.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowHistory(!showHistory)}
+                className="px-3.5 py-1.5 rounded-xl border border-bamboo-300 text-bamboo-700 hover:bg-bamboo-50 font-bold text-xs transition-colors"
+              >
+                {showHistory ? 'Thu gọn danh sách' : 'Xem chi tiết kết quả'}
+              </button>
+            </div>
+
+            {showHistory && (
+              <div className="space-y-3 pt-2">
+                {leadList.length === 0 ? (
+                  <div className="text-center py-6 text-eco-gray-400 text-xs italic">
+                    Chưa có yêu cầu nào được gửi trong phiên này. Hãy gửi thử một biểu mẫu ở phía trên để kiểm tra kết quả ngay!
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs border border-eco-gray-200 rounded-xl overflow-hidden">
+                      <thead className="bg-eco-gray-50 text-eco-gray-700 font-bold border-b border-eco-gray-200">
+                        <tr>
+                          <th className="p-3">Mã đơn</th>
+                          <th className="p-3">Loại yêu cầu</th>
+                          <th className="p-3">Khách hàng</th>
+                          <th className="p-3">Số điện thoại</th>
+                          <th className="p-3">Khu vực / Địa chỉ</th>
+                          <th className="p-3">Thời gian gửi</th>
+                          <th className="p-3">Trạng thái</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-eco-gray-100">
+                        {leadList.map((lead, idx) => (
+                          <tr key={idx} className="hover:bg-bamboo-50/40">
+                            <td className="p-3 font-mono font-bold text-bamboo-800">{lead.code}</td>
+                            <td className="p-3 font-semibold text-eco-gray-800">{lead.purposeTitle}</td>
+                            <td className="p-3">{lead.fullName}</td>
+                            <td className="p-3 font-mono">{lead.phone}</td>
+                            <td className="p-3">{lead.city || lead.address || '-'}</td>
+                            <td className="p-3 text-eco-gray-500">{lead.displayTime}</td>
+                            <td className="p-3 font-semibold text-green-700">✓ {lead.status}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
       </div>

@@ -65,7 +65,7 @@ const LayersIcon = ({ className = "w-4 h-4" }) => (
 );
 
 import colorItems from '../data/colorItems.json';
-import BRAND from '../config/brandConfig';
+import BRAND, { resolveBrandAssetUrl } from '../config/brandConfig';
 
 // ==========================================
 // DANH MỤC NHÓM MÀU CHUẨN ECOBAMBOO
@@ -218,7 +218,7 @@ export default function ColorLibraryPage({ onOpenVisualizer }) {
                 {/* Visual Texture Swatch Box */}
                 <div className="h-44 w-full relative p-3 flex flex-col justify-between overflow-hidden shadow-inner bg-eco-gray-100">
                   <img
-                    src={color.image || `/images/ecobamboo/${color.code}_sm.webp`}
+                    src={resolveBrandAssetUrl(color.image || `/images/ecobamboo/${color.code}_sm.webp`)}
                     alt={color.code}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     onError={(e) => {
@@ -314,11 +314,11 @@ export default function ColorLibraryPage({ onOpenVisualizer }) {
             {/* Simulated High-Res Texture Canvas */}
             <div className="relative rounded-2xl overflow-hidden aspect-[16/9] border border-eco-gray-200 shadow-inner group bg-eco-gray-900">
               <img
-                src={selectedModalItem.fullImage || selectedModalItem.image || `/images/ecobamboo/${selectedModalItem.code}-w800.webp`}
+                src={resolveBrandAssetUrl(selectedModalItem.fullImage || selectedModalItem.image || `/images/ecobamboo/${selectedModalItem.code}-w800.webp`)}
                 alt={selectedModalItem.code}
                 className="absolute inset-0 w-full h-full object-cover"
                 onError={(e) => {
-                  e.currentTarget.src = selectedModalItem.image || `/images/ecobamboo/${selectedModalItem.code}_sm.webp`;
+                  e.currentTarget.src = resolveBrandAssetUrl(selectedModalItem.image || `/images/ecobamboo/${selectedModalItem.code}_sm.webp`);
                 }}
               />
               <div className="relative z-10 w-full h-full flex flex-col justify-between p-5 bg-gradient-to-t from-black/80 via-transparent to-black/40">

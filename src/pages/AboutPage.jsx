@@ -82,9 +82,9 @@ export default function AboutPage() {
                 className="w-full aspect-video object-cover"
                 poster={posterSrc}
                 onError={() => {
-                  // Dự phòng: Thử đường dẫn tương đối nếu đường dẫn tuyệt đối chưa nạp được
-                  if (!currentVideoSrc.startsWith('./')) {
-                    setCurrentVideoSrc('./videos/amc-factory-intro.mp4');
+                  const fallback = `${base === '/' ? '' : base.replace(/\/$/, '')}/videos/amc-factory-intro.mp4`;
+                  if (currentVideoSrc !== fallback) {
+                    setCurrentVideoSrc(fallback);
                   }
                 }}
               >

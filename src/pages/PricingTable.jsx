@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import MainLayout from '../components/layout/MainLayout';
 import BRAND, { getCurrentYear, getPriceTableTitle } from '../config/brandConfig';
+import { downloadPriceTableCsv } from '../utils/fileDownload';
 
 // ==========================================
 // ICON HELPER COMPONENTS (Lucide Style SVG)
@@ -212,8 +213,11 @@ export default function PricingTable({ onOpenCalculator }) {
   const [downloadNotice, setDownloadNotice] = useState(false);
 
   const handleDownloadPricingPDF = () => {
+    try {
+      downloadPriceTableCsv(BRAND.brandName);
+    } catch (_) {}
     setDownloadNotice(true);
-    setTimeout(() => setDownloadNotice(false), 4000);
+    setTimeout(() => setDownloadNotice(false), 5000);
   };
 
   return (

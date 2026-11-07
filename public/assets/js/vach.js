@@ -15269,7 +15269,7 @@ function lamMoi(topo){ if(topo) H.suyDan(S); else H.dongBo(S);
     vienMau:[1,1,1], vienTo:0.08});
   (Lu.vat||[]).forEach(v=>{ v.lop=lopVat(v); });
   _luoiCuoi=Lu; anh.napLuoi(Lu); can=true; capNhat(); _nutXem(); }
-  
+
 /* ── HÍT MẠCH CỦA MẪU VỀ MỐC KHỔ TẤM (lệnh mục 1.3) ──────────────────────────
    "Mẫu nạp vào theo khổ đã chọn: mạch của mẫu hít về mốc khổ."
    ⚠ CỬA SỔ HÍT RỘNG HƠN lúc đặt mạch tay (40 mm): mẫu dựng theo TỈ LỆ vách nên mạch
@@ -30977,10 +30977,20 @@ async function giai(t){
    mà vài trình nhắn tin sẽ cắt cụt — link cắt cụt thì người nhận mở ra lỗi, và
    không ai biết vì sao. */
 const TRAN_LINK=2000;
+function layDuongDanVach(){
+  var base = "";
+  if (typeof window !== "undefined" && window.location.hostname.includes("github.io")) {
+    var p0 = window.location.pathname.split("/").filter(Boolean)[0];
+    if (p0 && p0 !== "tu-thiet-ke-vach") base = "/" + p0;
+  }
+  var slug = (HS && HS.SLUG) ? HS.SLUG : "/tu-thiet-ke-vach";
+  if (!slug.startsWith("/")) slug = "/" + slug;
+  return location.origin + base + slug;
+}
 async function taoLink(){
   const z=await nen(V.chupTT());
   if(!z){ V.nhac("Trình duyệt này không nén được — hãy cập nhật trình duyệt."); return null; }
-  const u=location.origin+(HS.SLUG||location.pathname)+"?v="+z;
+  const u=layDuongDanVach()+"?v="+z;
   return {u,z};
 }
 /* ── ⑧ + Bo sung 6 muc 2: LUU BAN THIET KE, LAY MA NGAN `V-XXXXX` ─────────────
@@ -31049,7 +31059,7 @@ async function xinMaVach(){
 async function guiLink(dan){
   const _d=dan||"Vách mình thiết kế trên Nhựa AMC: ";
   const m=await xinMaVach();
-  if(m){ const u=location.origin+(HS.SLUG||location.pathname)+"?m="+m;
+  if(m){ const u=layDuongDanVach()+"?m="+m;
     const chu=_d+u;
     if(navigator.share&&window.matchMedia("(max-width:959px)").matches) navigator.share({text:chu}).catch(()=>chep(chu));
     else chep(chu);
@@ -31859,7 +31869,7 @@ function bangChu(){
          dang, va dang dai thang vi no duoc dien sau. Muc dich cua muc 2 la rut link
          xuong ~45 ky tu, nen cho nay phai uu tien ma. */
       const l=f.querySelector('[name=vach_link]');
-      if(l) l.value = maSan ? (location.origin+(HS.SLUG||location.pathname)+"?m="+maSan)
+      if(l) l.value = maSan ? (layDuongDanVach()+"?m="+maSan)
                             : linkSan;
       /* Bo sung 6 muc 2: dien ma vach neu da co. `maSan` duoc dien SAN luc khach mo
          hop bao gia — KHONG `await` o day: trinh nghe `submit` ma async thi tra ve
@@ -31890,7 +31900,7 @@ function bangChu(){
          "Da nhan" trong ma khong co gi tra cuu duoc thi te hon khong hien gi. */
     let ma=maSan; if(!ma){ try{ ma=await xinMaVach(); }catch(_){} }
     let lk="";
-    if(ma) lk=location.origin+(HS.SLUG||location.pathname)+"?m="+ma;
+    if(ma) lk=layDuongDanVach()+"?m="+ma;
     else { try{ const t=await taoLink(); lk=t?t.u:""; }catch(_){} }
     h.hidden=false;
     h.innerHTML='<b>Đã nhận.</b> Tư vấn viên sẽ gọi lại trong giờ làm việc.'
@@ -33568,3 +33578,4 @@ window.VACH_REINIT = function() {
     console.warn('[vách] VACH_REINIT error:', e);
   }
 };
+

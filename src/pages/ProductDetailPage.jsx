@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import MainLayout from '../components/layout/MainLayout';
 import { PRODUCTS } from '../data/products';
 import BRAND, { getCurrentYear } from '../config/brandConfig';
+import { downloadCataloguePdf } from '../utils/fileDownload';
 
 // ==========================================
 // ICON HELPER COMPONENTS (Lucide Style SVG)
@@ -111,8 +112,11 @@ export default function ProductDetailPage({ product = PRODUCTS[0], onSelectProdu
   };
 
   const handleDownloadCatalog = () => {
+    try {
+      downloadCataloguePdf(BRAND.brandName);
+    } catch (_) {}
     setDownloadSuccess(true);
-    setTimeout(() => setDownloadSuccess(false), 4000);
+    setTimeout(() => setDownloadSuccess(false), 5000);
   };
 
   const currentMainImg = typeof gallery[activeImageIndex] === 'string'

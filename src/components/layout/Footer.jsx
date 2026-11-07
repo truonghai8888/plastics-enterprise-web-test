@@ -58,16 +58,39 @@ const ChevronRightIcon = ({ className = "w-4 h-4" }) => (
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    if (email.trim()) {
-      setIsSubscribed(true);
-      setTimeout(() => {
-        setIsSubscribed(false);
-        setEmail('');
-      }, 4000);
+    setErrorMsg('');
+    const val = email.trim();
+    if (!val) {
+      setErrorMsg('Vui lòng nhập email hoặc số điện thoại');
+      return;
     }
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    const isPhone = /^(0|\+84)[0-9]{8,11}$/.test(val.replace(/[\s.-]/g, ''));
+    if (!isEmail && !isPhone && val.length < 9) {
+      setErrorMsg('Vui lòng nhập đúng định dạng email hoặc số điện thoại');
+      return;
+    }
+
+    try {
+      const existing = JSON.parse(localStorage.getItem('plastics_enterprise_newsletter') || '[]');
+      existing.push({
+        contact: val,
+        type: isEmail ? 'email' : 'phone',
+        createdAt: new Date().toISOString(),
+        timestamp: new Date().toLocaleString('vi-VN')
+      });
+      localStorage.setItem('plastics_enterprise_newsletter', JSON.stringify(existing));
+    } catch (_) {}
+
+    setIsSubscribed(true);
+    setEmail('');
+    setTimeout(() => {
+      setIsSubscribed(false);
+    }, 6000);
   };
 
   return (
@@ -377,9 +400,9 @@ export default function Footer() {
             <form onSubmit={handleSubscribe} className="space-y-2.5">
               <div className="relative">
                 <input
-                  type="email"
+                  type="text"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => { setEmail(e.target.value); if (errorMsg) setErrorMsg(''); }}
                   placeholder="Nhập email hoặc số điện thoại..."
                   required
                   className="w-full px-3.5 py-2.5 pr-10 text-sm bg-bamboo-900 border border-bamboo-700 rounded-xl text-white placeholder-eco-gray-500 focus:outline-none focus:border-bamboo-400 focus:ring-1 focus:ring-bamboo-400"
@@ -393,10 +416,16 @@ export default function Footer() {
                 </button>
               </div>
 
+              {errorMsg && (
+                <div className="text-xs text-red-400 bg-red-950/60 p-2 rounded-lg border border-red-800 animate-fade-in">
+                  {errorMsg}
+                </div>
+              )}
+
               {isSubscribed && (
-                <div className="text-xs text-bamboo-400 flex items-center bg-bamboo-900/80 p-2 rounded-lg border border-bamboo-700 animate-fade-in">
-                  <CheckCircleIcon className="w-3.5 h-3.5 mr-1.5 shrink-0" />
-                  Đăng ký thành công! Chuyên viên {BRAND.shortName} sẽ liên hệ gửi báo giá sớm nhất.
+                <div className="text-xs text-bamboo-300 flex items-center bg-bamboo-900/90 p-2.5 rounded-lg border border-bamboo-600 shadow-md animate-fade-in">
+                  <CheckCircleIcon className="w-4 h-4 mr-1.5 text-bamboo-400 shrink-0" />
+                  <span>Đăng ký thành công! Chuyên viên {BRAND.shortName} sẽ gửi báo giá & bản tin sớm nhất.</span>
                 </div>
               )}
             </form>

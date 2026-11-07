@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import MainLayout from '../components/layout/MainLayout';
 import BRAND from '../config/brandConfig';
+import { downloadGuidePdf } from '../utils/fileDownload';
 
 // ==========================================
 // ICON HELPER COMPONENTS (Lucide Style SVG)
@@ -112,8 +113,11 @@ export default function ConstructionGuide() {
   const [downloadSuccess, setDownloadSuccess] = useState(false);
 
   const handleDownloadPDF = () => {
+    try {
+      downloadGuidePdf(BRAND.brandName);
+    } catch (_) {}
     setDownloadSuccess(true);
-    setTimeout(() => setDownloadSuccess(false), 4000);
+    setTimeout(() => setDownloadSuccess(false), 5000);
   };
 
   return (

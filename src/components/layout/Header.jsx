@@ -200,16 +200,17 @@ export default function Header() {
                 onError={(e) => {
                   if (!e.currentTarget.dataset.retried) {
                     e.currentTarget.dataset.retried = '1';
-                    e.currentTarget.src = './images/nhuaamc/logo-amc-1024x878.jpg';
+                    e.currentTarget.src = BRAND.logo.url || './images/nhuaamc/logo-amc-1024x878.jpg';
                     return;
                   }
                   if (e.currentTarget.dataset.retried === '1') {
                     e.currentTarget.dataset.retried = '2';
-                    e.currentTarget.src = './favicon.png';
+                    e.currentTarget.src = BRAND.logo.faviconUrl || './favicon.png';
                     return;
                   }
                   e.currentTarget.style.display = 'none';
                   if (e.currentTarget.nextElementSibling) {
+                    e.currentTarget.nextElementSibling.classList.remove('hidden');
                     e.currentTarget.nextElementSibling.style.display = 'flex';
                   }
                 }}

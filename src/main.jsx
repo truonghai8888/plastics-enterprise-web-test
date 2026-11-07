@@ -13,11 +13,8 @@ if (typeof document !== 'undefined') {
   }
   const favIconUrl = BRAND.logo.faviconUrl || BRAND.logo.squareUrl;
   if (favIconUrl) {
-    document.querySelectorAll("link[rel*='icon']").forEach((el) => {
-      if (el.getAttribute('type') !== 'image/x-icon') {
-        el.type = 'image/png';
-        el.href = favIconUrl;
-      }
+    document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']").forEach((el) => {
+      el.href = favIconUrl;
     });
   }
 }
